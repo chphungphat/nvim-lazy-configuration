@@ -1,10 +1,9 @@
 return {
 	"nvim-treesitter/nvim-treesitter",
-	build = ":TSUpdate",
+	build = "<cmd>:TSUpdate<CR>",
 	opts = {
 		ensure_installed = {
 			"javascript",
-			"jsx",
 			"typescript",
 			"tsx",
 			"bash",

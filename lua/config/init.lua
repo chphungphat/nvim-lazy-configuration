@@ -1,3 +1,3 @@
-require("core.keymap")
-require("core.option")
-require("core.command")
+require("config.keymap")
+require("config.option")
+require("config.command")

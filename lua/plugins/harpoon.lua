@@ -1,6 +1,6 @@
 return {
 	"ThePrimeagen/harpoon",
-	branch = "hapoon2",
+	branch = "harpoon2",
 	dependencies = {
 		"nvim-lua/plenary.nvim",
 	},
