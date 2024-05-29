@@ -14,3 +14,15 @@ vim.keymap.set("n", "<leader>cd", vim.diagnostic.open_float, { desc = "Show diag
 vim.keymap.set("n", "<leader>ca", vim.diagnostic.setloclist, { desc = "Open diagnostic Quickfix list" })
 
 vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
+
+vim.keymap.set("n", "<leader>gf", vim.cmd("git fetch"), { desc = "Git fetch" })
+vim.keymap.set("n", "<leader>gp", vim.cmd("git push"), { desc = "Git push" })
+vim.keymap.set("n", "<leader>gpl", vim.cmd("git pull"), { desc = "Git pull" })
+vim.keymap.set("n", "<leader>ga", vim.cmd("git add ."), { desc = "Git add" })
+vim.keymap.set("n", "<leader>gc", function()
+	vim.ui.input({ prompt = "Commit message: " }, function(message)
+		if message then
+			vim.cmd('git commit -m "' .. message .. '"')
+		end
+	end)
+end)
