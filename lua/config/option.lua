@@ -32,3 +32,7 @@ vim.opt.cursorline = true
 vim.opt.scrolloff = 10
 
 vim.opt.hlsearch = true
+
+vim.o.termguicolors = true
+
+package.cpath = package.cpath .. ";/usr/local/lib/?.so"

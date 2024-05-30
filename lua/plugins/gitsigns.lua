@@ -13,9 +13,13 @@ return {
 		current_line_blame_opts = {
 			virt_text = true,
 			virt_text_pos = "eol", -- 'eol' | 'overlay' | 'right_align'
-			delay = 500,
+			delay = 400,
 			ignore_whitespace = false,
 			virt_text_priority = 100,
+		},
+		current_line_blame_formatter = "<author>, <author_time:%d-%m-%Y> - <summary>",
+		current_line_blame_formatter_opts = {
+			relative_time = true,
 		},
 		on_attach = function(buffer)
 			local gs = package.loaded.gitsigns
@@ -24,7 +28,9 @@ return {
 				vim.keymap.set(mode, key, fn, { buffer = buffer, desc = desc })
 			end
 
-			map("n", "<leader>gb", gs.blame_line({ full = true }), "Blame line")
+			map("n", "<leader>gb", function()
+				gs.blame_line({ full = true })
+			end, "Blame line")
 
 			map("n", "<leader>gd", gs.diffthis, "Diff this")
 		end,
