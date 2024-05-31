@@ -3,7 +3,6 @@ return {
 	event = "VimEnter",
 	dependencies = {
 		"nvim-lua/plenary.nvim",
-		"ThePrimeagen/harpoon",
 		{
 			"nvim-telescope/telescope-fzf-native.nvim",
 			build = "make",
