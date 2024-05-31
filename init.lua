@@ -1,4 +1,4 @@
-require("config.option")
-require("config.keymap")
-require("config.command")
-require("config.lazy")
+require("core.option")
+require("core.keymap")
+require("core.command")
+require("core.lazy")
