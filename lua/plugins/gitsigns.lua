@@ -9,7 +9,7 @@ return {
 			changedelete = { text = "▎" },
 			untracked = { text = "▎" },
 		},
-		current_line_blame = true, -- Toggle with `:Gitsigns toggle_current_line_blame`
+		current_line_blame = false,
 		current_line_blame_opts = {
 			virt_text = true,
 			virt_text_pos = "eol", -- 'eol' | 'overlay' | 'right_align'
@@ -28,11 +28,11 @@ return {
 				vim.keymap.set(mode, key, fn, { buffer = buffer, desc = desc })
 			end
 
-			map("n", "<leader>gb", function()
-				gs.blame_line({ full = true })
-			end, "Blame line")
-
-			map("n", "<leader>gd", gs.diffthis, "Diff this")
+			map("n", "<leader>gt", gs.toggle_current_line_blame, "Toggle current line blame")
+			-- map("n", "<leader>hd", gs.diffthis, "Diff this")
+			-- map("n", "<leader>hD", function()
+			-- 	gs.diffthis("~")
+			-- end, "Diff this (cached)")
 		end,
 	},
 }
