@@ -6,7 +6,9 @@ vim.opt.relativenumber = true
 
 vim.opt.clipboard = "unnamedplus"
 
-vim.opt.mouse = "a"
+vim.opt.completeopt = "menuone,noselect,popup"
+
+vim.opt.mouse = ""
 vim.opt.showmode = false
 
 vim.opt.breakindent = true
