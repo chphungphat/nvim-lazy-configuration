@@ -16,6 +16,7 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup({
 	spec = {
 		{ import = "plugins" },
+		{ import = "colorschemes" },
 	},
 	defaults = {
 		lazy = false,
@@ -23,7 +24,6 @@ require("lazy").setup({
 	},
 	install = {
 		missing = true,
-		colorscheme = { "bamboo" },
 	},
 	checker = {
 		enabled = true,
@@ -41,3 +41,8 @@ require("lazy").setup({
 		reset_packpath = true,
 	},
 })
+
+vim.keymap.set("n", "<leader>l", "<cmd>Lazy<CR>", { noremap = true, silent = true })
+
+vim.o.background = "dark" -- or "light" for light mode
+vim.cmd([[colorscheme gruvbox]])

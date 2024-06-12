@@ -29,10 +29,6 @@ return {
 			end
 
 			map("n", "<leader>gt", gs.toggle_current_line_blame, "Toggle current line blame")
-			-- map("n", "<leader>hd", gs.diffthis, "Diff this")
-			-- map("n", "<leader>hD", function()
-			-- 	gs.diffthis("~")
-			-- end, "Diff this (cached)")
 		end,
 	},
 }
