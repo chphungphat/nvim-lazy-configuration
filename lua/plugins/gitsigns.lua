@@ -28,7 +28,7 @@ return {
 				vim.keymap.set(mode, key, fn, { buffer = buffer, desc = desc })
 			end
 
-			map("n", "<leader>gt", gs.toggle_current_line_blame, "Toggle current line blame")
+			map("n", "<leader>gT", gs.toggle_current_line_blame, "Toggle current line blame")
 		end,
 	},
 }

@@ -16,6 +16,7 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup({
 	spec = {
 		{ import = "plugins" },
+		{ import = "plugins/coding" },
 		{ import = "plugins/colorschemes" },
 	},
 	defaults = {
@@ -44,4 +45,4 @@ require("lazy").setup({
 
 vim.keymap.set("n", "<leader>l", "<cmd>Lazy<CR>", { noremap = true, silent = true })
 
-vim.cmd([[colorscheme gruvbox]])
+vim.cmd([[colorscheme bamboo]])

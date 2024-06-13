@@ -47,11 +47,3 @@ vim.opt.linebreak = true
 vim.opt.wrap = false
 
 vim.opt.swapfile = false
-
--- %=: Ensure the following text is on the right side of status column
--- v:virtnum < 1 ? ... : '': If first line
--- v:relnum ? v:relnum : ...: If relative number is true
--- v:lnum < 10 ? v:lnum . '  ' : v:lnum: If line number is less than 1, add 2 spaces
--- %=: Add separator to align item to the right
--- %s: The sign itself
-vim.opt.statuscolumn = "%=%{v:virtnum < 1 ? (v:relnum ? v:relnum : v:lnum < 10 ? v:lnum . '  ' : v:lnum) : ''}%=%s"
