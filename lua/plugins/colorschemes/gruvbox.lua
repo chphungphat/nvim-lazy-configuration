@@ -30,5 +30,7 @@ return {
 			dim_inactive = false,
 			transparent_mode = false,
 		})
+
+		vim.opt.background = "dark"
 	end,
 }

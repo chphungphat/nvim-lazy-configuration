@@ -16,7 +16,7 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup({
 	spec = {
 		{ import = "plugins" },
-		{ import = "colorschemes" },
+		{ import = "plugins/colorschemes" },
 	},
 	defaults = {
 		lazy = false,
@@ -44,5 +44,4 @@ require("lazy").setup({
 
 vim.keymap.set("n", "<leader>l", "<cmd>Lazy<CR>", { noremap = true, silent = true })
 
-vim.o.background = "dark" -- or "light" for light mode
 vim.cmd([[colorscheme gruvbox]])
