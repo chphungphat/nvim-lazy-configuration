@@ -8,7 +8,7 @@ vim.opt.clipboard = "unnamedplus"
 
 vim.opt.completeopt = "menuone,noselect,popup"
 
-vim.opt.mouse = ""
+vim.opt.mouse = "a"
 vim.opt.showmode = false
 
 vim.opt.breakindent = true

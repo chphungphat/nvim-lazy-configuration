@@ -21,14 +21,14 @@ return {
 		current_line_blame_formatter_opts = {
 			relative_time = true,
 		},
-		on_attach = function(buffer)
-			local gs = package.loaded.gitsigns
-
-			local function map(mode, key, fn, desc)
-				vim.keymap.set(mode, key, fn, { buffer = buffer, desc = desc })
-			end
-
-			map("n", "<leader>gT", gs.toggle_current_line_blame, "Toggle current line blame")
-		end,
+		-- on_attach = function(buffer)
+		-- 	local gs = package.loaded.gitsigns
+		--
+		-- 	local function map(mode, key, fn, desc)
+		-- 		vim.keymap.set(mode, key, fn, { buffer = buffer, desc = desc })
+		-- 	end
+		--
+		-- 	map("n", "<leader>gT", gs.toggle_current_line_blame, "Toggle current line blame")
+		-- end,
 	},
 }
