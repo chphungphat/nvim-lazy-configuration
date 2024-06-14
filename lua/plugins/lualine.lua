@@ -2,7 +2,7 @@ return {
 	"nvim-lualine/lualine.nvim",
 	dependencies = { "nvim-tree/nvim-web-devicons" },
 	config = function()
-		-- Taken from: https://github.com/jdhao/nvim-config/blob/master/lua/config/statusline.lua
+		-- Modified and taken from: https://github.com/jdhao/nvim-config/blob/master/lua/config/statusline.lua
 
 		local fn = vim.fn
 
@@ -124,14 +124,71 @@ return {
 			end
 		end
 
+		-- Custom colors for bamboo colorscheme
+		local bamboo_colors = {
+			normal = "#80b39d",
+			insert = "#8ac6d1",
+			visual = "#f0e68c",
+			replace = "#ff8c00",
+			command = "#7fc8a9",
+			inactive = "#4b9e99",
+			-- bg = "#2c3e50",
+			-- fg = "#ecf0f1",
+
+			bg = "#3c3836",
+			fg = "#ebdbb2",
+			--
+			-- bg = "#2e4a4a",
+			-- fg = "#d8e0d6",
+			--
+			-- bg = "#394a46",
+			-- fg = "#d3d9d7",
+			--
+			-- bg = "#3a3a38",
+			-- fg = "#f2e5d5",
+		}
+
+		local bamboo_theme = {
+			normal = {
+				a = { bg = bamboo_colors.normal, fg = bamboo_colors.bg, gui = "bold" },
+				b = { bg = bamboo_colors.bg, fg = bamboo_colors.fg },
+				c = { bg = bamboo_colors.bg, fg = bamboo_colors.fg },
+			},
+			insert = {
+				a = { bg = bamboo_colors.insert, fg = bamboo_colors.bg, gui = "bold" },
+				b = { bg = bamboo_colors.bg, fg = bamboo_colors.fg },
+				c = { bg = bamboo_colors.bg, fg = bamboo_colors.fg },
+			},
+			visual = {
+				a = { bg = bamboo_colors.visual, fg = bamboo_colors.bg, gui = "bold" },
+				b = { bg = bamboo_colors.bg, fg = bamboo_colors.fg },
+				c = { bg = bamboo_colors.bg, fg = bamboo_colors.fg },
+			},
+			command = {
+				a = { bg = bamboo_colors.command, fg = bamboo_colors.bg, gui = "bold" },
+				b = { bg = bamboo_colors.bg, fg = bamboo_colors.fg },
+				c = { bg = bamboo_colors.bg, fg = bamboo_colors.fg },
+			},
+			replace = {
+				a = { bg = bamboo_colors.replace, fg = bamboo_colors.bg, gui = "bold" },
+				b = { bg = bamboo_colors.bg, fg = bamboo_colors.fg },
+				c = { bg = bamboo_colors.bg, fg = bamboo_colors.fg },
+			},
+			inactive = {
+				a = { bg = bamboo_colors.inactive, fg = bamboo_colors.fg, gui = "bold" },
+				b = { bg = bamboo_colors.inactive, fg = bamboo_colors.fg },
+				c = { bg = bamboo_colors.inactive, fg = bamboo_colors.fg },
+			},
+		}
+
 		require("lualine").setup({
 			options = {
 				icons_enabled = true,
-				theme = "gruvbox-material",
-				-- component_separators = { left = "", right = "" },
-				-- section_separators = { left = "", right = "" },
-				section_separators = "",
-				component_separators = "",
+				theme = bamboo_theme,
+				component_separators = { left = "", right = "" },
+				section_separators = { left = "", right = "" },
+				-- section_separators = "",
+				-- component_separators = "",
 				disabled_filetypes = {},
 				always_divide_middle = true,
 			},
@@ -161,7 +218,8 @@ return {
 					{
 						"diagnostics",
 						sources = { "nvim_diagnostic" },
-						symbols = { error = "🆇 ", warn = "⚠️ ", info = "ℹ️ ", hint = " " },
+						-- symbols = { error = "🆇 ", warn = "⚠️ ", info = "ℹ️ ", hint = " " },
+						symbols = { error = " ", warn = " ", info = "󰠠 ", hint = " " },
 					},
 				},
 				lualine_x = {
@@ -169,7 +227,7 @@ return {
 					{
 						"fileformat",
 						symbols = {
-							unix = "unix",
+							unix = "linux",
 							dos = "win",
 							mac = "mac",
 						},
@@ -199,7 +257,7 @@ return {
 				lualine_z = {},
 			},
 			tabline = {},
-			extensions = { "quickfix", "fugitive", "nvim-tree" },
+			-- extensions = { "quickfix", "fugitive", "nvim-tree" },
 		})
 	end,
 }

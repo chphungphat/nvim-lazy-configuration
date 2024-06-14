@@ -1,3 +1,6 @@
+-- if true then
+-- 	return {}
+-- end
 return {
 	"ribru17/bamboo.nvim",
 	event = "VeryLazy",
@@ -6,6 +9,6 @@ return {
 		require("bamboo").setup({
 			-- optional configuration here
 		})
-		-- require("bamboo").load()
+		require("bamboo").load()
 	end,
 }
