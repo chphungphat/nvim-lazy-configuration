@@ -1,0 +1,25 @@
+return {
+	"romgrk/barbar.nvim",
+	dependencies = {
+		"lewis6991/gitsigns.nvim",
+		"nvim-tree/nvim-web-devicons",
+	},
+	config = function()
+		vim.g.barbar_auto_setup = false
+
+		require("barbar").setup({
+			animation = false,
+			clickable = true,
+		})
+
+		local map = vim.api.nvim_set_keymap
+
+		local function set_key(mode, key, cmd, desc)
+			map(mode, key, cmd, { desc = desc, noremap = true, silent = true })
+		end
+
+		set_key("n", "H", "<cmd>BufferPrevious<CR>", "Previous buffer")
+		set_key("n", "L", "<cmd>BufferNext<CR>", "Next buffer")
+		set_key("n", "<leader>bd", "<cmd>BufferClose<CR>", "Close buffer")
+	end,
+}

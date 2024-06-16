@@ -9,11 +9,11 @@ return {
 		"hrsh7th/cmp-cmdline",
 		"zbirenbaum/copilot-cmp",
 		"zbirenbaum/copilot.lua",
+		"SergioRibera/cmp-dotenv",
 	},
 	config = function()
 		local cmp = require("cmp")
 
-		local tes
 		cmp.setup({
 			completion = {
 				completeopt = "menu,menuone,preview,noselect",
@@ -29,6 +29,7 @@ return {
 				{ name = "nvim_lsp" },
 				{ name = "buffer" },
 				{ name = "path" },
+				{ name = "dotenv" },
 			}),
 		})
 	end,

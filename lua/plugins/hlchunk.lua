@@ -36,6 +36,9 @@ return {
 				aerial = true,
 				dashboard = true,
 				oil_preview = true,
+				"neo-tree",
+				"neo-tree-popup",
+				"notify",
 			},
 		})
 	end,
