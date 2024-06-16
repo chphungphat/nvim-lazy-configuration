@@ -1,5 +1,6 @@
 return {
 	"nvim-lualine/lualine.nvim",
+	lazy = false,
 	dependencies = { "nvim-tree/nvim-web-devicons" },
 	config = function()
 		-- Modified and taken from: https://github.com/jdhao/nvim-config/blob/master/lua/config/statusline.lua
@@ -124,67 +125,78 @@ return {
 			end
 		end
 
-		-- Custom colors for bamboo colorscheme
 		local bamboo_colors = {
 			normal = "#80b39d",
 			insert = "#8ac6d1",
 			visual = "#f0e68c",
 			replace = "#ff8c00",
 			command = "#7fc8a9",
-			inactive = "#4b9e99",
-			-- bg = "#2c3e50",
-			-- fg = "#ecf0f1",
-
-			bg = "#3c3836",
+			inactive = "#3a3a38",
+			bg = "#394a46",
 			fg = "#ebdbb2",
-			--
-			-- bg = "#2e4a4a",
-			-- fg = "#d8e0d6",
-			--
-			-- bg = "#394a46",
-			-- fg = "#d3d9d7",
-			--
-			-- bg = "#3a3a38",
-			-- fg = "#f2e5d5",
 		}
 
-		local bamboo_theme = {
+		local gruvbox_colors = {
+			normal = "#a89984",
+			insert = "#8ec07c",
+			visual = "#fabd2f",
+			replace = "#fb4934",
+			command = "#83a598",
+			inactive = "#3c3836",
+			bg = "#282828",
+			fg = "#ebdbb2",
+		}
+
+		local lualine_style = {
+			gruvbox = gruvbox_colors,
+			bamboo = bamboo_colors,
+		}
+
+		local colorscheme = vim.g.colors_name or "bamboo"
+
+		local style_colors = lualine_style[colorscheme]
+
+		if not style_colors then
+			style_colors = bamboo_colors
+		end
+
+		local lualine_theme = {
 			normal = {
-				a = { bg = bamboo_colors.normal, fg = bamboo_colors.bg, gui = "bold" },
-				b = { bg = bamboo_colors.bg, fg = bamboo_colors.fg },
-				c = { bg = bamboo_colors.bg, fg = bamboo_colors.fg },
+				a = { bg = style_colors.normal, fg = style_colors.bg, gui = "bold" },
+				b = { bg = style_colors.bg, fg = style_colors.fg },
+				c = { bg = style_colors.bg, fg = style_colors.fg },
 			},
 			insert = {
-				a = { bg = bamboo_colors.insert, fg = bamboo_colors.bg, gui = "bold" },
-				b = { bg = bamboo_colors.bg, fg = bamboo_colors.fg },
-				c = { bg = bamboo_colors.bg, fg = bamboo_colors.fg },
+				a = { bg = style_colors.insert, fg = style_colors.bg, gui = "bold" },
+				b = { bg = style_colors.bg, fg = style_colors.fg },
+				c = { bg = style_colors.bg, fg = style_colors.fg },
 			},
 			visual = {
-				a = { bg = bamboo_colors.visual, fg = bamboo_colors.bg, gui = "bold" },
-				b = { bg = bamboo_colors.bg, fg = bamboo_colors.fg },
-				c = { bg = bamboo_colors.bg, fg = bamboo_colors.fg },
+				a = { bg = style_colors.visual, fg = style_colors.bg, gui = "bold" },
+				b = { bg = style_colors.bg, fg = style_colors.fg },
+				c = { bg = style_colors.bg, fg = style_colors.fg },
 			},
 			command = {
-				a = { bg = bamboo_colors.command, fg = bamboo_colors.bg, gui = "bold" },
-				b = { bg = bamboo_colors.bg, fg = bamboo_colors.fg },
-				c = { bg = bamboo_colors.bg, fg = bamboo_colors.fg },
+				a = { bg = style_colors.command, fg = style_colors.bg, gui = "bold" },
+				b = { bg = style_colors.bg, fg = style_colors.fg },
+				c = { bg = style_colors.bg, fg = style_colors.fg },
 			},
 			replace = {
-				a = { bg = bamboo_colors.replace, fg = bamboo_colors.bg, gui = "bold" },
-				b = { bg = bamboo_colors.bg, fg = bamboo_colors.fg },
-				c = { bg = bamboo_colors.bg, fg = bamboo_colors.fg },
+				a = { bg = style_colors.replace, fg = style_colors.bg, gui = "bold" },
+				b = { bg = style_colors.bg, fg = style_colors.fg },
+				c = { bg = style_colors.bg, fg = style_colors.fg },
 			},
 			inactive = {
-				a = { bg = bamboo_colors.inactive, fg = bamboo_colors.fg, gui = "bold" },
-				b = { bg = bamboo_colors.inactive, fg = bamboo_colors.fg },
-				c = { bg = bamboo_colors.inactive, fg = bamboo_colors.fg },
+				a = { bg = style_colors.inactive, fg = style_colors.fg, gui = "bold" },
+				b = { bg = style_colors.inactive, fg = style_colors.fg },
+				c = { bg = style_colors.inactive, fg = style_colors.fg },
 			},
 		}
 
 		require("lualine").setup({
 			options = {
 				icons_enabled = true,
-				theme = bamboo_theme,
+				theme = lualine_theme,
 				component_separators = { left = "", right = "" },
 				section_separators = { left = "", right = "" },
 				-- section_separators = "",
@@ -219,7 +231,7 @@ return {
 						"diagnostics",
 						sources = { "nvim_diagnostic" },
 						-- symbols = { error = "🆇 ", warn = "⚠️ ", info = "ℹ️ ", hint = " " },
-						symbols = { error = " ", warn = " ", info = "󰠠 ", hint = " " },
+						symbols = { error = " ", warn = " ", hint = "󰠠 ", info = " " },
 					},
 				},
 				lualine_x = {

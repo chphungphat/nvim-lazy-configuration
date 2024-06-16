@@ -4,15 +4,12 @@ return {
 	config = function()
 		local colorscheme = vim.g.colors_name
 
-		local styleColors = {
+		local style = {
 			gruvbox = "#d47d26",
-			-- bamboo = "#8ac6d1",
-			-- bamboo =  "#a5dee5",
-			bamboo = "#4b9e99",
-			-- bamboo =  "#7fc8a9",
-			-- bamboo = "#6ab78a",
+			bamboo = "#6ab78a",
 		}
-		local styleColor = styleColors[colorscheme]
+		local style_color = style[colorscheme]
+
 		require("hlchunk").setup({
 			indent = {
 				enable = true,
@@ -31,7 +28,7 @@ return {
 					left_bottom = "└",
 					right_arrow = "─",
 				},
-				style = styleColor,
+				style = style_color,
 				duration = 50,
 				delay = 75,
 			},
