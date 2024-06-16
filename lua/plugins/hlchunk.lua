@@ -32,6 +32,11 @@ return {
 				duration = 50,
 				delay = 75,
 			},
+			exclude_filetypes = {
+				aerial = true,
+				dashboard = true,
+				oil_preview = true,
+			},
 		})
 	end,
 }
