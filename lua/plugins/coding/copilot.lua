@@ -17,6 +17,7 @@ return {
 	{
 		"CopilotC-Nvim/CopilotChat.nvim",
 		branch = "canary",
+		event = "InsertEnter",
 		dependencies = {
 			"zbirenbaum/copilot.lua",
 			"nvim-lua/plenary.nvim",
@@ -29,13 +30,17 @@ return {
 					complete = {
 						insert = "",
 					},
+					reset = {
+						normal = "<C-r>",
+						insert = "<C-r>",
+					},
 				},
 			})
 
 			------------------ Open Chat ---------------------------
 			vim.api.nvim_set_keymap(
 				"n",
-				"<leader>caa",
+				"<leader>pp",
 				":CopilotChatOpen<CR>",
 				{ noremap = true, silent = true, desc = "CopilotChat - Open" }
 			)
@@ -50,7 +55,7 @@ return {
 			_G.quick_chat = quick_chat
 			vim.api.nvim_set_keymap(
 				"n",
-				"<leader>caq",
+				"<leader>pq",
 				":lua quick_chat()<CR>",
 				{ noremap = true, silent = true, desc = "CopilotChat - Quick chat" }
 			)
@@ -63,7 +68,7 @@ return {
 			_G.optimize_chat = optimize_chat
 			vim.api.nvim_set_keymap(
 				"n",
-				"<leader>cao",
+				"<leader>po",
 				":lua optimize_chat()<CR>",
 				{ noremap = true, silent = true, desc = "CopilotChat - Optimize file" }
 			)
@@ -76,7 +81,7 @@ return {
 			_G.review_chat = review_chat
 			vim.api.nvim_set_keymap(
 				"n",
-				"<leader>car",
+				"<leader>pr",
 				":lua review_chat()<CR>",
 				{ noremap = true, silent = true, desc = "CopilotChat - Review file" }
 			)
@@ -89,7 +94,7 @@ return {
 			_G.fix_chat = fix_chat
 			vim.api.nvim_set_keymap(
 				"n",
-				"<leader>cpf",
+				"<leader>pf",
 				":lua fix_chat()<CR>",
 				{ noremap = true, silent = true, desc = "CopilotChat - Fix file" }
 			)
@@ -102,7 +107,7 @@ return {
 			_G.explain_chat = explain_chat
 			vim.api.nvim_set_keymap(
 				"n",
-				"<leader>cae",
+				"<leader>pe",
 				":lua explain_chat()<CR>",
 				{ noremap = true, silent = true, desc = "CopilotChat - Explain file" }
 			)
@@ -110,7 +115,7 @@ return {
 			---------------------- Fix Diagnostic ----------------------
 			vim.api.nvim_set_keymap(
 				"n",
-				"<leader>caf",
+				"<leader>pf",
 				":CopilotChatFixDiagnostic<CR>",
 				{ noremap = true, silent = true, desc = "CopilotChat - Fix Diagnostic" }
 			)

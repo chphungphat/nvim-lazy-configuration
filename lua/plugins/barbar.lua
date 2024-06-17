@@ -20,6 +20,6 @@ return {
 
 		set_key("n", "H", "<cmd>BufferPrevious<CR>", "Previous buffer")
 		set_key("n", "L", "<cmd>BufferNext<CR>", "Next buffer")
-		set_key("n", "<leader>bd", "<cmd>BufferClose<CR>", "Close buffer")
+		set_key("n", "B", "<cmd>BufferClose<CR>", "Close buffer")
 	end,
 }
