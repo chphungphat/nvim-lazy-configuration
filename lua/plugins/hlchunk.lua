@@ -35,10 +35,11 @@ return {
 			exclude_filetypes = {
 				aerial = true,
 				dashboard = true,
-				oil_preview = true,
+				"oil_preview",
 				"neo-tree",
 				"neo-tree-popup",
 				"notify",
+				"copilot-chat",
 			},
 		})
 	end,

@@ -3,7 +3,7 @@ return {
 	opts = {
 		dimming = {
 			alpha = 0.25,
-			color = { "Normal", "#ffffff" },
+			color = { "Normal", "#afaf5f" },
 			term_bg = "#000000",
 			inactive = true,
 		},
@@ -12,6 +12,7 @@ return {
 			"neo-tree",
 			"neo-tree-popup",
 			"notify",
+			"oil_preview",
 		},
 	},
 }
