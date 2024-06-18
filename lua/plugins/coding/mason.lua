@@ -37,7 +37,7 @@ return {
 				"prettier",
 				"stylua",
 				"isort",
-				"black",
+				-- "black",
 				-- "pylint",
 				-- "eslint-lsp",
 				-- "eslint_d",

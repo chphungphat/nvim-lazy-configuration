@@ -121,4 +121,7 @@ return {
 			)
 		end,
 	},
+	{
+		"AndreM222/copilot-lualine",
+	},
 }

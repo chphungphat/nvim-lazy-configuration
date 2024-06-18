@@ -4,6 +4,7 @@ return {
 	config = function()
 		require("oil").setup({
 			default_file_explorer = true,
+			delete_to_trash = true,
 			columns = {
 				"icon",
 				-- "permissions",
@@ -11,7 +12,7 @@ return {
 				-- "mtime",
 			},
 			win_options = {
-				wrap = false,
+				wrap = true,
 				signcolumn = "yes",
 			},
 			keymaps = {
@@ -20,7 +21,7 @@ return {
 				["<C-s>"] = false,
 				["<C-h>"] = false,
 				["<C-t>"] = false,
-				["<C-p>"] = "actions.preview",
+				-- ["<C-p>"] = "actions.preview",
 				["<C-c>"] = "actions.close",
 				["<C-l>"] = false,
 				["<F5>"] = "actions.refresh",
@@ -31,7 +32,7 @@ return {
 				["~"] = false,
 				["gs"] = false,
 				["gx"] = false,
-				["g."] = false,
+				["g."] = "actions.toggle_hidden",
 				["g\\"] = false,
 			},
 			use_default_keymaps = false,
@@ -40,9 +41,12 @@ return {
 			view_options = {
 				show_hidden = true,
 				natural_order = true,
+				is_always_hidden = function(name, _)
+					return name == ".." or name == ".git" or name == "node_modules"
+				end,
 			},
 		})
 
-		vim.keymap.set("n", "<C-t>", "<cmd>Oil<CR>", { desc = "Open Oil" })
+		vim.keymap.set("n", "<C-t>", "<cmd>Oil --float<CR>", { desc = "Open Oil" })
 	end,
 }

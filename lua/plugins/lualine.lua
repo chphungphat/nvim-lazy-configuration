@@ -235,6 +235,10 @@ return {
 					},
 				},
 				lualine_x = {
+					{
+						"copilot",
+						show_colors = true,
+					},
 					"encoding",
 					{
 						"fileformat",

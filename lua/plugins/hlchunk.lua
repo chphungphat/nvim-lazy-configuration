@@ -15,7 +15,18 @@ return {
 				enable = true,
 				priority = 10,
 				chars = {
-					"┊",
+					"│",
+					-- "¦",
+					-- "┆",
+					-- "┊",
+				},
+				exclude_filetypes = {
+					oil_preview = true,
+					oil = true,
+					TelescopePrompt = true,
+					notify = true,
+					copilot_chat = true,
+					fidget = true,
 				},
 			},
 			chunk = {
@@ -31,18 +42,6 @@ return {
 				style = style_color,
 				duration = 50,
 				delay = 75,
-			},
-			exclude_filetypes = {
-				aerial = true,
-				dashboard = true,
-				"oil",
-				"oil_preview",
-				"neo-tree",
-				"neo-tree-popup",
-				"notify",
-				"copilot-chat",
-				"telescope",
-				"fidget",
 			},
 		})
 	end,

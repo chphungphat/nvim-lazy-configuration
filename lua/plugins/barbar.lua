@@ -10,6 +10,7 @@ return {
 		require("barbar").setup({
 			animation = false,
 			clickable = true,
+			no_name_title = "Buffer",
 		})
 
 		local map = vim.api.nvim_set_keymap

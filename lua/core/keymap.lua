@@ -17,3 +17,5 @@ vim.keymap.set("n", "<leader>cd", vim.diagnostic.open_float, { desc = "Show diag
 vim.keymap.set("n", "<leader>ca", vim.diagnostic.setloclist, { desc = "Open diagnostic Quickfix list" })
 
 vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
+
+vim.keymap.set("n", "<leader>hh", ":tab help<Space>", { desc = "Tab help" })
