@@ -9,15 +9,14 @@ return {
 				inactive = false,
 			},
 			context = 20,
-			treesitter = true,
+			treesitter = false,
 			exclude = {
-				"neo-tree",
-				"neo-tree-popup",
 				"notify",
 				"oil",
 				"oil_preview",
 				"copliot-chat",
-				"telescope",
+				"fidget",
+				"TelescopePrompt",
 			},
 			expand = {
 				"function",

@@ -11,6 +11,14 @@ return {
 			animation = false,
 			clickable = true,
 			no_name_title = "Buffer",
+			exclude_ft = {
+				"notify",
+				"oil",
+				"oil_preview",
+				"copliot-chat",
+				"fidget",
+				"TelescopePrompt",
+			},
 		})
 
 		local map = vim.api.nvim_set_keymap

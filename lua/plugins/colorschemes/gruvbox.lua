@@ -1,6 +1,6 @@
-if true then
-	return {}
-end
+-- if true then
+-- 	return {}
+-- end
 return {
 	"ellisonleao/gruvbox.nvim",
 	priority = 1000,

@@ -45,4 +45,4 @@ require("lazy").setup({
 
 vim.keymap.set("n", "<leader>l", "<cmd>Lazy<CR>", { noremap = true, silent = true })
 
-vim.cmd([[colorscheme bamboo]])
+vim.cmd([[colorscheme gruvbox]])

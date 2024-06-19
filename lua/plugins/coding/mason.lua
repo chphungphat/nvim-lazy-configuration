@@ -1,14 +1,12 @@
 return {
 	"williamboman/mason.nvim",
 	dependencies = {
-		"williamboman/mason-lspconfig.nvim",
+		"hrsh7th/cmp-nvim-lsp",
 		"WhoIsSethDaniel/mason-tool-installer.nvim",
+	"creativenull/efmls-configs-nvim",
 	},
 	config = function()
 		local mason = require("mason")
-
-		local mason_lspconfig = require("mason-lspconfig")
-
 		local mason_tool_installer = require("mason-tool-installer")
 
 		mason.setup({
@@ -18,17 +16,6 @@ return {
 					package_pending = "➜",
 					package_uninstalled = "✗",
 				},
-			},
-		})
-
-		mason_lspconfig.setup({
-			ensure_installed = {
-				"tsserver",
-				"html",
-				"cssls",
-				"lua_ls",
-				-- "prismals",
-				-- "pyright",
 			},
 		})
 
