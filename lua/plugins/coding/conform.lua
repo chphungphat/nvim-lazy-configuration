@@ -1,6 +1,3 @@
-if true then
-	return {}
-end
 return {
 	"stevearc/conform.nvim",
 	event = { "BufReadPre", "BufNewFile" },

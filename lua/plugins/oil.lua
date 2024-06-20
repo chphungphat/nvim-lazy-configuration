@@ -1,5 +1,6 @@
 return {
 	"stevearc/oil.nvim",
+	event = "VimEnter",
 	dependencies = { "nvim-tree/nvim-web-devicons" },
 	config = function()
 		require("oil").setup({
@@ -42,11 +43,11 @@ return {
 				show_hidden = true,
 				natural_order = true,
 				is_always_hidden = function(name, _)
-					return name == ".." or name == ".git" or name == "node_modules"
+					return name == ".." or name == ".git"
 				end,
 			},
 		})
 
-		vim.keymap.set("n", "<C-t>", "<cmd>Oil --float<CR>", { desc = "Open Oil" })
+		vim.keymap.set("n", "<C-t>", "<cmd>Oil<CR>", { desc = "Open Oil" })
 	end,
 }

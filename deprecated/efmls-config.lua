@@ -1,4 +1,4 @@
--- if true then return {} end
+if true then return {} end
 return {
 	"creativenull/efmls-configs-nvim",
 	version = "v1.x.x",
@@ -7,7 +7,7 @@ return {
 	},
 	config = function()
 		local eslint = require("efmls-configs.linters.eslint")
-    local eslint_d = require("efmls-configs.linters.eslint_d")
+    -- local eslint_d = require("efmls-configs.linters.eslint_d")
 		local prettier = require("efmls-configs.formatters.prettier")
 		local stylua = require("efmls-configs.formatters.stylua")
 		-- Register linters and formatters per language

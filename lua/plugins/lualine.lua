@@ -1,6 +1,6 @@
 return {
 	"nvim-lualine/lualine.nvim",
-	lazy = false,
+	event = { "ColorScheme" },
 	dependencies = { "nvim-tree/nvim-web-devicons" },
 	config = function()
 		-- Modified and taken from: https://github.com/jdhao/nvim-config/blob/master/lua/config/statusline.lua
@@ -143,7 +143,7 @@ return {
 			replace = "#fb4934",
 			command = "#83a598",
 			inactive = "#3c3836",
-			bg = "#282828",
+			bg = "#403d2d",
 			fg = "#ebdbb2",
 		}
 

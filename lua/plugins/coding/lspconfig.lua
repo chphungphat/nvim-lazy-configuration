@@ -4,8 +4,7 @@ return {
 	dependencies = {
 		"hrsh7th/cmp-nvim-lsp",
 		{ "antosha417/nvim-lsp-file-operations", config = true },
-		"creativenull/efmls-configs-nvim",
-     "williamboman/mason-lspconfig.nvim"
+		"williamboman/mason-lspconfig.nvim",
 	},
 	config = function()
 		local lspconfig = require("lspconfig")
@@ -68,7 +67,7 @@ return {
 		-- used to enable autocompletion (assign to every lsp server config)
 		local cmp_nvim_lsp = require("cmp_nvim_lsp")
 		local capabilities = cmp_nvim_lsp.default_capabilities()
-		local mason_lspconfig = require("mason-lspconfig")  local efmls_configs = require("efmls-configs")
+		local mason_lspconfig = require("mason-lspconfig")
 
 		mason_lspconfig.setup_handlers({
 			-- default handler for installed servers
@@ -132,22 +131,6 @@ return {
 					},
 				})
 			end,
-      ["efm"] = function() -- Add this block
-        lspconfig["efm"].setup({
-          capabilities = capabilities,
-          on_attach = function(client)
-            client.server_capabilities.documentFormattingProvider = true
-            client.server_capabilities.documentRangeFormattingProvider = true
-          end,
-          init_options = {
-            documentFormatting = true,
-          },
-          settings = {
-            rootMarkers = { ".git/" },
-            languages = efmls_configs,
-          },
-        })
-      end,
 		})
 	end,
 }

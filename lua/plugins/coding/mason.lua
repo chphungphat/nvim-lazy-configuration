@@ -3,7 +3,6 @@ return {
 	dependencies = {
 		"hrsh7th/cmp-nvim-lsp",
 		"WhoIsSethDaniel/mason-tool-installer.nvim",
-	"creativenull/efmls-configs-nvim",
 	},
 	config = function()
 		local mason = require("mason")
@@ -26,7 +25,7 @@ return {
 				"isort",
 				-- "black",
 				-- "pylint",
-				-- "eslint-lsp",
+				"eslint-lsp",
 				-- "eslint_d",
 			},
 		})

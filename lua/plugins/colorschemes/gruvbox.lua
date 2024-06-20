@@ -1,8 +1,6 @@
--- if true then
--- 	return {}
--- end
 return {
 	"ellisonleao/gruvbox.nvim",
+	event = {},
 	priority = 1000,
 	config = function()
 		require("gruvbox").setup({

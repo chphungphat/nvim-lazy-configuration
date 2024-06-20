@@ -74,17 +74,17 @@ return {
 			)
 
 			------------------ Review selected buffer ---------------
-			local function review_chat()
-				vim.cmd("normal! ggVG")
-				vim.cmd("CopilotChatReview")
-			end
-			_G.review_chat = review_chat
-			vim.api.nvim_set_keymap(
-				"n",
-				"<leader>pr",
-				":lua review_chat()<CR>",
-				{ noremap = true, silent = true, desc = "CopilotChat - Review file" }
-			)
+			-- local function review_chat()
+			-- 	vim.cmd("normal! ggVG")
+			-- 	vim.cmd("CopilotChatReview")
+			-- end
+			-- _G.review_chat = review_chat
+			-- vim.api.nvim_set_keymap(
+			-- 	"n",
+			-- 	"<leader>pr",
+			-- 	":lua review_chat()<CR>",
+			-- 	{ noremap = true, silent = true, desc = "CopilotChat - Review file" }
+			-- )
 
 			------------------ Fix selected buffer ---------------
 			local function fix_chat()
