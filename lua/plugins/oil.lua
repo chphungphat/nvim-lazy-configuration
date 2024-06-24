@@ -22,7 +22,7 @@ return {
 				["<C-s>"] = false,
 				["<C-h>"] = false,
 				["<C-t>"] = false,
-				-- ["<C-p>"] = "actions.preview",
+				["<C-p>"] = "actions.preview",
 				["<C-c>"] = "actions.close",
 				["<C-l>"] = false,
 				["<F5>"] = "actions.refresh",

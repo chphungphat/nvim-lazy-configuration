@@ -57,11 +57,28 @@ return {
 			end,
 		})
 
-		local signs = { Error = " ", Warn = " ", Hint = "󰠠 ", Info = " " }
-		for type, icon in pairs(signs) do
-			local hl = "DiagnosticSign" .. type
-			vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
+		-- local signs = { Error = " ", Warn = " ", Hint = "󰠠 ", Info = " " }
+		-- for type, icon in pairs(signs) do
+		-- 	local hl = "DiagnosticSign" .. type
+		-- 	vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
+		-- end
+
+		for _, diag in ipairs({ "Error", "Warn", "Info", "Hint" }) do
+			vim.fn.sign_define("DiagnosticSign" .. diag, {
+				text = "",
+				texthl = "DiagnosticSign" .. diag,
+				linehl = "",
+				numhl = "DiagnosticSign" .. diag,
+			})
 		end
+
+		vim.diagnostic.config({
+			signs = true,
+			underline = true,
+			update_in_insert = false,
+			virtual_text = false,
+			severity_sort = true,
+		})
 
 		---------------------------------------------------------------------
 		-- used to enable autocompletion (assign to every lsp server config)
@@ -70,12 +87,12 @@ return {
 		local mason_lspconfig = require("mason-lspconfig")
 
 		mason_lspconfig.setup_handlers({
-			-- default handler for installed servers
 			function(server_name)
 				lspconfig[server_name].setup({
 					capabilities = capabilities,
 				})
 			end,
+
 			["svelte"] = function()
 				-- configure svelte server
 				lspconfig["svelte"].setup({
@@ -91,6 +108,7 @@ return {
 					end,
 				})
 			end,
+
 			["graphql"] = function()
 				-- configure graphql language server
 				lspconfig["graphql"].setup({
@@ -98,6 +116,7 @@ return {
 					filetypes = { "graphql", "gql", "svelte", "typescriptreact", "javascriptreact" },
 				})
 			end,
+
 			["emmet_ls"] = function()
 				-- configure emmet language server
 				lspconfig["emmet_ls"].setup({
@@ -114,6 +133,7 @@ return {
 					},
 				})
 			end,
+
 			["lua_ls"] = function()
 				-- configure lua server (with special settings)
 				lspconfig["lua_ls"].setup({
@@ -128,6 +148,45 @@ return {
 								callSnippet = "Replace",
 							},
 						},
+					},
+				})
+			end,
+
+			["tsserver"] = function()
+				local function organize_imports()
+					local params = {
+						command = "_typescript.organizeImports",
+						arguments = { vim.api.nvim_buf_get_name(0) },
+						title = "",
+					}
+					vim.lsp.buf.execute_command(params)
+				end
+				lspconfig["tsserver"].setup({
+					capabilities = capabilities,
+					commands = {
+						OrganizeImports = {
+							organize_imports,
+							description = "Organize Imports",
+						},
+					},
+					on_attach = function(_, bufnr)
+						vim.api.nvim_buf_set_keymap(
+							bufnr,
+							"n",
+							"<leader>oi",
+							'<cmd>lua vim.lsp.buf.execute_command({ command = "_typescript.organizeImports", arguments = { vim.api.nvim_buf_get_name(0)}, title = ""})<CR>',
+							{ noremap = true, silent = true, desc = "Organize Imports" }
+						)
+					end,
+				})
+			end,
+
+			["typos_lsp"] = function()
+				lspconfig["typos_lsp"].setup({
+					capabilities = capabilities,
+					filetypes = { "*" }, -- Enable for all filetypes
+					init_options = {
+						diagnosticSeverity = "Warning",
 					},
 				})
 			end,

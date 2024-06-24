@@ -27,6 +27,7 @@ return {
 				-- "pylint",
 				"eslint-lsp",
 				-- "eslint_d",
+				"typos-lsp",
 			},
 		})
 
