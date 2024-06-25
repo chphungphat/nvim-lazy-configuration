@@ -29,7 +29,6 @@ return {
 					return "[CN]"
 				end
 			end
-
 			return ""
 		end
 
@@ -230,7 +229,6 @@ return {
 					{
 						"diagnostics",
 						sources = { "nvim_diagnostic" },
-						-- symbols = { error = "🆇 ", warn = "⚠️ ", info = "ℹ️ ", hint = " " },
 						symbols = { error = " ", warn = " ", hint = "󰠠 ", info = " " },
 					},
 				},
@@ -272,7 +270,16 @@ return {
 				lualine_y = {},
 				lualine_z = {},
 			},
-			tabline = {},
+			tabline = {
+				lualine_a = {
+					{
+						"buffers",
+						-- separator = { left = "", right = "" },
+						-- right_padding = 2,
+						-- symbols = { alternate_file = "" },
+					},
+				},
+			},
 			-- extensions = { "quickfix", "fugitive", "nvim-tree" },
 		})
 	end,

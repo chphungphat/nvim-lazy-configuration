@@ -20,4 +20,4 @@ vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" }
 
 vim.keymap.set("n", "<leader>hh", ":tab help<Space>", { desc = "Tab help" })
 
-vim.keymap.set("n", "<leader>sc", "<cmd>set spell!<CR>", { noremap = true, silent = true })
+-- vim.keymap.set("n", "<leader>sc", "<cmd>set spell!<CR>", { noremap = true, silent = true })
