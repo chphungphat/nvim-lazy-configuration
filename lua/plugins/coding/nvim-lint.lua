@@ -15,11 +15,28 @@ return {
 		local lint = require("lint")
 
 		lint.linters_by_ft = {
-			javascript = { "eslint" },
-			typescript = { "eslint" },
-			javascriptreact = { "eslint" },
-			typescriptreact = { "eslint" },
-			kotlin = { "ktlint" },
+			javascript = { "eslint_d" },
+			typescript = { "eslint_d" },
+			javascriptreact = { "eslint_d" },
+			typescriptreact = { "eslint_d" },
+			-- kotlin = { "ktlint" },
+		}
+
+		lint.linters.eslint_d = {
+			cmd = "eslint_d",
+			args = {
+				"--format",
+				"json",
+				"--stdin",
+				"--stdin-filename",
+				function()
+					return vim.api.nvim_buf_get_name(0)
+				end,
+			},
+			stdin = true,
+			stream = "stdout",
+			ignore_exitcode = true,
+			parser = require("lint.parser").from_json,
 		}
 
 		local lint_augroup = vim.api.nvim_create_augroup("lint", { clear = true })
@@ -28,10 +45,10 @@ return {
 			"BufEnter",
 			"BufWritePost",
 			"InsertLeave",
-			"InsertChange",
-			"TextChanged",
-			"TextChangedI",
-			"TextYankPost",
+			-- "InsertChange",
+			-- "TextChanged",
+			-- "TextChangedI",
+			-- "TextYankPost",
 		}, {
 			group = lint_augroup,
 			callback = function()
