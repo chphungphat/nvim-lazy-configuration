@@ -27,6 +27,8 @@ return {
 					notify = true,
 					copilot_chat = true,
 					fidget = true,
+					NvimTree = true,
+					NeogitStatus = true,
 				},
 			},
 			chunk = {

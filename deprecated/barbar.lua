@@ -21,6 +21,7 @@ return {
 				"copliot-chat",
 				"fidget",
 				"TelescopePrompt",
+				"NeogitStatus",
 			},
 		})
 

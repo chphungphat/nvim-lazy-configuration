@@ -9,6 +9,8 @@ return {
 					"oil_preview",
 					"copilot-chat",
 					"oil",
+					"NvimTree",
+					"NeogitStatus",
 				},
 			},
 		})

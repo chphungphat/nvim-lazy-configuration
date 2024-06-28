@@ -17,6 +17,7 @@ return {
 				"copliot-chat",
 				"fidget",
 				"TelescopePrompt",
+				"NvimTree",
 			},
 			expand = {
 				"function",
@@ -25,12 +26,5 @@ return {
 				"if_statement",
 			},
 		})
-
-		vim.keymap.set(
-			"n",
-			"<leader>t",
-			"<cmd>Twilight<CR>",
-			{ desc = "Toggle Twilight", noremap = true, silent = true }
-		)
 	end,
 }

@@ -21,7 +21,7 @@ vim.opt.smartcase = true
 vim.opt.signcolumn = "yes"
 
 vim.opt.updatetime = 250
-vim.opt.timeoutlen = 500
+vim.opt.timeoutlen = 1000
 
 vim.opt.splitright = true
 vim.opt.splitbelow = true
@@ -48,5 +48,5 @@ vim.opt.wrap = false
 
 vim.opt.swapfile = false
 
--- vim.opt.spell = true
--- vim.opt.spelllang = { "en_us" }
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1

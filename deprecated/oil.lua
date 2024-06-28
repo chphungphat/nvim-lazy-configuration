@@ -1,9 +1,12 @@
+if true then
+	return {}
+end
 return {
 	"stevearc/oil.nvim",
 	event = "VimEnter",
 	dependencies = { "nvim-tree/nvim-web-devicons" },
 	config = function()
-		require("oil").setup({
+		require("deprecated.oil").setup({
 			default_file_explorer = true,
 			delete_to_trash = true,
 			columns = {
