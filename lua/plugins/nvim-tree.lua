@@ -1,7 +1,7 @@
 return {
 	"nvim-tree/nvim-tree.lua",
 	version = "*",
-	event = "VimEnter",
+	lazy = false,
 	dependencies = {
 		"nvim-tree/nvim-web-devicons",
 	},
@@ -35,13 +35,6 @@ return {
 				open_file = {
 					window_picker = {
 						enable = true,
-						picker = function()
-							-- Use a custom picker function
-							local picked_window_id = require("window-picker").pick_window()
-
-							-- If no window is picked, use the current window
-							return picked_window_id or vim.api.nvim_get_current_win()
-						end,
 					},
 				},
 				change_dir = {
@@ -49,6 +42,23 @@ return {
 					global = false,
 				},
 			},
+		})
+
+		-- Function to set up custom highlight for NvimTreeWindowPicker
+		local function set_nvim_tree_highlight()
+			vim.api.nvim_set_hl(0, "NvimTreeWindowPicker", {
+				fg = "#3c3836",
+				bg = "#fe8019",
+				bold = true,
+			})
+		end
+
+		-- Set up the highlight immediately
+		set_nvim_tree_highlight()
+
+		-- Set up an autocommand to apply the highlight after colorscheme changes
+		vim.api.nvim_create_autocmd("ColorScheme", {
+			callback = set_nvim_tree_highlight,
 		})
 
 		local tree_api = require("nvim-tree.api")
@@ -84,8 +94,6 @@ return {
 			local global_cwd = vim.fn.getcwd(-1, -1)
 			api.tree.change_root(global_cwd)
 		end
-
-		-- Sorting files naturally
 
 		vim.keymap.set("n", "<C-c>", change_root_to_global_cwd, { desc = "Change Root To Global CWD", noremap = true })
 	end,
