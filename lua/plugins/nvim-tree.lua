@@ -21,16 +21,73 @@ return {
 			},
 			renderer = {
 				special_files = {
-					"Cargo.toml",
-					"Makefile",
-					"README.md",
-					"readme.md",
-					"package.json",
+					-- "Cargo.toml",
+					-- "Makefile",
+					-- "README.md",
+					-- "readme.md",
+					-- "package.json",
 				},
+				highlight_git = "name",
+				highlight_diagnostics = "name",
+				highlight_opened_files = "none",
+				highlight_modified = "name",
+				highlight_bookmarks = "none",
+				highlight_clipboard = "name",
+				indent_markers = {
+					enable = true,
+					inline_arrows = true,
+					icons = {
+						corner = "└",
+						edge = "│",
+						item = "│",
+						bottom = "─",
+						none = " ",
+					},
+				},
+
 				icons = {
 					git_placement = "after",
+					show = {
+						file = true,
+						folder = true,
+						folder_arrow = true,
+						git = false,
+						modified = false,
+						diagnostics = false,
+						bookmarks = false,
+					},
 				},
 			},
+			git = {
+				enable = true,
+				show_on_dirs = true,
+				show_on_open_dirs = true,
+				disable_for_dirs = {},
+				timeout = 400,
+				cygwin_support = false,
+			},
+			diagnostics = {
+				enable = true,
+				show_on_dirs = true,
+				show_on_open_dirs = false,
+				debounce_delay = 50,
+				severity = {
+					min = vim.diagnostic.severity.HINT,
+					max = vim.diagnostic.severity.ERROR,
+				},
+				icons = {
+					hint = "󰠠 ",
+					info = " ",
+					warning = " ",
+					error = " ",
+				},
+			},
+			modified = {
+				enable = true,
+				show_on_dirs = true,
+				show_on_open_dirs = false,
+			},
+
 			actions = {
 				open_file = {
 					window_picker = {
@@ -44,8 +101,21 @@ return {
 			},
 		})
 
-		-- Function to set up custom highlight for NvimTreeWindowPicker
 		local function set_nvim_tree_highlight()
+			vim.api.nvim_set_hl(0, "NvimTreeGitFileNewHL", { fg = "#98971a" })
+			vim.api.nvim_set_hl(0, "NvimTreeGitFolderNewHL", { fg = "#98971a" })
+
+			vim.api.nvim_set_hl(0, "NvimTreeGitFileDirtyHL", { fg = "#689d6a" })
+			vim.api.nvim_set_hl(0, "NvimTreeGitFolderDirtyHL", { fg = "#689d6a" })
+
+			vim.api.nvim_set_hl(0, "NvimTreeDiagnosticErrorFileHL", { fg = "#d79921" })
+			vim.api.nvim_set_hl(0, "NvimTreeDiagnosticErrorFolderHL", { fg = "#d79921" })
+
+			vim.api.nvim_set_hl(0, "NvimTreeDiagnosticWarnFileHL", { fg = "#fabd2f" })
+			vim.api.nvim_set_hl(0, "NvimTreeDiagnosticWarnFolderHL", { fg = "#fabd2f" })
+
+			vim.api.nvim_set_hl(0, "NvimTreeIndentMarker", { fg = "#504945" })
+
 			vim.api.nvim_set_hl(0, "NvimTreeWindowPicker", {
 				fg = "#3c3836",
 				bg = "#fe8019",
