@@ -53,7 +53,7 @@ return {
 						folder_arrow = true,
 						git = false,
 						modified = false,
-						diagnostics = false,
+						diagnostics = true,
 						bookmarks = false,
 					},
 				},
@@ -108,11 +108,11 @@ return {
 			vim.api.nvim_set_hl(0, "NvimTreeGitFileDirtyHL", { fg = "#689d6a" })
 			vim.api.nvim_set_hl(0, "NvimTreeGitFolderDirtyHL", { fg = "#689d6a" })
 
-			vim.api.nvim_set_hl(0, "NvimTreeDiagnosticErrorFileHL", { fg = "#d79921" })
-			vim.api.nvim_set_hl(0, "NvimTreeDiagnosticErrorFolderHL", { fg = "#d79921" })
+			vim.api.nvim_set_hl(0, "NvimTreeDiagnosticErrorFileHL", { fg = "#d79921", underline = true })
+			vim.api.nvim_set_hl(0, "NvimTreeDiagnosticErrorFolderHL", { fg = "#d79921", bold = true })
 
-			vim.api.nvim_set_hl(0, "NvimTreeDiagnosticWarnFileHL", { fg = "#fabd2f" })
-			vim.api.nvim_set_hl(0, "NvimTreeDiagnosticWarnFolderHL", { fg = "#fabd2f" })
+			vim.api.nvim_set_hl(0, "NvimTreeDiagnosticWarnFileHL", { fg = "#fabd2f", underline = true })
+			vim.api.nvim_set_hl(0, "NvimTreeDiagnosticWarnFolderHL", { fg = "#fabd2f", bold = true })
 
 			vim.api.nvim_set_hl(0, "NvimTreeIndentMarker", { fg = "#504945" })
 
