@@ -61,7 +61,7 @@ return {
 				vim.cmd("normal! ggVG")
 				vim.cmd("CopilotChatOptimize")
 			end
-			map("n", "<leader>po", optimize_chat, { desc = "CopilotChat - Optimize file" })
+			map("n", "<leader>cpo", optimize_chat, { desc = "CopilotChat - Optimize file" })
 
 			-- Fix selected buffer
 			local function fix_chat()

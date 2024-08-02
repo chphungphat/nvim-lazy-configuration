@@ -53,7 +53,7 @@ return {
 						folder_arrow = true,
 						git = false,
 						modified = false,
-						diagnostics = true,
+						diagnostics = false,
 						bookmarks = false,
 					},
 				},
@@ -61,10 +61,16 @@ return {
 			git = {
 				enable = true,
 				show_on_dirs = true,
+				ignore = false,
 				show_on_open_dirs = true,
 				disable_for_dirs = {},
 				timeout = 400,
 				cygwin_support = false,
+			},
+			filters = {
+				dotfiles = false,
+				custom = {},
+				exclude = {},
 			},
 			diagnostics = {
 				enable = true,
@@ -108,11 +114,17 @@ return {
 			vim.api.nvim_set_hl(0, "NvimTreeGitFileDirtyHL", { fg = "#689d6a" })
 			vim.api.nvim_set_hl(0, "NvimTreeGitFolderDirtyHL", { fg = "#689d6a" })
 
-			vim.api.nvim_set_hl(0, "NvimTreeDiagnosticErrorFileHL", { fg = "#d79921", underline = true })
-			vim.api.nvim_set_hl(0, "NvimTreeDiagnosticErrorFolderHL", { fg = "#d79921", bold = true })
+			vim.api.nvim_set_hl(0, "NvimTreeDiagnosticWarnFileHL", { fg = "#d79921", underline = true })
+			vim.api.nvim_set_hl(0, "NvimTreeDiagnosticWarnFolderHL", { fg = "#d79921", bold = true })
 
-			vim.api.nvim_set_hl(0, "NvimTreeDiagnosticWarnFileHL", { fg = "#fabd2f", underline = true })
-			vim.api.nvim_set_hl(0, "NvimTreeDiagnosticWarnFolderHL", { fg = "#fabd2f", bold = true })
+			-- vim.api.nvim_set_hl(0, "NvimTreeDiagnosticWarnFileHL", { fg = "#b57614", underline = true })
+			-- vim.api.nvim_set_hl(0, "NvimTreeDiagnosticWarnFolderHL", { fg = "#b57614", bold = true })
+
+			-- vim.api.nvim_set_hl(0, "NvimTreeDiagnosticWarnFileHL", { fg = "#fabd2f", underline = true })
+			-- vim.api.nvim_set_hl(0, "NvimTreeDiagnosticWarnFolderHL", { fg = "#fabd2f", bold = true })
+
+			vim.api.nvim_set_hl(0, "NvimTreeDiagnosticErrorFileHL", { fg = "#d65d0e", underline = true })
+			vim.api.nvim_set_hl(0, "NvimTreeDiagnosticErrorFolderHL", { fg = "#d65d0e", bold = true })
 
 			vim.api.nvim_set_hl(0, "NvimTreeIndentMarker", { fg = "#504945" })
 
