@@ -22,12 +22,13 @@ return {
 			ensure_installed = {
 				"prettier",
 				"stylua",
-				"isort",
+				-- "isort",
 				-- "black",
 				-- "pylint",
 				"eslint-lsp",
 				-- "eslint_d",
 				"typos-lsp",
+				"typescript-language-server",
 			},
 		})
 
