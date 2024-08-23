@@ -28,6 +28,7 @@ return {
 				-- "eslint-lsp",
 				-- "eslint_d",
 				"typos-lsp",
+				"typescript-language-server",
 			},
 		})
 
