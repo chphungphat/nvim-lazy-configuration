@@ -30,6 +30,12 @@ return {
 			defaults = {
 				prompt_prefix = "❯ ",
 				selection_caret = "❯ ",
+				layout_strategy = "horizontal",
+				layout_config = {
+					width = 0.95,
+					height = 0.85,
+					preview_cutoff = 120,
+				},
 				mappings = {
 					i = {
 						["<C-j>"] = require("telescope.actions").move_selection_next,
