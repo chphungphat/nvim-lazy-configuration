@@ -5,6 +5,7 @@ return {
 		"hrsh7th/cmp-nvim-lsp",
 		{ "antosha417/nvim-lsp-file-operations", config = true },
 		"williamboman/mason-lspconfig.nvim",
+		"stevearc/dressing.nvim",
 	},
 	config = function()
 		local lspconfig = require("lspconfig")
@@ -33,7 +34,13 @@ return {
 				keymap.set("n", "gt", fzf.lsp_typedefs, opts)
 
 				opts.desc = "See available code actions"
-				keymap.set({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, opts)
+				keymap.set({ "n", "v" }, "<leader>ca", function()
+					vim.lsp.buf.code_action({
+						-- This will use dressing.nvim for the code action menu
+						context = { diagnostics = vim.lsp.diagnostic.get_line_diagnostics() },
+						apply = true,
+					})
+				end, opts)
 
 				opts.desc = "Smart rename"
 				keymap.set("n", "<leader>cr", vim.lsp.buf.rename, opts)
