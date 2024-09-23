@@ -9,10 +9,7 @@ return {
 		require("nvim-tree").setup({
 			view = {
 				adaptive_size = true,
-				width = {
-					min = 30,
-					max = 100,
-				},
+				width = { min = 30, max = 100 },
 			},
 			sort = {
 				sorter = "name",

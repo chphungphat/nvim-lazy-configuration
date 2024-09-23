@@ -165,16 +165,45 @@ return {
 				})
 			end,
 
-			["ts_ls"] = function()
+			-- ["ts_ls"] = function()
+			-- 	local function organize_imports()
+			-- 		local params = {
+			-- 			command = "_typescript.organizeImports",
+			-- 			arguments = { vim.api.nvim_buf_get_name(0) },
+			-- 			title = "",
+			-- 		}
+			-- 		vim.lsp.buf.execute_command(params)
+			-- 	end
+			-- 	lspconfig["ts_ls"].setup({
+			-- 		capabilities = capabilities,
+			-- 		commands = {
+			-- 			OrganizeImports = {
+			-- 				organize_imports,
+			-- 				description = "Organize Imports",
+			-- 			},
+			-- 		},
+			-- 		on_attach = function(_, bufnr)
+			-- 			vim.api.nvim_buf_set_keymap(
+			-- 				bufnr,
+			-- 				"n",
+			-- 				"<leader>oi",
+			-- 				'<cmd>lua vim.lsp.buf.execute_command({ command = "_typescript.organizeImports", arguments = { vim.api.nvim_buf_get_name(0)}, title = ""})<CR>',
+			-- 				{ noremap = true, silent = true, desc = "Organize Imports" }
+			-- 			)
+			-- 		end,
+			-- 	})
+			-- end,
+
+			["vtsls"] = function()
 				local function organize_imports()
 					local params = {
-						command = "_typescript.organizeImports",
+						command = "typescript.organizeImports",
 						arguments = { vim.api.nvim_buf_get_name(0) },
 						title = "",
 					}
 					vim.lsp.buf.execute_command(params)
 				end
-				lspconfig["ts_ls"].setup({
+				lspconfig["vtsls"].setup({
 					capabilities = capabilities,
 					commands = {
 						OrganizeImports = {
@@ -187,7 +216,7 @@ return {
 							bufnr,
 							"n",
 							"<leader>oi",
-							'<cmd>lua vim.lsp.buf.execute_command({ command = "_typescript.organizeImports", arguments = { vim.api.nvim_buf_get_name(0)}, title = ""})<CR>',
+							'<cmd>lua vim.lsp.buf.execute_command({ command = "typescript.organizeImports", arguments = { vim.api.nvim_buf_get_name(0)}, title = ""})<CR>',
 							{ noremap = true, silent = true, desc = "Organize Imports" }
 						)
 					end,
