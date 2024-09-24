@@ -1,6 +1,3 @@
-if true then
-	return {}
-end
 return {
 	"nvim-lualine/lualine.nvim",
 	event = { "ColorScheme" },
@@ -273,16 +270,16 @@ return {
 				lualine_y = {},
 				lualine_z = {},
 			},
-			tabline = {
-				lualine_a = {
-					{
-						"buffers",
-						-- separator = { left = "", right = "" },
-						-- right_padding = 2,
-						-- symbols = { alternate_file = "" },
-					},
-				},
-			},
+			-- tabline = {
+			-- 	lualine_a = {
+			-- 		{
+			-- 			"buffers",
+			-- 			-- separator = { left = "", right = "" },
+			-- 			-- right_padding = 2,
+			-- 			-- symbols = { alternate_file = "" },
+			-- 		},
+			-- 	},
+			-- },
 			-- extensions = { "quickfix", "fugitive", "nvim-tree" },
 		})
 	end,

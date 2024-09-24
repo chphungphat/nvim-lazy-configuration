@@ -32,7 +32,6 @@ return {
 					return buffer.devicon.icon
 				end,
 				fg = function(buffer)
-					-- return buffer.devicon.color and "#423e34"
 					return buffer.is_focused and gruvbox.light_black or gruvbox.light_gray
 				end,
 				truncation = { priority = 1 },
@@ -43,7 +42,6 @@ return {
 					return buffer.filename
 				end,
 				fg = function(buffer)
-					-- return buffer.is_focused and gruvbox.fg or gruvbox.gray
 					return buffer.is_focused and gruvbox.light_black or gruvbox.light_gray
 				end,
 				style = function(buffer)
@@ -60,7 +58,6 @@ return {
 					return buffer.is_modified and "●" or ""
 				end,
 				fg = function(buffer)
-					-- return buffer.is_modified and gruvbox.yellow or nil
 					if buffer.is_focused then
 						return buffer.is_modified and gruvbox.light_black
 					else
@@ -71,6 +68,8 @@ return {
 				truncation = { priority = 1 },
 			},
 		}
+
+		local get_hex = require("cokeline.hlgroups").get_hl_attr
 
 		require("cokeline").setup({
 			show_if_buffers_are_at_least = 1,
@@ -84,12 +83,23 @@ return {
 				max_buffer_width = 30,
 			},
 
+			sidebar = {
+				filetype = "NvimTree",
+				components = {
+					{
+						text = "  NvimTree",
+						fg = vim.g.terminal_color_3,
+						bg = get_hex("NvimTreeNormal", "bg"),
+						bold = true,
+					},
+				},
+			},
+
 			default_hl = {
 				fg = function(buffer)
 					return buffer.is_focused and gruvbox.light_black or gruvbox.light_gray
 				end,
 				bg = function(buffer)
-					-- return buffer.is_focused and gruvbox.light_gray or gruvbox.bg
 					return buffer.is_focused and gruvbox.light_gray or gruvbox.light_black
 				end,
 				bold = true,
