@@ -5,7 +5,7 @@ return {
 			"zbirenbaum/copilot-cmp",
 		},
 		cmd = "Copilot",
-		event = "InsertEnter",
+		event = "BufEnter",
 		config = function()
 			require("copilot").setup({
 				suggestion = { enabled = false },
@@ -17,7 +17,7 @@ return {
 	{
 		"CopilotC-Nvim/CopilotChat.nvim",
 		branch = "canary",
-		event = "InsertEnter",
+		event = "BufEnter",
 		dependencies = {
 			"zbirenbaum/copilot.lua",
 			"nvim-lua/plenary.nvim",
