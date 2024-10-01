@@ -35,10 +35,11 @@ return {
 				"prettier",
 				"stylua",
 				"eslint-lsp",
-				-- "typescript-language-server",
-				"vtsls",
+				"typescript-language-server",
 				"lua-language-server",
 				"marksman",
+				"bash-language-server",
+				"shfmt",
 			},
 		})
 

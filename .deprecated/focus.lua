@@ -1,9 +1,12 @@
+if true then
+	return {}
+end
 return {
 	"nvim-focus/focus.nvim",
 	version = false,
 	config = function()
 		require("focus").setup({
-			enable = false,
+			enable = true,
 			commands = true,
 			ui = {
 				number = true,

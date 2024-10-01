@@ -106,47 +106,6 @@ return {
 				})
 			end,
 
-			["svelte"] = function()
-				-- configure svelte server
-				lspconfig["svelte"].setup({
-					capabilities = capabilities,
-					on_attach = function(client, _)
-						vim.api.nvim_create_autocmd("BufWritePost", {
-							pattern = { "*.js", "*.ts" },
-							callback = function(ctx)
-								-- Here use ctx.match instead of ctx.file
-								client.notify("$/onDidChangeTsOrJsFile", { uri = ctx.match })
-							end,
-						})
-					end,
-				})
-			end,
-
-			["graphql"] = function()
-				-- configure graphql language server
-				lspconfig["graphql"].setup({
-					capabilities = capabilities,
-					filetypes = { "graphql", "gql", "svelte", "typescriptreact", "javascriptreact" },
-				})
-			end,
-
-			["emmet_ls"] = function()
-				-- configure emmet language server
-				lspconfig["emmet_ls"].setup({
-					capabilities = capabilities,
-					filetypes = {
-						"html",
-						"typescriptreact",
-						"javascriptreact",
-						"css",
-						"sass",
-						"scss",
-						"less",
-						"svelte",
-					},
-				})
-			end,
-
 			["lua_ls"] = function()
 				-- configure lua server (with special settings)
 				lspconfig["lua_ls"].setup({
@@ -165,61 +124,45 @@ return {
 				})
 			end,
 
-			-- ["ts_ls"] = function()
-			-- 	local function organize_imports()
-			-- 		local params = {
-			-- 			command = "_typescript.organizeImports",
-			-- 			arguments = { vim.api.nvim_buf_get_name(0) },
-			-- 			title = "",
-			-- 		}
-			-- 		vim.lsp.buf.execute_command(params)
-			-- 	end
-			-- 	lspconfig["ts_ls"].setup({
-			-- 		capabilities = capabilities,
-			-- 		commands = {
-			-- 			OrganizeImports = {
-			-- 				organize_imports,
-			-- 				description = "Organize Imports",
-			-- 			},
-			-- 		},
-			-- 		on_attach = function(_, bufnr)
-			-- 			vim.api.nvim_buf_set_keymap(
-			-- 				bufnr,
-			-- 				"n",
-			-- 				"<leader>oi",
-			-- 				'<cmd>lua vim.lsp.buf.execute_command({ command = "_typescript.organizeImports", arguments = { vim.api.nvim_buf_get_name(0)}, title = ""})<CR>',
-			-- 				{ noremap = true, silent = true, desc = "Organize Imports" }
-			-- 			)
-			-- 		end,
-			-- 	})
-			-- end,
-
-			["vtsls"] = function()
-				local function organize_imports()
-					local params = {
-						command = "typescript.organizeImports",
-						arguments = { vim.api.nvim_buf_get_name(0) },
-						title = "",
-					}
-					vim.lsp.buf.execute_command(params)
-				end
-				lspconfig["vtsls"].setup({
+			["ts_ls"] = function()
+				lspconfig["ts_ls"].setup({
 					capabilities = capabilities,
 					commands = {
 						OrganizeImports = {
-							organize_imports,
+							function()
+								vim.lsp.buf.execute_command({
+									command = "_typescript.organizeImports",
+									arguments = { vim.api.nvim_buf_get_name(0) },
+								})
+							end,
 							description = "Organize Imports",
 						},
 					},
-					on_attach = function(_, bufnr)
-						vim.api.nvim_buf_set_keymap(
-							bufnr,
-							"n",
-							"<leader>oi",
-							'<cmd>lua vim.lsp.buf.execute_command({ command = "typescript.organizeImports", arguments = { vim.api.nvim_buf_get_name(0)}, title = ""})<CR>',
-							{ noremap = true, silent = true, desc = "Organize Imports" }
-						)
+					on_attach = function(client, bufnr)
+						local opts = { noremap = true, silent = true, buffer = bufnr }
+
+						vim.keymap.set("n", "<leader>oi", function()
+							local params = {
+								command = "_typescript.organizeImports",
+								arguments = { vim.api.nvim_buf_get_name(0) },
+							}
+
+							client.request("workspace/executeCommand", params, function(err, _result, _ctx)
+								if err then
+									local msg = err.message or "Error organizing imports"
+									vim.notify(msg, vim.log.levels.ERROR)
+								else
+									vim.notify("Imports organized", vim.log.levels.INFO)
+								end
+							end, bufnr)
+						end, opts)
 					end,
+				})
+			end,
+
+			["bashls"] = function()
+				lspconfig["bashls"].setup({
+					capabilities = capabilities,
 				})
 			end,
 
