@@ -62,16 +62,16 @@ return {
 			require("nvim-treesitter.configs").setup(opts)
 		end,
 	},
-	{
-		"nvim-treesitter/nvim-treesitter-context",
-		dependencies = {
-			"nvim-treesitter/nvim-treesitter",
-		},
-		opts = {
-			separator = nil,
-		},
-		config = function(_, opts)
-			require("treesitter-context").setup(opts)
-		end,
-	},
+	-- {
+	-- 	"nvim-treesitter/nvim-treesitter-context",
+	-- 	dependencies = {
+	-- 		"nvim-treesitter/nvim-treesitter",
+	-- 	},
+	-- 	opts = {
+	-- 		separator = nil,
+	-- 	},
+	-- 	config = function(_, opts)
+	-- 		require("treesitter-context").setup(opts)
+	-- 	end,
+	-- },
 }

@@ -274,13 +274,18 @@ return {
 			-- 	lualine_a = {
 			-- 		{
 			-- 			"buffers",
-			-- 			-- separator = { left = "", right = "" },
-			-- 			-- right_padding = 2,
-			-- 			-- symbols = { alternate_file = "" },
+			-- 			show_filename_only = true,
+			-- 			show_modified_status = true,
+			-- 			separator = { left = "▏", right = "" },
+			-- 			right_padding = 2,
+			-- 			symbols = {
+			-- 				modified = " ",
+			-- 				alternate_file = "",
+			-- 			},
 			-- 		},
 			-- 	},
 			-- },
-			-- extensions = { "quickfix", "fugitive", "nvim-tree" },
+			extensions = { "fzf", "mason", "nvim-tree", "lazy" },
 		})
 	end,
 }

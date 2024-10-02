@@ -119,7 +119,13 @@ return {
 
 		-- Keymaps
 		vim.keymap.set("n", "<leader>bd", "<Cmd>bdelete<CR>", { silent = true, desc = "Close buffer" })
-		vim.keymap.set("n", "<S-Tab>", "<Cmd>bprevious<CR>", { silent = true, desc = "Previous buffer" })
-		vim.keymap.set("n", "<Tab>", "<Cmd>bnext<CR>", { silent = true, desc = "Next buffer" })
+
+		vim.keymap.set("n", "<tab>", function()
+			return ("<Plug>(cokeline-focus-%s)"):format(vim.v.count > 0 and vim.v.count or "next")
+		end, { silent = true, expr = true })
+
+		vim.keymap.set("n", "<S-tab>", function()
+			return ("<Plug>(cokeline-focus-%s)"):format(vim.v.count > 0 and vim.v.count - 2 or "prev")
+		end, { silent = true, expr = true })
 	end,
 }
