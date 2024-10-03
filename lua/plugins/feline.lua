@@ -39,6 +39,7 @@ return {
 			replace = "#fb4934",
 			command = "#83a598",
 			inactive = "#3c3836",
+			filetype = "#bdae93", -- "#928374" -- "#bdae93" -- "#a89984"
 		}
 
 		local vi_mode_colors = {
@@ -83,13 +84,13 @@ return {
 				local val = {}
 				val.bg = vi_mode_utils.get_mode_color()
 				val.fg = colors.bg
-				val.style = "bold" -- Always bold for mode indicator
+				val.style = "bold"
 				return val
 			end,
 			right_sep = config.separator,
 		}
 
-		-- filename (without path and without symbols)
+		-- filename
 		components.active[1][2] = {
 			provider = function()
 				return vim.fn.expand("%:t")
@@ -209,39 +210,22 @@ return {
 				end
 				return icon
 			end,
-			hl = function()
-				local val = {}
-				local filename = vim.fn.expand("%:t")
-				local extension = vim.fn.expand("%:e")
-				local icon, name = require("nvim-web-devicons").get_icon(filename, extension)
-				if icon ~= nil then
-					val.fg = vim.fn.synIDattr(vim.fn.hlID(name), "fg")
-				else
-					val.fg = colors.fg
-				end
-				val.bg = colors.bg
-				val.style = get_style()
-				return val
-			end,
+			hl = {
+				fg = colors.filetype,
+				bg = colors.bg,
+				style = "bold",
+			},
 			right_sep = config.separator,
 		}
+
 		-- fileType
 		components.active[3][2] = {
 			provider = "file_type",
-			hl = function()
-				local val = {}
-				local filename = vim.fn.expand("%:t")
-				local extension = vim.fn.expand("%:e")
-				local icon, name = require("nvim-web-devicons").get_icon(filename, extension)
-				if icon ~= nil then
-					val.fg = vim.fn.synIDattr(vim.fn.hlID(name), "fg")
-				else
-					val.fg = colors.fg
-				end
-				val.bg = colors.bg
-				val.style = get_style()
-				return val
-			end,
+			hl = {
+				fg = colors.filetype,
+				bg = colors.bg,
+				style = "bold",
+			},
 			right_sep = config.separator,
 		}
 
@@ -255,6 +239,7 @@ return {
 			},
 			right_sep = config.separator,
 		}
+
 		-- linePercent
 		components.active[3][4] = {
 			provider = "line_percentage",
@@ -265,6 +250,7 @@ return {
 			},
 			right_sep = config.separator,
 		}
+
 		-- scrollBar
 		components.active[3][5] = {
 			provider = "scroll_bar",
@@ -278,7 +264,7 @@ return {
 			{
 				{
 					provider = function()
-						return vim.fn.expand("%:t") -- Also update inactive filename to show only name
+						return vim.fn.expand("%:t")
 					end,
 					hl = {
 						fg = colors.fg,

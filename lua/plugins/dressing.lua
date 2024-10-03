@@ -3,6 +3,7 @@ return {
 	event = "VeryLazy",
 	config = function()
 		require("dressing").setup({
+			backend = { "fzf_lua", "fzf", "builtin" },
 			select = {
 				-- Options for built-in selector
 				builtin = {
@@ -53,12 +54,6 @@ return {
 				winblend = 10,
 				-- Change default highlight groups (see :help winhl)
 				winhighlight = "",
-
-				override = function(conf)
-					-- This is the config that will be passed to nvim_open_win.
-					-- Change values here to customize the layout
-					return conf
-				end,
 			},
 		})
 	end,
