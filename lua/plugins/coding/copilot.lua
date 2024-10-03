@@ -93,7 +93,4 @@ return {
 			map("v", "<leader>pe", ":CopilotChatExplain<CR>", { desc = "CopilotChat - Explain selection" })
 		end,
 	},
-	{
-		"AndreM222/copilot-lualine",
-	},
 }

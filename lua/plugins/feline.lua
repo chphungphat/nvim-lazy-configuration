@@ -59,24 +59,6 @@ return {
 			NONE = "normal",
 		}
 
-		local vi_mode_text = {
-			NORMAL = "<|",
-			OP = "<|",
-			INSERT = "|>",
-			VISUAL = "<>",
-			LINES = "<>",
-			BLOCK = "<>",
-			REPLACE = "<>",
-			["V-REPLACE"] = "<>",
-			ENTER = "<>",
-			MORE = "<>",
-			SELECT = "<>",
-			COMMAND = "<|",
-			SHELL = "<|",
-			TERM = "<|",
-			NONE = "<>",
-		}
-
 		force_inactive.filetypes = {
 			"NvimTree",
 			"dbui",
@@ -91,54 +73,35 @@ return {
 		}
 
 		-- LEFT
-
 		-- vi-mode
 		components.active[1][1] = {
-			provider = " NV ",
+			provider = function()
+				local mode = vi_mode_utils.get_vim_mode()
+				return " " .. mode:upper() .. " "
+			end,
 			hl = function()
 				local val = {}
 				val.bg = vi_mode_utils.get_mode_color()
 				val.fg = colors.bg
-				val.style = get_style()
+				val.style = "bold" -- Always bold for mode indicator
 				return val
 			end,
 			right_sep = config.separator,
 		}
-		-- vi-symbol
+
+		-- filename (without path and without symbols)
 		components.active[1][2] = {
 			provider = function()
-				return vi_mode_text[vi_mode_utils.get_vim_mode()]
-			end,
-			hl = function()
-				local val = {}
-				val.fg = vi_mode_utils.get_mode_color()
-				val.bg = colors.bg
-				val.style = get_style()
-				return val
-			end,
-			right_sep = config.separator,
-		}
-		-- filename
-		components.active[1][3] = {
-			provider = function()
-				return vim.fn.expand("%:F")
+				return vim.fn.expand("%:t")
 			end,
 			hl = {
 				fg = colors.fg,
 				bg = colors.bg,
 				style = get_style(),
 			},
-			right_sep = {
-				str = " > ",
-				hl = {
-					fg = colors.fg,
-					bg = colors.bg,
-					style = get_style(),
-				},
-			},
 		}
-		-- MID
 
+		-- MID
 		-- gitBranch
 		components.active[2][1] = {
 			provider = "git_branch",
@@ -149,6 +112,7 @@ return {
 			},
 			right_sep = config.separator,
 		}
+
 		-- diffAdd
 		components.active[2][2] = {
 			provider = "git_diff_added",
@@ -159,6 +123,7 @@ return {
 			},
 			-- right_sep = config.separator,
 		}
+
 		-- diffModfified
 		components.active[2][3] = {
 			provider = "git_diff_changed",
@@ -169,6 +134,7 @@ return {
 			},
 			-- right_sep = config.separator,
 		}
+
 		-- diffRemove
 		components.active[2][4] = {
 			provider = "git_diff_removed",
@@ -179,6 +145,7 @@ return {
 			},
 			right_sep = config.separator,
 		}
+
 		-- diagnosticErrors
 		components.active[2][5] = {
 			provider = "diagnostic_errors",
@@ -191,6 +158,7 @@ return {
 			},
 			-- right_sep = config.separator,
 		}
+
 		-- diagnosticWarn
 		components.active[2][6] = {
 			provider = "diagnostic_warnings",
@@ -203,6 +171,7 @@ return {
 			},
 			-- right_sep = config.separator,
 		}
+
 		-- diagnosticHint
 		components.active[2][7] = {
 			provider = "diagnostic_hints",
@@ -215,6 +184,7 @@ return {
 			},
 			-- right_sep = config.separator,
 		}
+
 		-- diagnosticInfo
 		components.active[2][8] = {
 			provider = "diagnostic_info",
@@ -228,7 +198,6 @@ return {
 		}
 
 		-- RIGHT
-
 		-- fileIcon
 		components.active[3][1] = {
 			provider = function()
@@ -309,7 +278,7 @@ return {
 			{
 				{
 					provider = function()
-						return vim.fn.expand("%:F")
+						return vim.fn.expand("%:t") -- Also update inactive filename to show only name
 					end,
 					hl = {
 						fg = colors.fg,
