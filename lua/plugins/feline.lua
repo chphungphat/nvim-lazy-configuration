@@ -1,18 +1,23 @@
-if true then
-	return {}
-end
 return {
 	"freddiehaddad/feline.nvim",
 	event = "VeryLazy",
 	dependencies = {
-		"gitsigns.nvim",
-		"nvim-web-devicons",
+		"lewis6991/gitsigns.nvim",
+		"nvim-tree/nvim-web-devicons",
 	},
-	-- Taken from https://github.com/atareao/dotfiles/blob/main/.config/nvim/lua/plugins/feline.lua
-	--
 	config = function()
 		local lsp = require("feline.providers.lsp")
 		local vi_mode_utils = require("feline.providers.vi_mode")
+
+		local config = {
+			use_bold = false,
+			separator = " ",
+		}
+
+		-- Helper function to handle bold styling
+		local function get_style()
+			return config.use_bold and "bold" or "NONE"
+		end
 
 		local force_inactive = {
 			filetypes = {},
@@ -26,37 +31,32 @@ return {
 		}
 
 		local colors = {
-			bg = "#282828",
-			black = "#282828",
-			yellow = "#d8a657",
-			cyan = "#89b482",
-			oceanblue = "#45707a",
-			green = "#a9b665",
-			orange = "#e78a4e",
-			violet = "#d3869b",
-			magenta = "#c14a4a",
-			white = "#a89984",
-			fg = "#a89984",
-			skyblue = "#7daea3",
-			red = "#ea6962",
+			bg = "#403d2d",
+			fg = "#ebdbb2",
+			normal = "#a89984",
+			insert = "#8ec07c",
+			visual = "#fabd2f",
+			replace = "#fb4934",
+			command = "#83a598",
+			inactive = "#3c3836",
 		}
 
 		local vi_mode_colors = {
-			NORMAL = "green",
-			OP = "green",
-			INSERT = "red",
-			VISUAL = "skyblue",
-			LINES = "skyblue",
-			BLOCK = "skyblue",
-			REPLACE = "violet",
-			["V-REPLACE"] = "violet",
-			ENTER = "cyan",
-			MORE = "cyan",
-			SELECT = "orange",
-			COMMAND = "green",
-			SHELL = "green",
-			TERM = "green",
-			NONE = "yellow",
+			NORMAL = "normal",
+			OP = "normal",
+			INSERT = "insert",
+			VISUAL = "visual",
+			LINES = "visual",
+			BLOCK = "visual",
+			REPLACE = "replace",
+			["V-REPLACE"] = "replace",
+			ENTER = "insert",
+			MORE = "insert",
+			SELECT = "visual",
+			COMMAND = "command",
+			SHELL = "normal",
+			TERM = "normal",
+			NONE = "normal",
 		}
 
 		local vi_mode_text = {
@@ -97,14 +97,12 @@ return {
 			provider = " NV ",
 			hl = function()
 				local val = {}
-
 				val.bg = vi_mode_utils.get_mode_color()
-				val.fg = "black"
-				val.style = "bold"
-
+				val.fg = colors.bg
+				val.style = get_style()
 				return val
 			end,
-			right_sep = " ",
+			right_sep = config.separator,
 		}
 		-- vi-symbol
 		components.active[1][2] = {
@@ -115,10 +113,10 @@ return {
 				local val = {}
 				val.fg = vi_mode_utils.get_mode_color()
 				val.bg = colors.bg
-				val.style = "bold"
+				val.style = get_style()
 				return val
 			end,
-			right_sep = " ",
+			right_sep = config.separator,
 		}
 		-- filename
 		components.active[1][3] = {
@@ -126,16 +124,16 @@ return {
 				return vim.fn.expand("%:F")
 			end,
 			hl = {
-				fg = "white",
+				fg = colors.fg,
 				bg = colors.bg,
-				style = "bold",
+				style = get_style(),
 			},
 			right_sep = {
 				str = " > ",
 				hl = {
-					fg = "white",
+					fg = colors.fg,
 					bg = colors.bg,
-					style = "bold",
+					style = get_style(),
 				},
 			},
 		}
@@ -145,37 +143,41 @@ return {
 		components.active[2][1] = {
 			provider = "git_branch",
 			hl = {
-				fg = "yellow",
+				fg = colors.visual,
 				bg = colors.bg,
-				style = "bold",
+				style = get_style(),
 			},
+			right_sep = config.separator,
 		}
 		-- diffAdd
 		components.active[2][2] = {
 			provider = "git_diff_added",
 			hl = {
-				fg = "green",
+				fg = colors.insert,
 				bg = colors.bg,
-				style = "bold",
+				style = get_style(),
 			},
+			-- right_sep = config.separator,
 		}
 		-- diffModfified
 		components.active[2][3] = {
 			provider = "git_diff_changed",
 			hl = {
-				fg = "orange",
+				fg = colors.visual,
 				bg = colors.bg,
-				style = "bold",
+				style = get_style(),
 			},
+			-- right_sep = config.separator,
 		}
 		-- diffRemove
 		components.active[2][4] = {
 			provider = "git_diff_removed",
 			hl = {
-				fg = "red",
+				fg = colors.replace,
 				bg = colors.bg,
-				style = "bold",
+				style = get_style(),
 			},
+			right_sep = config.separator,
 		}
 		-- diagnosticErrors
 		components.active[2][5] = {
@@ -184,9 +186,10 @@ return {
 				return lsp.diagnostics_exist(vim.diagnostic.severity.ERROR)
 			end,
 			hl = {
-				fg = "red",
-				style = "bold",
+				fg = colors.replace,
+				style = get_style(),
 			},
+			-- right_sep = config.separator,
 		}
 		-- diagnosticWarn
 		components.active[2][6] = {
@@ -195,9 +198,10 @@ return {
 				return lsp.diagnostics_exist(vim.diagnostic.severity.WARN)
 			end,
 			hl = {
-				fg = "yellow",
-				style = "bold",
+				fg = colors.visual,
+				style = get_style(),
 			},
+			-- right_sep = config.separator,
 		}
 		-- diagnosticHint
 		components.active[2][7] = {
@@ -206,9 +210,10 @@ return {
 				return lsp.diagnostics_exist(vim.diagnostic.severity.HINT)
 			end,
 			hl = {
-				fg = "cyan",
-				style = "bold",
+				fg = colors.insert,
+				style = get_style(),
 			},
+			-- right_sep = config.separator,
 		}
 		-- diagnosticInfo
 		components.active[2][8] = {
@@ -217,31 +222,21 @@ return {
 				return lsp.diagnostics_exist(vim.diagnostic.severity.INFO)
 			end,
 			hl = {
-				fg = "skyblue",
-				style = "bold",
+				fg = colors.command,
+				style = get_style(),
 			},
 		}
 
 		-- RIGHT
 
-		-- LspName
-		components.active[3][1] = {
-			provider = "lsp_client_names",
-			hl = {
-				fg = "yellow",
-				bg = colors.bg,
-				style = "bold",
-			},
-			right_sep = " ",
-		}
 		-- fileIcon
-		components.active[3][2] = {
+		components.active[3][1] = {
 			provider = function()
 				local filename = vim.fn.expand("%:t")
 				local extension = vim.fn.expand("%:e")
 				local icon = require("nvim-web-devicons").get_icon(filename, extension)
 				if icon == nil then
-					icon = ""
+					icon = ""
 				end
 				return icon
 			end,
@@ -253,16 +248,16 @@ return {
 				if icon ~= nil then
 					val.fg = vim.fn.synIDattr(vim.fn.hlID(name), "fg")
 				else
-					val.fg = "white"
+					val.fg = colors.fg
 				end
 				val.bg = colors.bg
-				val.style = "bold"
+				val.style = get_style()
 				return val
 			end,
-			right_sep = " ",
+			right_sep = config.separator,
 		}
 		-- fileType
-		components.active[3][3] = {
+		components.active[3][2] = {
 			provider = "file_type",
 			hl = function()
 				local val = {}
@@ -272,115 +267,55 @@ return {
 				if icon ~= nil then
 					val.fg = vim.fn.synIDattr(vim.fn.hlID(name), "fg")
 				else
-					val.fg = "white"
+					val.fg = colors.fg
 				end
 				val.bg = colors.bg
-				val.style = "bold"
+				val.style = get_style()
 				return val
 			end,
-			right_sep = " ",
+			right_sep = config.separator,
 		}
-		-- fileSize
-		components.active[3][4] = {
-			provider = "file_size",
-			enabled = function()
-				return vim.fn.getfsize(vim.fn.expand("%:t")) > 0
-			end,
-			hl = {
-				fg = "skyblue",
-				bg = colors.bg,
-				style = "bold",
-			},
-			right_sep = " ",
-		}
-		-- fileFormat
-		components.active[3][5] = {
-			provider = function()
-				return "" .. vim.bo.fileformat:upper() .. ""
-			end,
-			hl = {
-				fg = "white",
-				bg = colors.bg,
-				style = "bold",
-			},
-			right_sep = " ",
-		}
-		-- fileEncode
-		components.active[3][6] = {
-			provider = "file_encoding",
-			hl = {
-				fg = "white",
-				bg = colors.bg,
-				style = "bold",
-			},
-			right_sep = " ",
-		}
-		-- WordCount
-		components.active[3][7] = {
-			provider = function()
-				return " " .. tostring(vim.fn.wordcount().words)
-			end,
-			hl = {
-				fg = "yellow",
-				bg = colors.bg,
-			},
-			right_sep = " ",
-		}
+
 		-- lineInfo
-		components.active[3][8] = {
+		components.active[3][3] = {
 			provider = "position",
 			hl = {
-				fg = "white",
+				fg = colors.fg,
 				bg = colors.bg,
-				style = "bold",
+				style = get_style(),
 			},
-			right_sep = " ",
+			right_sep = config.separator,
 		}
 		-- linePercent
-		components.active[3][9] = {
+		components.active[3][4] = {
 			provider = "line_percentage",
 			hl = {
-				fg = "white",
+				fg = colors.fg,
 				bg = colors.bg,
-				style = "bold",
+				style = get_style(),
 			},
-			right_sep = " ",
+			right_sep = config.separator,
 		}
 		-- scrollBar
-		components.active[3][10] = {
+		components.active[3][5] = {
 			provider = "scroll_bar",
 			hl = {
-				fg = "yellow",
+				fg = colors.visual,
 				bg = colors.bg,
 			},
 		}
 
-		-- INACTIVE
-
-		-- fileType
-		components.inactive[1][1] = {
-			provider = "file_type",
-			hl = {
-				fg = "black",
-				bg = "cyan",
-				style = "bold",
-			},
-			left_sep = {
-				str = " ",
-				hl = {
-					fg = "NONE",
-					bg = "cyan",
-				},
-			},
-			right_sep = {
+		components.inactive = {
+			{
 				{
-					str = " ",
+					provider = function()
+						return vim.fn.expand("%:F")
+					end,
 					hl = {
-						fg = "NONE",
-						bg = "cyan",
+						fg = colors.fg,
+						bg = colors.inactive,
 					},
 				},
-				" ",
 			},
 		}
 
