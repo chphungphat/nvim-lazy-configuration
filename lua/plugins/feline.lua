@@ -100,11 +100,11 @@ return {
 				bg = colors.bg,
 				style = get_style(),
 			},
+			right_sep = config.separator .. config.separator,
 		}
 
-		-- MID
 		-- gitBranch
-		components.active[2][1] = {
+		components.active[1][3] = {
 			provider = "git_branch",
 			hl = {
 				fg = colors.visual,
@@ -115,7 +115,7 @@ return {
 		}
 
 		-- diffAdd
-		components.active[2][2] = {
+		components.active[1][4] = {
 			provider = "git_diff_added",
 			hl = {
 				fg = colors.insert,
@@ -126,7 +126,7 @@ return {
 		}
 
 		-- diffModfified
-		components.active[2][3] = {
+		components.active[1][5] = {
 			provider = "git_diff_changed",
 			hl = {
 				fg = colors.visual,
@@ -137,7 +137,7 @@ return {
 		}
 
 		-- diffRemove
-		components.active[2][4] = {
+		components.active[1][6] = {
 			provider = "git_diff_removed",
 			hl = {
 				fg = colors.replace,
@@ -148,7 +148,7 @@ return {
 		}
 
 		-- diagnosticErrors
-		components.active[2][5] = {
+		components.active[2][1] = {
 			provider = "diagnostic_errors",
 			enabled = function()
 				return lsp.diagnostics_exist(vim.diagnostic.severity.ERROR)
@@ -161,7 +161,7 @@ return {
 		}
 
 		-- diagnosticWarn
-		components.active[2][6] = {
+		components.active[2][2] = {
 			provider = "diagnostic_warnings",
 			enabled = function()
 				return lsp.diagnostics_exist(vim.diagnostic.severity.WARN)
@@ -174,7 +174,7 @@ return {
 		}
 
 		-- diagnosticHint
-		components.active[2][7] = {
+		components.active[2][3] = {
 			provider = "diagnostic_hints",
 			enabled = function()
 				return lsp.diagnostics_exist(vim.diagnostic.severity.HINT)
@@ -187,7 +187,7 @@ return {
 		}
 
 		-- diagnosticInfo
-		components.active[2][8] = {
+		components.active[2][4] = {
 			provider = "diagnostic_info",
 			enabled = function()
 				return lsp.diagnostics_exist(vim.diagnostic.severity.INFO)
@@ -198,39 +198,38 @@ return {
 			},
 		}
 
-		-- RIGHT
 		-- fileIcon
-		components.active[3][1] = {
-			provider = function()
-				local filename = vim.fn.expand("%:t")
-				local extension = vim.fn.expand("%:e")
-				local icon = require("nvim-web-devicons").get_icon(filename, extension)
-				if icon == nil then
-					icon = ""
-				end
-				return icon
-			end,
-			hl = {
-				fg = colors.filetype,
-				bg = colors.bg,
-				style = "bold",
-			},
-			right_sep = config.separator,
-		}
+		-- components.active[3][1] = {
+		-- 	provider = function()
+		-- 		local filename = vim.fn.expand("%:t")
+		-- 		local extension = vim.fn.expand("%:e")
+		-- 		local icon = require("nvim-web-devicons").get_icon(filename, extension)
+		-- 		if icon == nil then
+		-- 			icon = ""
+		-- 		end
+		-- 		return icon
+		-- 	end,
+		-- 	hl = {
+		-- 		fg = colors.filetype,
+		-- 		bg = colors.bg,
+		-- 		style = "bold",
+		-- 	},
+		-- 	right_sep = config.separator,
+		-- }
 
 		-- fileType
-		components.active[3][2] = {
-			provider = "file_type",
-			hl = {
-				fg = colors.filetype,
-				bg = colors.bg,
-				style = "bold",
-			},
-			right_sep = config.separator,
-		}
+		-- components.active[3][2] = {
+		-- 	provider = "file_type",
+		-- 	hl = {
+		-- 		fg = colors.filetype,
+		-- 		bg = colors.bg,
+		-- 		style = "bold",
+		-- 	},
+		-- 	right_sep = config.separator,
+		-- }
 
 		-- lineInfo
-		components.active[3][3] = {
+		components.active[3][1] = {
 			provider = "position",
 			hl = {
 				fg = colors.fg,
@@ -241,24 +240,24 @@ return {
 		}
 
 		-- linePercent
-		components.active[3][4] = {
-			provider = "line_percentage",
-			hl = {
-				fg = colors.fg,
-				bg = colors.bg,
-				style = get_style(),
-			},
-			right_sep = config.separator,
-		}
+		-- components.active[3][4] = {
+		-- 	provider = "line_percentage",
+		-- 	hl = {
+		-- 		fg = colors.fg,
+		-- 		bg = colors.bg,
+		-- 		style = get_style(),
+		-- 	},
+		-- 	right_sep = config.separator,
+		-- }
 
 		-- scrollBar
-		components.active[3][5] = {
-			provider = "scroll_bar",
-			hl = {
-				fg = colors.visual,
-				bg = colors.bg,
-			},
-		}
+		-- components.active[3][5] = {
+		-- 	provider = "scroll_bar",
+		-- 	hl = {
+		-- 		fg = colors.visual,
+		-- 		bg = colors.bg,
+		-- 	},
+		-- }
 
 		components.inactive = {
 			{
