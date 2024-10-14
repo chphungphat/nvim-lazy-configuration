@@ -1,6 +1,6 @@
 return {
 	"ellisonleao/gruvbox.nvim",
-	event = {},
+	event = { "VimEnter", "ColorScheme" },
 	priority = 1000,
 	config = function()
 		require("gruvbox").setup({

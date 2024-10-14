@@ -9,7 +9,6 @@ return {
 		"hrsh7th/cmp-cmdline",
 		"zbirenbaum/copilot-cmp",
 		"zbirenbaum/copilot.lua",
-		"SergioRibera/cmp-dotenv",
 	},
 	config = function()
 		local cmp = require("cmp")
@@ -29,7 +28,6 @@ return {
 				{ name = "nvim_lsp" },
 				{ name = "buffer" },
 				{ name = "path" },
-				{ name = "dotenv" },
 			}),
 		})
 	end,

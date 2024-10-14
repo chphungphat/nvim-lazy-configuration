@@ -159,7 +159,7 @@ return {
 
 		vim.keymap.set("n", "<C-t>", nvimTreeFocusOrToggle)
 
-		vim.api.nvim_set_keymap("n", "<leader>t", "<cmd>NvimTreeToggle<CR>", { silent = true, noremap = true })
+		vim.api.nvim_set_keymap("n", "<leader>e", "<cmd>NvimTreeToggle<CR>", { silent = true, noremap = true })
 
 		-- Set statusline to show the tree name
 		tree_api.events.subscribe(tree_api.events.Event.TreeOpen, function()
