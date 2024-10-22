@@ -1,6 +1,6 @@
 return {
 	"kylechui/nvim-surround",
-	event = "VeryLazy",
+	event = { "BufReadPre", "BufNewFile" },
 	config = function()
 		---@diagnostic disable-next-line
 		require("nvim-surround").setup({

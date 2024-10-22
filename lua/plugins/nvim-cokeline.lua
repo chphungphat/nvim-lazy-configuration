@@ -118,7 +118,28 @@ return {
 		})
 
 		-- Keymaps
-		vim.keymap.set("n", "<leader>bd", "<Cmd>bdelete<CR>", { silent = true, desc = "Close buffer" })
+		vim.keymap.set("n", "<leader>bd", function()
+			-- Get the current buffer number
+			local current_buf = vim.api.nvim_get_current_buf()
+
+			-- Get a list of all buffers
+			local buffers = vim.api.nvim_list_bufs()
+
+			-- Filter out non-loaded and current buffers
+			local alternate_buffers = vim.tbl_filter(function(buf)
+				return buf ~= current_buf and vim.api.nvim_buf_is_loaded(buf)
+			end, buffers)
+
+			if #alternate_buffers > 0 then
+				-- Switch to another buffer before deleting
+				vim.api.nvim_set_current_buf(alternate_buffers[1])
+			else
+				-- If no other buffers exist, create a new empty buffer
+				vim.cmd("enew")
+			end
+
+			vim.api.nvim_buf_delete(current_buf, { force = false })
+		end, { silent = true, desc = "Close buffer while preserving window" })
 
 		vim.keymap.set("n", "<tab>", function()
 			return ("<Plug>(cokeline-focus-%s)"):format(vim.v.count > 0 and vim.v.count or "next")
