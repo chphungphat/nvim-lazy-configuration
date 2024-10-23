@@ -24,7 +24,6 @@ return {
 				extra = false,
 			},
 			pre_hook = ts_context_commentstring.create_pre_hook(),
-			post_hook = nil,
 		})
 	end,
 }
