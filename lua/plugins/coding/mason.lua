@@ -40,6 +40,7 @@ return {
 				"marksman",
 				"bash-language-server",
 				"shfmt",
+				"typos-lsp",
 			},
 		})
 

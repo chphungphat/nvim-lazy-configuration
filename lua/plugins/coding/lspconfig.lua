@@ -167,12 +167,19 @@ return {
 			end,
 
 			["typos_lsp"] = function()
-				lspconfig["typos_lsp"].setup({
+				lspconfig.typos_lsp.setup({
 					capabilities = capabilities,
-					filetypes = { "*" }, -- Enable for all filetypes
 					init_options = {
-						diagnosticSeverity = "Warning",
+						config = vim.fn.expand("~/.config/typos/typos.toml"),
+						diagnosticSeverity = "warning",
+						checkStrict = true,
 					},
+					settings = {
+						diagnostics = {
+							enabled = true,
+						},
+					},
+					filetypes = { "*" },
 				})
 			end,
 		})
