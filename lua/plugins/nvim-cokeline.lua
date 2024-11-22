@@ -1,15 +1,32 @@
 return {
 	"willothy/nvim-cokeline",
+	event = { "BufReadPost", "BufNewFile" },
 	dependencies = {
 		"nvim-lua/plenary.nvim",
 		"nvim-tree/nvim-web-devicons",
 		"stevearc/resession.nvim",
 	},
 	config = function()
+		local excluded_filetypes = {
+			"NvimTree",
+			"man",
+		}
+
+		local function is_excluded(buf)
+			return vim.tbl_contains(excluded_filetypes, vim.bo[buf].filetype)
+		end
+
+		local ok_hlgroups, hlgroups = pcall(require, "cokeline.hlgroups")
+		if not ok_hlgroups then
+			return
+		end
+
+		local function safe_get_hex(group, attr)
+			local ok, color = pcall(hlgroups.get_hl_attr, group, attr)
+			return ok and color or "#000000"
+		end
+
 		local gruvbox = {
-			-- bg = "#282828",
-			-- fg = "#ebdbb2",
-			-- gray = "#928374",
 			light_gray = "#a89984",
 			light_black = "#423e34",
 		}
@@ -69,14 +86,21 @@ return {
 			},
 		}
 
-		local get_hex = require("cokeline.hlgroups").get_hl_attr
+		local ok_cokeline, cokeline = pcall(require, "cokeline")
+		if not ok_cokeline then
+			return
+		end
 
-		require("cokeline").setup({
+		cokeline.setup({
 			show_if_buffers_are_at_least = 1,
 
 			buffers = {
 				focus_on_delete = "prev",
 				new_buffers_position = "next",
+
+				filter_valid = function(buffer)
+					return not is_excluded(buffer.number)
+				end,
 			},
 
 			rendering = {
@@ -88,8 +112,8 @@ return {
 				components = {
 					{
 						text = "  NvimTree",
-						fg = vim.g.terminal_color_3,
-						bg = get_hex("NvimTreeNormal", "bg"),
+						fg = vim.g.terminal_color_3 or "#fabd2f",
+						bg = safe_get_hex("NvimTreeNormal", "bg"),
 						bold = true,
 					},
 				},
@@ -119,22 +143,15 @@ return {
 
 		-- Keymaps
 		vim.keymap.set("n", "<leader>bd", function()
-			-- Get the current buffer number
 			local current_buf = vim.api.nvim_get_current_buf()
-
-			-- Get a list of all buffers
 			local buffers = vim.api.nvim_list_bufs()
-
-			-- Filter out non-loaded and current buffers
 			local alternate_buffers = vim.tbl_filter(function(buf)
 				return buf ~= current_buf and vim.api.nvim_buf_is_loaded(buf)
 			end, buffers)
 
 			if #alternate_buffers > 0 then
-				-- Switch to another buffer before deleting
 				vim.api.nvim_set_current_buf(alternate_buffers[1])
 			else
-				-- If no other buffers exist, create a new empty buffer
 				vim.cmd("enew")
 			end
 

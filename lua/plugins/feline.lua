@@ -1,22 +1,30 @@
 return {
 	"freddiehaddad/feline.nvim",
-	event = "VeryLazy",
+	event = { "BufReadPost", "BufNewFile" },
 	dependencies = {
 		"lewis6991/gitsigns.nvim",
 		"nvim-tree/nvim-web-devicons",
 	},
 	config = function()
-		local lsp = require("feline.providers.lsp")
-		local vi_mode_utils = require("feline.providers.vi_mode")
+		local ok_lsp, lsp = pcall(require, "feline.providers.lsp")
+		local ok_vimode, vi_mode_utils = pcall(require, "feline.providers.vi_mode")
+
+		if not (ok_lsp and ok_vimode) then
+			return
+		end
 
 		local config = {
 			use_bold = false,
 			separator = " ",
 		}
 
-		-- Helper function to handle bold styling
 		local function get_style()
 			return config.use_bold and "bold" or "NONE"
+		end
+
+		local function safe_diagnostics_exist(severity)
+			local ok, exists = pcall(lsp.diagnostics_exist, severity)
+			return ok and exists or false
 		end
 
 		local force_inactive = {
@@ -39,7 +47,7 @@ return {
 			replace = "#fb4934",
 			command = "#83a598",
 			inactive = "#3c3836",
-			filetype = "#bdae93", -- "#928374" -- "#bdae93" -- "#a89984"
+			filetype = "#bdae93",
 		}
 
 		local vi_mode_colors = {
@@ -67,6 +75,7 @@ return {
 			"startify",
 			"fugitive",
 			"fugitiveblame",
+			"man",
 		}
 
 		force_inactive.buftypes = {
@@ -74,7 +83,6 @@ return {
 		}
 
 		-- LEFT
-		-- vi-mode
 		components.active[1][1] = {
 			provider = function()
 				local mode = vi_mode_utils.get_vim_mode()
@@ -90,7 +98,6 @@ return {
 			right_sep = config.separator,
 		}
 
-		-- filename
 		components.active[1][2] = {
 			provider = function()
 				return vim.fn.expand("%:t")
@@ -103,7 +110,6 @@ return {
 			right_sep = config.separator .. config.separator,
 		}
 
-		-- gitBranch
 		components.active[1][3] = {
 			provider = "git_branch",
 			hl = {
@@ -114,7 +120,6 @@ return {
 			right_sep = config.separator,
 		}
 
-		-- diffAdd
 		components.active[1][4] = {
 			provider = "git_diff_added",
 			hl = {
@@ -122,10 +127,8 @@ return {
 				bg = colors.bg,
 				style = get_style(),
 			},
-			-- right_sep = config.separator,
 		}
 
-		-- diffModfified
 		components.active[1][5] = {
 			provider = "git_diff_changed",
 			hl = {
@@ -133,10 +136,8 @@ return {
 				bg = colors.bg,
 				style = get_style(),
 			},
-			-- right_sep = config.separator,
 		}
 
-		-- diffRemove
 		components.active[1][6] = {
 			provider = "git_diff_removed",
 			hl = {
@@ -147,50 +148,44 @@ return {
 			right_sep = config.separator,
 		}
 
-		-- diagnosticErrors
+		-- Diagnostics with safe checks
 		components.active[2][1] = {
 			provider = "diagnostic_errors",
 			enabled = function()
-				return lsp.diagnostics_exist(vim.diagnostic.severity.ERROR)
+				return safe_diagnostics_exist(vim.diagnostic.severity.ERROR)
 			end,
 			hl = {
 				fg = colors.replace,
 				style = get_style(),
 			},
-			-- right_sep = config.separator,
 		}
 
-		-- diagnosticWarn
 		components.active[2][2] = {
 			provider = "diagnostic_warnings",
 			enabled = function()
-				return lsp.diagnostics_exist(vim.diagnostic.severity.WARN)
+				return safe_diagnostics_exist(vim.diagnostic.severity.WARN)
 			end,
 			hl = {
 				fg = colors.visual,
 				style = get_style(),
 			},
-			-- right_sep = config.separator,
 		}
 
-		-- diagnosticHint
 		components.active[2][3] = {
 			provider = "diagnostic_hints",
 			enabled = function()
-				return lsp.diagnostics_exist(vim.diagnostic.severity.HINT)
+				return safe_diagnostics_exist(vim.diagnostic.severity.HINT)
 			end,
 			hl = {
 				fg = colors.insert,
 				style = get_style(),
 			},
-			-- right_sep = config.separator,
 		}
 
-		-- diagnosticInfo
 		components.active[2][4] = {
 			provider = "diagnostic_info",
 			enabled = function()
-				return lsp.diagnostics_exist(vim.diagnostic.severity.INFO)
+				return safe_diagnostics_exist(vim.diagnostic.severity.INFO)
 			end,
 			hl = {
 				fg = colors.command,
@@ -198,37 +193,6 @@ return {
 			},
 		}
 
-		-- fileIcon
-		-- components.active[3][1] = {
-		-- 	provider = function()
-		-- 		local filename = vim.fn.expand("%:t")
-		-- 		local extension = vim.fn.expand("%:e")
-		-- 		local icon = require("nvim-web-devicons").get_icon(filename, extension)
-		-- 		if icon == nil then
-		-- 			icon = ""
-		-- 		end
-		-- 		return icon
-		-- 	end,
-		-- 	hl = {
-		-- 		fg = colors.filetype,
-		-- 		bg = colors.bg,
-		-- 		style = "bold",
-		-- 	},
-		-- 	right_sep = config.separator,
-		-- }
-
-		-- fileType
-		-- components.active[3][2] = {
-		-- 	provider = "file_type",
-		-- 	hl = {
-		-- 		fg = colors.filetype,
-		-- 		bg = colors.bg,
-		-- 		style = "bold",
-		-- 	},
-		-- 	right_sep = config.separator,
-		-- }
-
-		-- lineInfo
 		components.active[3][1] = {
 			provider = "position",
 			hl = {
@@ -238,26 +202,6 @@ return {
 			},
 			right_sep = config.separator,
 		}
-
-		-- linePercent
-		-- components.active[3][4] = {
-		-- 	provider = "line_percentage",
-		-- 	hl = {
-		-- 		fg = colors.fg,
-		-- 		bg = colors.bg,
-		-- 		style = get_style(),
-		-- 	},
-		-- 	right_sep = config.separator,
-		-- }
-
-		-- scrollBar
-		-- components.active[3][5] = {
-		-- 	provider = "scroll_bar",
-		-- 	hl = {
-		-- 		fg = colors.visual,
-		-- 		bg = colors.bg,
-		-- 	},
-		-- }
 
 		components.inactive = {
 			{
@@ -272,6 +216,11 @@ return {
 				},
 			},
 		}
+
+		local ok_feline = pcall(require, "feline")
+		if not ok_feline then
+			return
+		end
 
 		require("feline").setup({
 			theme = colors,

@@ -52,7 +52,7 @@ return {
 
 				map("n", "<leader>hr", gs.reset_hunk)
 				map("n", "<leader>hR", gs.reset_buffer)
-				map("n", "<leader>tb", gs.toggle_current_line_blame)
+				map("n", "<leader>gb", gs.toggle_current_line_blame)
 			end,
 		})
 
