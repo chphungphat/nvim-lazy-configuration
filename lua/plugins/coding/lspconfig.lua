@@ -18,11 +18,11 @@ return {
 			callback = function(ev)
 				local opts = { buffer = ev.buf, silent = true }
 
-				opts.desc = "Show LSP references"
-				keymap.set("n", "gR", fzf.lsp_references, opts)
-
 				opts.desc = "Go to declaration"
 				keymap.set("n", "gD", vim.lsp.buf.declaration, opts)
+
+				opts.desc = "Show LSP references"
+				keymap.set("n", "gr", fzf.lsp_references, opts)
 
 				opts.desc = "Show LSP definitions"
 				keymap.set("n", "gd", fzf.lsp_definitions, opts)
