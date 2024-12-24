@@ -21,6 +21,15 @@ return {
 			-- Global options
 			global_resume = true,
 			global_resume_query = true,
+			hls = {
+				normal = "Normal", -- Window normal color (fg+bg)
+				border = "FloatBorder", -- Border color
+				cursor = "Cursor", -- Cursor highlight
+				cursorline = "CursorLine", -- Cursor line
+				search = "Search", -- Search matches
+				scrollbar_f = "PmenuThumb", -- Scrollbar "full" section highlight
+				scrollbar_e = "PmenuSbar", -- Scrollbar "empty" section highlight
+			},
 			winopts = {
 				height = 0.85,
 				width = 0.80,
@@ -30,15 +39,6 @@ return {
 					horizontal = "right:50%",
 					layout = "flex",
 					flip_columns = 120,
-				},
-				hl = {
-					normal = "Normal", -- Window normal color (fg+bg)
-					border = "FloatBorder", -- Border color
-					cursor = "Cursor", -- Cursor highlight
-					cursorline = "CursorLine", -- Cursor line
-					search = "Search", -- Search matches
-					scrollbar_f = "PmenuThumb", -- Scrollbar "full" section highlight
-					scrollbar_e = "PmenuSbar", -- Scrollbar "empty" section highlight
 				},
 				border = "rounded",
 				fzf_opts = {
