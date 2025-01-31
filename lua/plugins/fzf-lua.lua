@@ -4,21 +4,19 @@ return {
 	config = function()
 		local fzf = require("fzf-lua")
 
-		-- Gruvbox-inspired colors
-		local gruvbox = {
+		local gruvbox_material = {
 			bg = "#282828",
-			fg = "#ebdbb2",
-			red = "#cc241d",
-			green = "#98971a",
-			yellow = "#d79921",
-			blue = "#458588",
-			purple = "#b16286",
-			aqua = "#689d6a",
-			gray = "#a89984",
+			fg = "#d4be98",
+			red = "#ea6962",
+			green = "#a9b665",
+			yellow = "#d8a657",
+			blue = "#7daea3",
+			purple = "#d3869b",
+			aqua = "#89b482",
+			gray = "#928374",
 		}
 
 		fzf.setup({
-			-- Global options
 			global_resume = true,
 			global_resume_query = true,
 			hls = {
@@ -44,18 +42,18 @@ return {
 				fzf_opts = {
 					["--color"] = string.format(
 						"bg+:%s,bg:%s,spinner:%s,hl:%s,fg:%s,header:%s,info:%s,pointer:%s,marker:%s,fg+:%s,prompt:%s,hl+:%s",
-						gruvbox.bg,
-						gruvbox.bg,
-						gruvbox.yellow,
-						gruvbox.green,
-						gruvbox.fg,
-						gruvbox.blue,
-						gruvbox.blue,
-						gruvbox.yellow,
-						gruvbox.yellow,
-						gruvbox.fg,
-						gruvbox.yellow,
-						gruvbox.green
+						gruvbox_material.bg,
+						gruvbox_material.bg,
+						gruvbox_material.yellow,
+						gruvbox_material.green,
+						gruvbox_material.fg,
+						gruvbox_material.blue,
+						gruvbox_material.blue,
+						gruvbox_material.yellow,
+						gruvbox_material.yellow,
+						gruvbox_material.fg,
+						gruvbox_material.yellow,
+						gruvbox_material.green
 					),
 				},
 			},

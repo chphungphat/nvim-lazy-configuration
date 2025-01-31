@@ -85,8 +85,5 @@ return {
 	},
 	init = function()
 		vim.o.formatexpr = "v:lua.require'conform'.formatexpr()"
-
-		-- Add format status to statusline
-		vim.o.statusline = vim.o.statusline .. "%{%v:lua.require'conform'.status()%}"
 	end,
 }

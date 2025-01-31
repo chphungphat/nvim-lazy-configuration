@@ -1,6 +1,3 @@
--- if true then
--- 	return {}
--- end
 return {
 	"nvim-tree/nvim-tree.lua",
 	version = "*",
@@ -107,33 +104,69 @@ return {
 			},
 		})
 
+		-- local function set_nvim_tree_highlight()
+		-- 	vim.api.nvim_set_hl(0, "NvimTreeGitFileNewHL", { fg = "#98971a" })
+		-- 	vim.api.nvim_set_hl(0, "NvimTreeGitFolderNewHL", { fg = "#98971a" })
+		--
+		-- 	vim.api.nvim_set_hl(0, "NvimTreeGitFileDirtyHL", { fg = "#689d6a" })
+		-- 	vim.api.nvim_set_hl(0, "NvimTreeGitFolderDirtyHL", { fg = "#689d6a" })
+		--
+		-- 	vim.api.nvim_set_hl(0, "NvimTreeDiagnosticWarnFileHL", { fg = "#d79921", underline = true })
+		-- 	vim.api.nvim_set_hl(0, "NvimTreeDiagnosticWarnFolderHL", { fg = "#d79921", bold = true })
+		--
+		-- 	vim.api.nvim_set_hl(0, "NvimTreeDiagnosticErrorFileHL", { fg = "#d65d0e", underline = true })
+		-- 	vim.api.nvim_set_hl(0, "NvimTreeDiagnosticErrorFolderHL", { fg = "#d65d0e", bold = true })
+		--
+		-- 	vim.api.nvim_set_hl(0, "NvimTreeIndentMarker", { fg = "#504945" })
+		--
+		-- 	vim.api.nvim_set_hl(0, "NvimTreeWindowPicker", {
+		-- 		fg = "#3c3836",
+		-- 		bg = "#fe8019",
+		-- 		bold = true,
+		-- 	})
+		-- end
+
+		local gruvbox_material = {
+			fg = "#d4be98", -- Foreground
+			bg = "#282828", -- Background (Medium variant)
+			green = "#a9b665", -- Green
+			aqua = "#89b482", -- Aqua / Cyan
+			yellow = "#d8a657", -- Yellow (Warmer than default gruvbox)
+			orange = "#e78a4e", -- Orange
+			red = "#ea6962", -- Red
+			gray = "#928374", -- Neutral Gray
+		}
+
 		local function set_nvim_tree_highlight()
-			vim.api.nvim_set_hl(0, "NvimTreeGitFileNewHL", { fg = "#98971a" })
-			vim.api.nvim_set_hl(0, "NvimTreeGitFolderNewHL", { fg = "#98971a" })
+			vim.api.nvim_set_hl(0, "NvimTreeGitFileNewHL", { fg = gruvbox_material.green })
+			vim.api.nvim_set_hl(0, "NvimTreeGitFolderNewHL", { fg = gruvbox_material.green })
 
-			vim.api.nvim_set_hl(0, "NvimTreeGitFileDirtyHL", { fg = "#689d6a" })
-			vim.api.nvim_set_hl(0, "NvimTreeGitFolderDirtyHL", { fg = "#689d6a" })
+			vim.api.nvim_set_hl(0, "NvimTreeGitFileDirtyHL", { fg = gruvbox_material.aqua })
+			vim.api.nvim_set_hl(0, "NvimTreeGitFolderDirtyHL", { fg = gruvbox_material.aqua })
 
-			vim.api.nvim_set_hl(0, "NvimTreeDiagnosticWarnFileHL", { fg = "#d79921", underline = true })
-			vim.api.nvim_set_hl(0, "NvimTreeDiagnosticWarnFolderHL", { fg = "#d79921", bold = true })
+			vim.api.nvim_set_hl(0, "NvimTreeDiagnosticWarnFileHL", { fg = gruvbox_material.yellow, underline = true })
+			vim.api.nvim_set_hl(0, "NvimTreeDiagnosticWarnFolderHL", { fg = gruvbox_material.yellow, bold = true })
 
-			-- vim.api.nvim_set_hl(0, "NvimTreeDiagnosticWarnFileHL", { fg = "#b57614", underline = true })
-			-- vim.api.nvim_set_hl(0, "NvimTreeDiagnosticWarnFolderHL", { fg = "#b57614", bold = true })
+			vim.api.nvim_set_hl(0, "NvimTreeDiagnosticErrorFileHL", { fg = gruvbox_material.orange, underline = true })
+			vim.api.nvim_set_hl(0, "NvimTreeDiagnosticErrorFolderHL", { fg = gruvbox_material.orange, bold = true })
 
-			-- vim.api.nvim_set_hl(0, "NvimTreeDiagnosticWarnFileHL", { fg = "#fabd2f", underline = true })
-			-- vim.api.nvim_set_hl(0, "NvimTreeDiagnosticWarnFolderHL", { fg = "#fabd2f", bold = true })
+			vim.api.nvim_set_hl(0, "NvimTreeIndentMarker", { fg = gruvbox_material.gray }) -- Indentation guides
 
-			vim.api.nvim_set_hl(0, "NvimTreeDiagnosticErrorFileHL", { fg = "#d65d0e", underline = true })
-			vim.api.nvim_set_hl(0, "NvimTreeDiagnosticErrorFolderHL", { fg = "#d65d0e", bold = true })
-
-			vim.api.nvim_set_hl(0, "NvimTreeIndentMarker", { fg = "#504945" })
-
+			-- Window picker background
 			vim.api.nvim_set_hl(0, "NvimTreeWindowPicker", {
-				fg = "#3c3836",
-				bg = "#fe8019",
+				fg = gruvbox_material.bg,
+				bg = gruvbox_material.orange,
 				bold = true,
 			})
 		end
+
+		-- Apply highlights immediately
+		set_nvim_tree_highlight()
+
+		-- Auto-adjust highlights after colorscheme changes
+		vim.api.nvim_create_autocmd("ColorScheme", {
+			callback = set_nvim_tree_highlight,
+		})
 
 		-- Set up the highlight immediately
 		set_nvim_tree_highlight()
