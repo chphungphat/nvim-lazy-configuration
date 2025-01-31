@@ -1,7 +1,7 @@
 return {
 	"williamboman/mason.nvim",
 	dependencies = {
-		"hrsh7th/cmp-nvim-lsp",
+		-- "hrsh7th/cmp-nvim-lsp",
 		"WhoIsSethDaniel/mason-tool-installer.nvim",
 		"stevearc/dressing.nvim",
 	},
@@ -34,7 +34,6 @@ return {
 			ensure_installed = {
 				"prettier",
 				"stylua",
-				-- "eslint-lsp",
 				"typescript-language-server",
 				"lua-language-server",
 				"marksman",

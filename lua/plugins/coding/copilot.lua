@@ -1,13 +1,9 @@
-if true then
-	return {}
-end
 return {
 	{
 		"zbirenbaum/copilot.lua",
 		cmd = "Copilot",
 		event = "InsertEnter",
 		dependencies = {
-			"zbirenbaum/copilot-cmp",
 			"windwp/nvim-autopairs",
 		},
 		config = function()
@@ -47,30 +43,16 @@ return {
 					},
 				},
 			})
-
-			-- Configure copilot-cmp
-			require("copilot_cmp").setup({
-				method = "getCompletionsCycling",
-				formatters = {
-					label = require("copilot_cmp.format").format_label_text,
-					insert_text = require("copilot_cmp.format").format_insert_text,
-					preview = require("copilot_cmp.format").format_preview_text,
-				},
-			})
 		end,
 	},
 	{
 		"CopilotC-Nvim/CopilotChat.nvim",
-		branch = "canary",
 		event = "VeryLazy",
 		dependencies = {
 			"zbirenbaum/copilot.lua",
 			"nvim-lua/plenary.nvim",
-			"hrsh7th/nvim-cmp",
 		},
 		config = function()
-			require("CopilotChat.integrations.cmp").setup()
-
 			local chat = require("CopilotChat")
 			local select = require("CopilotChat.select")
 
