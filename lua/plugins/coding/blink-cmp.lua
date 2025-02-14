@@ -3,10 +3,10 @@ return {
 	dependencies = {
 		"folke/lazydev.nvim",
 		"rafamadriz/friendly-snippets",
-		"mikavilpas/blink-ripgrep.nvim",
-		"giuxtaposition/blink-cmp-copilot",
+		"fang2hou/blink-copilot",
 		"onsails/lspkind.nvim",
 		"echasnovski/mini.icons",
+		"mikavilpas/blink-ripgrep.nvim",
 	},
 	version = "*",
 	opts = {
@@ -19,16 +19,10 @@ return {
 			["<C-f>"] = { "scroll_documentation_down", "fallback" },
 
 			["<C-Space>"] = { "show", "fallback" },
-
-			["<C-g>"] = {
-				function()
-					require("blink-cmp").show({ providers = { "ripgrep" } })
-				end,
-			},
 		},
 
 		sources = {
-			default = { "lsp", "path", "snippets", "buffer", "lazydev", "ripgrep", "copilot" },
+			default = { "lsp", "path", "snippets", "buffer", "lazydev", "copilot", "ripgrep" },
 
 			providers = {
 
@@ -46,60 +40,44 @@ return {
 
 				copilot = {
 					name = "copilot",
-					module = "blink-cmp-copilot",
+					module = "blink-copilot",
 					score_offset = 99,
 					async = true,
+					opts = {
+						max_completions = 2,
+						max_attempts = 2,
+						kind = "Copilot",
+						debounce = 1000,
+					},
 
-					transform_items = function(_, items)
-						local CompletionItemKind = require("blink.cmp.types").CompletionItemKind
-						local kind_idx = #CompletionItemKind + 1
-						CompletionItemKind[kind_idx] = "Copilot"
-						for _, item in ipairs(items) do
-							item.kind = kind_idx
-						end
-						return items
-					end,
+					-- transform_items = function(_, items)
+					-- 	local CompletionItemKind = require("blink.cmp.types").CompletionItemKind
+					-- 	local kind_idx = #CompletionItemKind + 1
+					-- 	CompletionItemKind[kind_idx] = "Copilot"
+					-- 	for _, item in ipairs(items) do
+					-- 		item.kind = kind_idx
+					-- 	end
+					-- 	return items
+					-- end,
 				},
 
 				ripgrep = {
 					module = "blink-ripgrep",
 					name = "Ripgrep",
 					opts = {
-						prefix_min_len = 3,
-
-						context_size = 5,
-
-						max_filesize = "1M",
-
-						-- Specifies how to find the root of the project where the ripgrep
-						-- search will start from.
-						project_root_marker = ".git",
-
-						-- The casing to use for the search in a format that ripgrep
-						-- accepts. Defaults to "--ignore-case". See `rg --help` for all the
-						-- available options ripgrep supports
-						search_casing = "--ignore-case",
-
-						additional_rg_options = {},
-
-						-- When a result is found for a file whose filetype does not have a
-						-- treesitter parser installed, fall back to regex based highlighting
-						-- that is bundled in Neovim.
-						fallback_to_regex_highlighting = true,
-
-						-- Show debug information in `:messages` that can help in
-						-- diagnosing issues with the plugin.
-						debug = false,
+						prefix_min_len = 4,
+						context_size = 4,
 					},
 
-					transform_items = function(_, items)
-						for _, item in ipairs(items) do
-							item.labelDetails = {
-								description = "(rg)",
-							}
-						end
-						return items
-					end,
+					-- transform_items = function(_, items)
+					-- 	for _, item in ipairs(items) do
+					-- 		-- example: append a description to easily distinguish rg results
+					-- 		item.labelDetails = {
+					-- 			description = "(rg)",
+					-- 		}
+					-- 	end
+					-- 	return items
+					-- end,
 				},
 			},
 		},
@@ -122,19 +100,6 @@ return {
 						{ "label", "label_description", gap = 1 },
 						{ "kind_icon", gap = 1, "kind" },
 					},
-					-- components = {
-					-- 	kind_icon = {
-					-- 		ellipsis = false,
-					-- 		text = function(ctx)
-					-- 			local kind_icon, _, _ = require("mini.icons").get("lsp", ctx.kind)
-					-- 			return kind_icon
-					-- 		end,
-					-- 		highlight = function(ctx)
-					-- 			local _, hl, _ = require("mini.icons").get("lsp", ctx.kind)
-					-- 			return hl
-					-- 		end,
-					-- 	},
-					-- },
 				},
 			},
 		},
