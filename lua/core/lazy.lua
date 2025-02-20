@@ -44,6 +44,3 @@ require("lazy").setup({
 })
 
 vim.keymap.set("n", "<leader>l", "<cmd>Lazy<CR>", { noremap = true, silent = true })
-
--- vim.cmd.colorscheme("gruvbox")
--- vim.cmd.colorscheme("gruvbox-material")

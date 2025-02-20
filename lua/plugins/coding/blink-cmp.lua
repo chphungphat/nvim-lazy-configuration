@@ -6,7 +6,7 @@ return {
 		"fang2hou/blink-copilot",
 		"onsails/lspkind.nvim",
 		"echasnovski/mini.icons",
-		"mikavilpas/blink-ripgrep.nvim",
+		-- "mikavilpas/blink-ripgrep.nvim",
 	},
 	version = "*",
 	opts = {
@@ -22,7 +22,7 @@ return {
 		},
 
 		sources = {
-			default = { "lsp", "path", "snippets", "buffer", "lazydev", "copilot", "ripgrep" },
+			default = { "lsp", "path", "snippets", "buffer", "lazydev", "copilot" },
 
 			providers = {
 
@@ -61,24 +61,25 @@ return {
 					-- end,
 				},
 
-				ripgrep = {
-					module = "blink-ripgrep",
-					name = "Ripgrep",
-					opts = {
-						prefix_min_len = 4,
-						context_size = 4,
-					},
-
-					-- transform_items = function(_, items)
-					-- 	for _, item in ipairs(items) do
-					-- 		-- example: append a description to easily distinguish rg results
-					-- 		item.labelDetails = {
-					-- 			description = "(rg)",
-					-- 		}
-					-- 	end
-					-- 	return items
-					-- end,
-				},
+				-- ripgrep = {
+				-- 	module = "blink-ripgrep",
+				-- 	name = "Ripgrep",
+				-- 	async = true,
+				-- 	score_offset = 99,
+				-- 	opts = {
+				-- 		prefix_min_len = 4,
+				-- 	},
+				--
+				-- 	-- transform_items = function(_, items)
+				-- 	-- 	for _, item in ipairs(items) do
+				-- 	-- 		-- example: append a description to easily distinguish rg results
+				-- 	-- 		item.labelDetails = {
+				-- 	-- 			description = "(rg)",
+				-- 	-- 		}
+				-- 	-- 	end
+				-- 	-- 	return items
+				-- 	-- end,
+				-- },
 			},
 		},
 
