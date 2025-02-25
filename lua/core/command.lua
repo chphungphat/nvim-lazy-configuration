@@ -6,9 +6,10 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 	end,
 })
 
--- vim.cmd([[
---   hi SpellBad   guisp=red gui=undercurl
---   hi SpellCap   guisp=blue gui=undercurl
---   hi SpellRare  guisp=magenta gui=undercurl
---   hi SpellLocal guisp=cyan gui=undercurl
--- ]])
+vim.cmd([[
+  augroup CursorLineOnlyInActiveWindow
+    autocmd!
+    autocmd WinEnter * setlocal cursorline
+    autocmd WinLeave * setlocal nocursorline
+  augroup END
+]])

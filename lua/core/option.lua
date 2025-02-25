@@ -20,7 +20,7 @@ vim.opt.smartcase = true
 
 vim.opt.signcolumn = "yes"
 
-vim.opt.updatetime = 250
+vim.opt.updatetime = 1000
 vim.opt.timeoutlen = 1000
 
 vim.opt.splitright = true
@@ -31,7 +31,7 @@ vim.opt.listchars = { tab = "  ", trail = "-", nbsp = "␣" }
 
 vim.opt.inccommand = "split"
 
-vim.opt.cursorline = true
+vim.opt.cursorline = false
 vim.opt.scrolloff = 10
 
 vim.opt.hlsearch = true
@@ -47,8 +47,12 @@ vim.opt.linebreak = true
 vim.opt.wrap = false
 
 vim.opt.swapfile = false
+vim.opt.backup = false
+vim.opt.writebackup = false
 
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 
 vim.o.laststatus = 3
+
+vim.o.lazyredraw = true

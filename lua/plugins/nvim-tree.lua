@@ -168,14 +168,6 @@ return {
 			callback = set_nvim_tree_highlight,
 		})
 
-		-- Set up the highlight immediately
-		set_nvim_tree_highlight()
-
-		-- Set up an autocommand to apply the highlight after colorscheme changes
-		vim.api.nvim_create_autocmd("ColorScheme", {
-			callback = set_nvim_tree_highlight,
-		})
-
 		local tree_api = require("nvim-tree.api")
 
 		-- Toggle NvimTree

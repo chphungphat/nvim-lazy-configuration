@@ -35,8 +35,8 @@ return {
 					default = "bat",
 					vertical = "down:45%",
 					horizontal = "right:50%",
-					layout = "flex",
-					flip_columns = 120,
+					layout = "horizontal",
+					flip_columns = 100,
 				},
 				border = "rounded",
 				fzf_opts = {
