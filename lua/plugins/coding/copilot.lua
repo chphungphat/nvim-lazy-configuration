@@ -59,13 +59,7 @@ return {
 			chat.setup({
 				debug = false,
 				show_help = false,
-				model = "claude-3.5-sonnet",
-				prompts = {
-					Explain = "Explain how this code works in detail.",
-					Review = "Review this code for potential improvements.",
-					Tests = "Generate unit tests for this code.",
-					Refactor = "Refactor this code to improve its clarity and readability.",
-				},
+				model = "claude-3.7-sonnet",
 				-- window = {
 				-- 	width = 0.8,
 				-- 	height = 0.8,
@@ -102,7 +96,6 @@ return {
 			-- Chat commands
 			local chat_commands = {
 				{ key = "<leader>cpp", cmd = ":CopilotChatOpen<CR>", desc = "Open Chat" },
-				{ key = "<leader>cpd", cmd = ":CopilotChatFixDiagnostic<CR>", desc = "Fix Diagnostic" },
 				{ key = "<leader>cpt", cmd = ":CopilotChatTests<CR>", desc = "Generate Tests" },
 				{ key = "<leader>cpr", cmd = ":CopilotChatReview<CR>", desc = "Review Code" },
 			}
@@ -152,7 +145,7 @@ return {
 				map("n", cmd.key, cmd.fn, { desc = cmd.desc })
 			end
 
-			map({ "n", "v" }, "<leader>cpq", quick_chat, { desc = "Quick Chat" })
+			map({ "n" }, "<leader>cpq", quick_chat, { desc = "Quick Chat" })
 
 			-- Visual mode mappings
 			map("v", "<leader>cpo", ":CopilotChatOptimize<CR>", { desc = "Optimize Selection" })

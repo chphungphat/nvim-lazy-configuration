@@ -102,29 +102,13 @@ return {
 					global = false,
 				},
 			},
-		})
 
-		-- local function set_nvim_tree_highlight()
-		-- 	vim.api.nvim_set_hl(0, "NvimTreeGitFileNewHL", { fg = "#98971a" })
-		-- 	vim.api.nvim_set_hl(0, "NvimTreeGitFolderNewHL", { fg = "#98971a" })
-		--
-		-- 	vim.api.nvim_set_hl(0, "NvimTreeGitFileDirtyHL", { fg = "#689d6a" })
-		-- 	vim.api.nvim_set_hl(0, "NvimTreeGitFolderDirtyHL", { fg = "#689d6a" })
-		--
-		-- 	vim.api.nvim_set_hl(0, "NvimTreeDiagnosticWarnFileHL", { fg = "#d79921", underline = true })
-		-- 	vim.api.nvim_set_hl(0, "NvimTreeDiagnosticWarnFolderHL", { fg = "#d79921", bold = true })
-		--
-		-- 	vim.api.nvim_set_hl(0, "NvimTreeDiagnosticErrorFileHL", { fg = "#d65d0e", underline = true })
-		-- 	vim.api.nvim_set_hl(0, "NvimTreeDiagnosticErrorFolderHL", { fg = "#d65d0e", bold = true })
-		--
-		-- 	vim.api.nvim_set_hl(0, "NvimTreeIndentMarker", { fg = "#504945" })
-		--
-		-- 	vim.api.nvim_set_hl(0, "NvimTreeWindowPicker", {
-		-- 		fg = "#3c3836",
-		-- 		bg = "#fe8019",
-		-- 		bold = true,
-		-- 	})
-		-- end
+			-- update_focused_file = {
+			-- 	enable = true,
+			-- 	update_cwd = false,
+			-- 	ignore_list = {},
+			-- },
+		})
 
 		local gruvbox_material = {
 			fg = "#d4be98", -- Foreground
@@ -203,5 +187,13 @@ return {
 		end
 
 		vim.keymap.set("n", "<C-c>", change_root_to_global_cwd, { desc = "Change Root To Global CWD", noremap = true })
+
+		local function focus_on_current_file()
+			local api = require("nvim-tree.api")
+
+			api.tree.find_file(vim.fn.expand("%:p"), true)
+		end
+
+		vim.keymap.set("n", "<C-t>", focus_on_current_file, { desc = "Focus on current file", noremap = true })
 	end,
 }
