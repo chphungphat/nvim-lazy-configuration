@@ -48,14 +48,29 @@ return {
 				opts.desc = "Show buffer diagnostics"
 				keymap.set("n", "<leader>D", fzf.diagnostics_document, opts)
 
-				opts.desc = "Show line diagnostics"
-				keymap.set("n", "<leader>d", vim.diagnostic.open_float, opts)
+				opts.desc = "Go to previous error"
+				keymap.set("n", "[e", function()
+					vim.diagnostic.goto_prev({ severity = vim.diagnostic.severity.ERROR })
+				end, opts)
 
-				opts.desc = "Go to previous diagnostic"
-				keymap.set("n", "[d", vim.diagnostic.goto_prev, opts)
+				opts.desc = "Go to next error"
+				keymap.set("n", "]e", function()
+					vim.diagnostic.goto_next({ severity = vim.diagnostic.severity.ERROR })
+				end, opts)
 
-				opts.desc = "Go to next diagnostic"
-				keymap.set("n", "]d", vim.diagnostic.goto_next, opts)
+				opts.desc = "Go to previous warning/hint"
+				keymap.set("n", "[d", function()
+					vim.diagnostic.goto_prev({
+						severity = { min = vim.diagnostic.severity.HINT, max = vim.diagnostic.severity.WARN },
+					})
+				end, opts)
+
+				opts.desc = "Go to next warning/hint"
+				keymap.set("n", "]d", function()
+					vim.diagnostic.goto_next({
+						severity = { min = vim.diagnostic.severity.HINT, max = vim.diagnostic.severity.WARN },
+					})
+				end, opts)
 
 				opts.desc = "Show documentation for what is under cursor"
 				keymap.set("n", "K", vim.lsp.buf.hover, opts)
