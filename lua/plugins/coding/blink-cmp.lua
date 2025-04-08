@@ -22,7 +22,14 @@ return {
 		},
 
 		sources = {
-			default = { "lsp", "path", "snippets", "buffer", "lazydev", "copilot" },
+			default = {
+				"lsp",
+				"path",
+				"snippets",
+				"buffer",
+				"lazydev",
+				"copilot",
+			},
 
 			providers = {
 
@@ -35,7 +42,32 @@ return {
 				lsp = {
 					name = "LSP",
 					module = "blink.cmp.sources.lsp",
+					fallbacks = { "buffer" },
+
+					transform_items = function(_, items)
+						return vim.tbl_filter(function(item)
+							return item.kind ~= require("blink.cmp.types").CompletionItemKind.Text
+						end, items)
+					end,
+
+					opts = { tailwind_color_icon = "██" },
+
 					score_offset = 100,
+				},
+
+				path = {
+					module = "blink.cmp.sources.path",
+					fallbacks = { "buffer" },
+					opts = {
+						trailing_slash = true,
+						label_trailing_slash = true,
+						get_cwd = function(context)
+							return vim.fn.expand(("#%d:p:h"):format(context.bufnr))
+						end,
+						show_hidden_files_by_default = false,
+					},
+
+					score_offset = 90,
 				},
 
 				copilot = {
@@ -44,7 +76,7 @@ return {
 					score_offset = 99,
 					async = true,
 					opts = {
-						max_completions = 2,
+						-- max_completions = 2,
 						max_attempts = 2,
 						kind = "Copilot",
 						debounce = 1000,
@@ -60,26 +92,6 @@ return {
 					-- 	return items
 					-- end,
 				},
-
-				-- ripgrep = {
-				-- 	module = "blink-ripgrep",
-				-- 	name = "Ripgrep",
-				-- 	async = true,
-				-- 	score_offset = 99,
-				-- 	opts = {
-				-- 		prefix_min_len = 4,
-				-- 	},
-				--
-				-- 	-- transform_items = function(_, items)
-				-- 	-- 	for _, item in ipairs(items) do
-				-- 	-- 		-- example: append a description to easily distinguish rg results
-				-- 	-- 		item.labelDetails = {
-				-- 	-- 			description = "(rg)",
-				-- 	-- 		}
-				-- 	-- 	end
-				-- 	-- 	return items
-				-- 	-- end,
-				-- },
 			},
 		},
 

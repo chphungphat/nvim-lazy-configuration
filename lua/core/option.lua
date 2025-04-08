@@ -18,7 +18,9 @@ vim.opt.undofile = true
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
 
-vim.opt.signcolumn = "yes"
+vim.opt.signcolumn = "auto"
+
+vim.opt.numberwidth = 4
 
 vim.opt.updatetime = 1000
 vim.opt.timeoutlen = 1000

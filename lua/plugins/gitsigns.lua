@@ -1,6 +1,25 @@
 return {
 	"lewis6991/gitsigns.nvim",
 	config = function()
+		local scheme = vim.g.colors_name or "gruvbox-material"
+
+		local palette = {
+			["gruvbox-material"] = {
+				add = "#a9b665",
+				change = "#89b482",
+				delete = "#ea6962",
+				blame = "#d65d0e",
+			},
+			["kanagawa"] = {
+				add = "#98BB6C",
+				change = "#7AA89F",
+				delete = "#FF5D62",
+				blame = "#FFA066",
+			},
+		}
+
+		local c = palette[scheme] or palette["gruvbox-material"]
+
 		require("gitsigns").setup({
 			signs = {
 				add = { text = "▎" },
@@ -13,57 +32,78 @@ return {
 			current_line_blame = false,
 			current_line_blame_opts = {
 				virt_text = true,
-				virt_text_pos = "eol", -- 'eol' | 'overlay' | 'right_align'
+				virt_text_pos = "eol",
 				delay = 400,
 				ignore_whitespace = false,
 				virt_text_priority = 100,
 				virt_text_hl_group = "GitSignsCurrentLineBlame",
 			},
-			current_line_blame_formatter = "<author>, <author_time:%d-%m-%Y> - <summary>",
+			current_line_blame_formatter = "<author>, <author_time:%Y-%m-%d> - <summary>",
 
 			on_attach = function(bufnr)
 				local gs = package.loaded.gitsigns
-
-				local function map(mode, key, cmd, opts)
-					opts = opts or {}
-					opts.buffer = bufnr
-					vim.keymap.set(mode, key, cmd, opts)
+				local map = function(mode, key, cmd, desc)
+					vim.keymap.set(mode, key, cmd, { buffer = bufnr, silent = true, desc = desc })
 				end
 
+				-- Navigation
 				map("n", "]h", function()
 					if vim.wo.diff then
 						return "]h"
 					end
-					vim.schedule(function()
-						gs.next_hunk()
-					end)
+					vim.schedule(gs.next_hunk)
 					return "<Ignore>"
-				end, { expr = true })
+				end, "Next Git Hunk")
 
 				map("n", "[h", function()
 					if vim.wo.diff then
 						return "[h"
 					end
-					vim.schedule(function()
-						gs.prev_hunk()
-					end)
+					vim.schedule(gs.prev_hunk)
 					return "<Ignore>"
-				end, { expr = true })
+				end, "Previous Git Hunk")
 
-				map("n", "<leader>hr", gs.reset_hunk)
-				map("n", "<leader>hR", gs.reset_buffer)
-				map("n", "<leader>gb", gs.toggle_current_line_blame)
+				-- GitSigns actions with "gs" prefix
+				map("n", "gsb", gs.toggle_current_line_blame, "Toggle Line Blame")
+				map("n", "gsB", gs.blame_line, "Blame Line (Full)")
+				map("n", "gsr", gs.reset_hunk, "Reset Hunk")
+				map("n", "gsR", gs.reset_buffer, "Reset Buffer")
+				map("n", "gss", gs.stage_hunk, "Stage Hunk")
+				map("n", "gsS", gs.stage_buffer, "Stage Buffer")
+				map("n", "gsu", gs.undo_stage_hunk, "Undo Stage Hunk")
+				map("n", "gsd", gs.diffthis, "Diff This")
+				map("n", "gsD", function()
+					gs.diffthis("~")
+				end, "Diff Base")
+
+				-- Visual mode selection
+				map("v", "gss", function()
+					gs.stage_hunk({ vim.fn.line("."), vim.fn.line("v") })
+				end, "Stage Selection")
+				map("v", "gsr", function()
+					gs.reset_hunk({ vim.fn.line("."), vim.fn.line("v") })
+				end, "Reset Selection")
 			end,
 		})
 
-		vim.api.nvim_set_hl(0, "GitSignsCurrentLineBlame", { fg = "#d65d0e", italic = true })
+		-- Apply theme highlights
+		vim.api.nvim_set_hl(0, "GitSignsAdd", { fg = c.add })
+		vim.api.nvim_set_hl(0, "GitSignsChange", { fg = c.change })
+		vim.api.nvim_set_hl(0, "GitSignsDelete", { fg = c.delete })
+		vim.api.nvim_set_hl(0, "GitSignsCurrentLineBlame", { fg = c.blame, italic = true })
 
-		-- Apply the custom highlight to the virtual text
-		vim.cmd([[
-     augroup GitSignsCustomHighlight
-        autocmd!
-        autocmd ColorScheme * highlight GitSignsCurrentLineBlame guifg=#d65d0e gui=italic
-      augroup END
-    ]])
+		-- Sync colors with colorscheme changes
+		vim.api.nvim_create_autocmd("ColorScheme", {
+			callback = function()
+				vim.schedule(function()
+					local scheme = vim.g.colors_name or "gruvbox-material"
+					local c = palette[scheme] or palette["gruvbox-material"]
+					vim.api.nvim_set_hl(0, "GitSignsAdd", { fg = c.add })
+					vim.api.nvim_set_hl(0, "GitSignsChange", { fg = c.change })
+					vim.api.nvim_set_hl(0, "GitSignsDelete", { fg = c.delete })
+					vim.api.nvim_set_hl(0, "GitSignsCurrentLineBlame", { fg = c.blame, italic = true })
+				end)
+			end,
+		})
 	end,
 }

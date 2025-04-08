@@ -6,12 +6,13 @@ return {
 	},
 	config = function()
 		require("slimline").setup({
-			bold = false, -- makes primary parts and mode bold
-			verbose_mode = false, -- Mode as single letter or as a word
-			style = "fg", -- or "fg". Whether highlights should be applied to bg or fg of components
-			mode_follow_style = true, -- Whether the mode color components should follow the style option
-			workspace_diagnostics = false, -- Whether diagnostics should show workspace diagnostics instead of current buffer
-			components = { -- Choose components and their location
+			bold = false, -- makes primary parts bold
+
+			-- Global style. Can be overwritten using `configs.<component>.style`
+			style = "fg", -- or "fg"
+
+			-- Component placement
+			components = {
 				left = {
 					"mode",
 					"path",
@@ -24,48 +25,80 @@ return {
 					"progress",
 				},
 			},
-			spaces = {
-				components = " ",
-				left = " ",
-				right = " ",
-			},
-			sep = {
-				hide = {
-					first = true,
-					last = true,
+
+			-- Component configuration
+			-- `<component>.style` can be used to overwrite the global 'style'
+			-- `<component>.hl = { primary = ..., secondary = ...}` can be used to overwrite global ones
+			-- `<component>.follow` can point to another component name to follow its style (e.g. 'progress' following 'mode' by default). Follow can be disabled by setting it to `false`
+			configs = {
+				mode = {
+					verbose = false, -- Mode as single letter or as a word
+					hl = {
+						normal = "Type",
+						insert = "Function",
+						pending = "Boolean",
+						visual = "Keyword",
+						command = "String",
+					},
 				},
-				left = "",
-				right = "",
-			},
-			hl = {
-				modes = {
-					normal = "Type", -- highlight base of modes
-					insert = "Function",
-					pending = "Boolean",
-					visual = "Keyword",
-					command = "String",
-				},
-				base = "Comment", -- highlight of everything in in between components
-				primary = "Normal", -- highlight of primary parts (e.g. filename)
-				secondary = "Comment", -- highlight of secondary parts (e.g. filepath)
-			},
-			icons = {
-				diagnostics = {
-					ERROR = " ",
-					WARN = " ",
-					HINT = " ",
-					INFO = " ",
+				path = {
+					directory = true, -- Whether to show the directory
+					icons = {
+						folder = " ",
+						modified = "",
+						read_only = "",
+					},
 				},
 				git = {
-					branch = "",
+					icons = {
+						branch = "",
+						added = "+",
+						modified = "~",
+						removed = "-",
+					},
 				},
-				folder = " ",
-				lines = " ",
-				recording = " ",
-				buffer = {
-					modified = "",
-					read_only = "",
+				diagnostics = {
+					workspace = false, -- Whether diagnostics should show workspace diagnostics instead of current buffer
+					icons = {
+						ERROR = " ",
+						WARN = " ",
+						HINT = " ",
+						INFO = " ",
+					},
 				},
+				filetype_lsp = {},
+				progress = {
+					follow = "mode",
+					column = false, -- Enables a secondary section with the cursor column
+					icon = " ",
+				},
+				recording = {
+					icon = " ",
+				},
+			},
+
+			-- Spacing configuration
+			spaces = {
+				components = " ", -- string between components
+				left = " ", -- string at the start of the line
+				right = " ", -- string at the end of the line
+			},
+
+			-- Seperator configuartion
+			sep = {
+				hide = {
+					first = false, -- hides the first separator of the line
+					last = false, -- hides the last separator of the line
+				},
+				left = "", -- left separator of components
+				right = "", -- right separator of components
+			},
+
+			-- Global highlights
+			hl = {
+				base = "Comment", -- highlight of the background
+				primary = "Normal", -- highlight of primary parts (e.g. filename)
+				secondary = "Comment", -- highlight of secondary parts (e.g. filepath)
 			},
 		})
 	end,

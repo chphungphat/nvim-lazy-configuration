@@ -9,6 +9,6 @@ return {
 		vim.g.gruvbox_material_disable_italic_comment = 0
 		vim.g.gruvbox_material_enable_italic = true
 		vim.g.gruvbox_material_enable_bold = 1
-		vim.cmd.colorscheme("gruvbox-material")
+		-- vim.cmd.colorscheme("gruvbox-material")
 	end,
 }

@@ -13,3 +13,5 @@ vim.cmd([[
     autocmd WinLeave * setlocal nocursorline
   augroup END
 ]])
+
+vim.o.background = "dark"

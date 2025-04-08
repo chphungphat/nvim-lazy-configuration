@@ -178,23 +178,6 @@ return {
 					capabilities = capabilities,
 				})
 			end,
-
-			-- ["typos_lsp"] = function()
-			-- 	lspconfig.typos_lsp.setup({
-			-- 		capabilities = capabilities,
-			-- 		init_options = {
-			-- 			config = vim.fn.expand("~/.config/typos/typos.toml"),
-			-- 			diagnosticSeverity = "warning",
-			-- 			checkStrict = true,
-			-- 		},
-			-- 		settings = {
-			-- 			diagnostics = {
-			-- 				enabled = true,
-			-- 			},
-			-- 		},
-			-- 		filetypes = { "*" },
-			-- 	})
-			-- end,
 		})
 	end,
 }

@@ -59,7 +59,7 @@ return {
 			chat.setup({
 				debug = false,
 				show_help = false,
-				model = "claude-3.7-sonnet",
+				model = "claude-3.7-sonnet-thought",
 				-- window = {
 				-- 	width = 0.8,
 				-- 	height = 0.8,

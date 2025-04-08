@@ -2,24 +2,24 @@ return {
 	"shellRaining/hlchunk.nvim",
 	event = { "BufReadPre", "BufNewFile" },
 	config = function()
-		local colorscheme = vim.g.colors_name
+		local scheme = vim.g.colors_name or "kanagawa"
 
-		local style = {
-			gruvbox = "#d47d26",
-			bamboo = "#6ab78a",
+		local palette = {
+			["gruvbox-material"] = {
+				chunk_style = "#d47d26",
+			},
+			["kanagawa"] = {
+				chunk_style = "#FFA066",
+			},
 		}
-		local style_color = style[colorscheme]
+
+		local color = (palette[scheme] or palette["gruvbox-material"]).chunk_style
 
 		require("hlchunk").setup({
 			indent = {
 				enable = true,
 				priority = 10,
-				chars = {
-					"│",
-					-- "¦",
-					-- "┆",
-					-- "┊",
-				},
+				chars = { "│" },
 				exclude_filetypes = {
 					oil_preview = true,
 					oil = true,
@@ -41,10 +41,19 @@ return {
 					left_bottom = "└",
 					right_arrow = "─",
 				},
-				style = style_color,
+				style = color,
 				duration = 50,
-				delay = 75,
+				delay = 50,
 			},
+		})
+
+		vim.api.nvim_create_autocmd("ColorScheme", {
+			callback = function()
+				vim.schedule(function()
+					vim.cmd("silent! lua require('hlchunk').disable()")
+					vim.cmd("silent! lua require('hlchunk').enable()")
+				end)
+			end,
 		})
 	end,
 }

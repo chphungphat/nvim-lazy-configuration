@@ -110,46 +110,61 @@ return {
 			-- },
 		})
 
-		local gruvbox_material = {
-			fg = "#d4be98", -- Foreground
-			bg = "#282828", -- Background (Medium variant)
-			green = "#a9b665", -- Green
-			aqua = "#89b482", -- Aqua / Cyan
-			yellow = "#d8a657", -- Yellow (Warmer than default gruvbox)
-			orange = "#e78a4e", -- Orange
-			red = "#ea6962", -- Red
-			gray = "#928374", -- Neutral Gray
-		}
-
 		local function set_nvim_tree_highlight()
-			vim.api.nvim_set_hl(0, "NvimTreeGitFileNewHL", { fg = gruvbox_material.green })
-			vim.api.nvim_set_hl(0, "NvimTreeGitFolderNewHL", { fg = gruvbox_material.green })
+			local scheme = vim.g.colors_name or "gruvbox-material"
 
-			vim.api.nvim_set_hl(0, "NvimTreeGitFileDirtyHL", { fg = gruvbox_material.aqua })
-			vim.api.nvim_set_hl(0, "NvimTreeGitFolderDirtyHL", { fg = gruvbox_material.aqua })
+			local palettes = {
+				["gruvbox-material"] = {
+					fg = "#d4be98",
+					bg = "#282828",
+					green = "#a9b665",
+					aqua = "#89b482",
+					yellow = "#d8a657",
+					orange = "#e78a4e",
+					red = "#ea6962",
+					gray = "#928374",
+				},
+				["kanagawa"] = {
+					fg = "#C5C9C5",
+					bg = "#1F1F28",
+					green = "#98BB6C",
+					aqua = "#7AA89F",
+					yellow = "#DCA561",
+					orange = "#FFA066",
+					red = "#E82424",
+					gray = "#727169",
+				},
+			}
 
-			vim.api.nvim_set_hl(0, "NvimTreeDiagnosticWarnFileHL", { fg = gruvbox_material.yellow, underline = true })
-			vim.api.nvim_set_hl(0, "NvimTreeDiagnosticWarnFolderHL", { fg = gruvbox_material.yellow, bold = true })
+			local c = palettes[scheme] or palettes["gruvbox-material"]
 
-			vim.api.nvim_set_hl(0, "NvimTreeDiagnosticErrorFileHL", { fg = gruvbox_material.orange, underline = true })
-			vim.api.nvim_set_hl(0, "NvimTreeDiagnosticErrorFolderHL", { fg = gruvbox_material.orange, bold = true })
+			local highlights = {
+				{ name = "NvimTreeGitFileNewHL", fg = c.green },
+				{ name = "NvimTreeGitFolderNewHL", fg = c.green },
+				{ name = "NvimTreeGitFileDirtyHL", fg = c.aqua },
+				{ name = "NvimTreeGitFolderDirtyHL", fg = c.aqua },
+				{ name = "NvimTreeDiagnosticWarnFileHL", fg = c.yellow, underline = true },
+				{ name = "NvimTreeDiagnosticWarnFolderHL", fg = c.yellow, bold = true },
+				{ name = "NvimTreeDiagnosticErrorFileHL", fg = c.orange, underline = true },
+				{ name = "NvimTreeDiagnosticErrorFolderHL", fg = c.orange, bold = true },
+				{ name = "NvimTreeIndentMarker", fg = c.gray },
+				{ name = "NvimTreeWindowPicker", fg = c.bg, bg = c.orange, bold = true },
+			}
 
-			vim.api.nvim_set_hl(0, "NvimTreeIndentMarker", { fg = gruvbox_material.gray }) -- Indentation guides
-
-			-- Window picker background
-			vim.api.nvim_set_hl(0, "NvimTreeWindowPicker", {
-				fg = gruvbox_material.bg,
-				bg = gruvbox_material.orange,
-				bold = true,
-			})
+			for _, h in ipairs(highlights) do
+				local name = h.name
+				h.name = nil
+				vim.api.nvim_set_hl(0, name, h)
+			end
 		end
 
 		-- Apply highlights immediately
 		set_nvim_tree_highlight()
 
-		-- Auto-adjust highlights after colorscheme changes
 		vim.api.nvim_create_autocmd("ColorScheme", {
-			callback = set_nvim_tree_highlight,
+			callback = function()
+				vim.schedule(set_nvim_tree_highlight)
+			end,
 		})
 
 		local tree_api = require("nvim-tree.api")
