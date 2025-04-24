@@ -8,10 +8,10 @@ return {
 			compile = false,
 			undercurl = true,
 			commentStyle = { italic = true },
-			functionStyle = {},
+			functionStyle = { bold = true },
 			keywordStyle = { italic = true },
 			statementStyle = { bold = true },
-			typeStyle = {},
+			typeStyle = { bold = true },
 			transparent = false,
 			dimInactive = false,
 			terminalColors = true,
@@ -20,7 +20,10 @@ return {
 				theme = { wave = {}, lotus = {}, dragon = {}, all = {} },
 			},
 			overrides = function(colors)
-				return {}
+				return {
+					-- String = { fg = colors.palette.carpYellow, italic = true },
+					-- SomePluginHl = { fg = colors.theme.syn.type, bold = true },
+				}
 			end,
 			theme = "dragon",
 			background = {
@@ -28,6 +31,9 @@ return {
 				light = "lotus",
 			},
 		})
+
+		vim.api.nvim_set_hl(0, "CursorLine", { bg = "#2a2a37" })
+		vim.api.nvim_set_hl(0, "CursorLineNr", { fg = "#fabd2f", bold = true })
 
 		-- vim.cmd("colorscheme kanagawa")
 	end,

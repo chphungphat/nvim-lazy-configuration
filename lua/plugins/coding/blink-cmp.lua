@@ -76,10 +76,10 @@ return {
 					score_offset = 99,
 					async = true,
 					opts = {
-						-- max_completions = 2,
+						max_completions = 2,
 						max_attempts = 2,
 						kind = "Copilot",
-						debounce = 1000,
+						debounce = 500,
 					},
 
 					-- transform_items = function(_, items)

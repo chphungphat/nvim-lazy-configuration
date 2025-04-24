@@ -19,9 +19,9 @@ return {
 				suggestion = {
 					enabled = false,
 					auto_trigger = false,
-					debounce = 150,
+					debounce = 100,
 					keymap = {
-						accept = false,
+						accept = "<M-l>",
 						next = "<M-]>",
 						prev = "<M-[>",
 						dismiss = "<C-]>",
@@ -66,6 +66,7 @@ return {
 				-- 	row = 0.1,
 				-- 	col = 0.1,
 				-- },
+				-- agent = "agentic-search",
 				mappings = {
 					complete = {
 						insert = "<C-x>",

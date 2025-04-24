@@ -3,4 +3,4 @@ require("core.option")
 require("core.command")
 require("core.lazy")
 
-vim.cmd("colorscheme kanagawa")
+vim.cmd("colorscheme gruvbox-material")

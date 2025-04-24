@@ -68,7 +68,6 @@ The content is organized as follows:
       fzf-lua.lua
       gitsigns.lua
       hlchunk.lua
-      inline.lua
       lazydev.lua
       neogit.lua
       neoscroll.lua
@@ -201,7 +200,9 @@ vim.opt.undofile = true
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
 
-vim.opt.signcolumn = "yes"
+vim.opt.signcolumn = "auto"
+
+vim.opt.numberwidth = 4
 
 vim.opt.updatetime = 1000
 vim.opt.timeoutlen = 1000
@@ -992,6 +993,9 @@ return {
 </file>
 
 <file path="./lua/plugins/colorschemes/gruvbox-material.lua">
+if true then
+	return {}
+end
 return {
 	"sainnhe/gruvbox-material",
 	event = { "VimEnter", "ColorScheme" },
@@ -1003,7 +1007,7 @@ return {
 		vim.g.gruvbox_material_disable_italic_comment = 0
 		vim.g.gruvbox_material_enable_italic = true
 		vim.g.gruvbox_material_enable_bold = 1
-		vim.cmd.colorscheme("gruvbox-material")
+		-- vim.cmd.colorscheme("gruvbox-material")
 	end,
 }
 </file>
@@ -1024,8 +1028,8 @@ return {
 			statementStyle = { bold = true },
 			typeStyle = {},
 			transparent = false,
-			dimInactive = true, --
-			terminalColors = true, --
+			dimInactive = false,
+			terminalColors = true,
 			colors = { --
 				palette = {},
 				theme = { wave = {}, lotus = {}, dragon = {}, all = {} },
@@ -1040,8 +1044,7 @@ return {
 			},
 		})
 
-		-- setup must be called before loading
-		vim.cmd("colorscheme kanagawa")
+		-- vim.cmd("colorscheme kanagawa")
 	end,
 }
 </file>
@@ -1196,7 +1199,7 @@ return {
 		local fzf = require("fzf-lua")
 
 		local function get_fzf_colors()
-			local colorscheme = vim.g.colors_name or "gruvbox-material"
+			local colorscheme = vim.g.colors_name or "kanagawa"
 
 			local themes = {
 				["gruvbox-material"] = {
@@ -1209,15 +1212,31 @@ return {
 					purple = "#d3869b",
 					aqua = "#89b482",
 					gray = "#928374",
+					hl = "#fabd2f",
+					info = "#83a598",
+					search = "#fe8019",
+					header = "#d79921",
+					pointer = "#fabd2f",
+					marker = "#fe8019",
+					prompt = "#d3869b",
 				},
 				["kanagawa"] = {
 					bg = "#181616",
 					fg = "#C5C9C5",
+					red = "#C34043",
+					green = "#76946A",
+					yellow = "#C0A36E",
+					blue = "#7E9CD8",
+					purple = "#957FB8",
+					aqua = "#7AA89F",
+					gray = "#727169",
 					hl = "#C34043",
 					info = "#7E9CD8",
 					search = "#E82424",
 					header = "#DCA561",
 					pointer = "#9D6F6C",
+					marker = "#C34043",
+					prompt = "#C34043",
 				},
 			}
 
@@ -1273,7 +1292,9 @@ return {
 		apply_fzf_colors()
 
 		vim.api.nvim_create_autocmd("ColorScheme", {
-			callback = apply_fzf_colors,
+			callback = function()
+				vim.schedule(apply_fzf_colors)
+			end,
 		})
 
 		-- Keymaps
@@ -1293,6 +1314,25 @@ return {
 return {
 	"lewis6991/gitsigns.nvim",
 	config = function()
+		local scheme = vim.g.colors_name or "gruvbox-material"
+
+		local palette = {
+			["gruvbox-material"] = {
+				add = "#a9b665",
+				change = "#89b482",
+				delete = "#ea6962",
+				blame = "#d65d0e",
+			},
+			["kanagawa"] = {
+				add = "#98BB6C",
+				change = "#7AA89F",
+				delete = "#FF5D62",
+				blame = "#FFA066",
+			},
+		}
+
+		local c = palette[scheme] or palette["gruvbox-material"]
+
 		require("gitsigns").setup({
 			signs = {
 				add = { text = "▎" },
@@ -1305,58 +1345,79 @@ return {
 			current_line_blame = false,
 			current_line_blame_opts = {
 				virt_text = true,
-				virt_text_pos = "eol", -- 'eol' | 'overlay' | 'right_align'
+				virt_text_pos = "eol",
 				delay = 400,
 				ignore_whitespace = false,
 				virt_text_priority = 100,
 				virt_text_hl_group = "GitSignsCurrentLineBlame",
 			},
-			current_line_blame_formatter = "<author>, <author_time:%d-%m-%Y> - <summary>",
+			current_line_blame_formatter = "<author>, <author_time:%Y-%m-%d> - <summary>",
 
 			on_attach = function(bufnr)
 				local gs = package.loaded.gitsigns
-
-				local function map(mode, key, cmd, opts)
-					opts = opts or {}
-					opts.buffer = bufnr
-					vim.keymap.set(mode, key, cmd, opts)
+				local map = function(mode, key, cmd, desc)
+					vim.keymap.set(mode, key, cmd, { buffer = bufnr, silent = true, desc = desc })
 				end
 
+				-- Navigation
 				map("n", "]h", function()
 					if vim.wo.diff then
 						return "]h"
 					end
-					vim.schedule(function()
-						gs.next_hunk()
-					end)
+					vim.schedule(gs.next_hunk)
 					return "<Ignore>"
-				end, { expr = true })
+				end, "Next Git Hunk")
 
 				map("n", "[h", function()
 					if vim.wo.diff then
 						return "[h"
 					end
-					vim.schedule(function()
-						gs.prev_hunk()
-					end)
+					vim.schedule(gs.prev_hunk)
 					return "<Ignore>"
-				end, { expr = true })
+				end, "Previous Git Hunk")
 
-				map("n", "<leader>hr", gs.reset_hunk)
-				map("n", "<leader>hR", gs.reset_buffer)
-				map("n", "<leader>gb", gs.toggle_current_line_blame)
+				-- GitSigns actions with "gs" prefix
+				map("n", "gsb", gs.toggle_current_line_blame, "Toggle Line Blame")
+				map("n", "gsB", gs.blame_line, "Blame Line (Full)")
+				map("n", "gsr", gs.reset_hunk, "Reset Hunk")
+				map("n", "gsR", gs.reset_buffer, "Reset Buffer")
+				map("n", "gss", gs.stage_hunk, "Stage Hunk")
+				map("n", "gsS", gs.stage_buffer, "Stage Buffer")
+				map("n", "gsu", gs.undo_stage_hunk, "Undo Stage Hunk")
+				map("n", "gsd", gs.diffthis, "Diff This")
+				map("n", "gsD", function()
+					gs.diffthis("~")
+				end, "Diff Base")
+
+				-- Visual mode selection
+				map("v", "gss", function()
+					gs.stage_hunk({ vim.fn.line("."), vim.fn.line("v") })
+				end, "Stage Selection")
+				map("v", "gsr", function()
+					gs.reset_hunk({ vim.fn.line("."), vim.fn.line("v") })
+				end, "Reset Selection")
 			end,
 		})
 
-		vim.api.nvim_set_hl(0, "GitSignsCurrentLineBlame", { fg = "#d65d0e", italic = true })
+		-- Apply theme highlights
+		vim.api.nvim_set_hl(0, "GitSignsAdd", { fg = c.add })
+		vim.api.nvim_set_hl(0, "GitSignsChange", { fg = c.change })
+		vim.api.nvim_set_hl(0, "GitSignsDelete", { fg = c.delete })
+		vim.api.nvim_set_hl(0, "GitSignsCurrentLineBlame", { fg = c.blame, italic = true })
 
-		-- Apply the custom highlight to the virtual text
-		vim.cmd([[
-     augroup GitSignsCustomHighlight
-        autocmd!
-        autocmd ColorScheme * highlight GitSignsCurrentLineBlame guifg=#d65d0e gui=italic
-      augroup END
-    ]])
+		-- Sync colors with colorscheme changes
+		vim.api.nvim_create_autocmd("ColorScheme", {
+			callback = function()
+				vim.schedule(function()
+					local scheme = vim.g.colors_name or "gruvbox-material"
+					local c = palette[scheme] or palette["gruvbox-material"]
+					vim.api.nvim_set_hl(0, "GitSignsAdd", { fg = c.add })
+					vim.api.nvim_set_hl(0, "GitSignsChange", { fg = c.change })
+					vim.api.nvim_set_hl(0, "GitSignsDelete", { fg = c.delete })
+					vim.api.nvim_set_hl(0, "GitSignsCurrentLineBlame", { fg = c.blame, italic = true })
+				end)
+			end,
+		})
 	end,
 }
 </file>
@@ -1366,14 +1427,18 @@ return {
 	"shellRaining/hlchunk.nvim",
 	event = { "BufReadPre", "BufNewFile" },
 	config = function()
-		local colorscheme = vim.g.colors_name or "kanagawa"
+		local scheme = vim.g.colors_name or "kanagawa"
 
-		local style = {
-			["gruvbox-material"] = "#d47d26",
-			["kanagawa"] = "#C34043",
+		local palette = {
+			["gruvbox-material"] = {
+				chunk_style = "#d47d26",
+			},
+			["kanagawa"] = {
+				chunk_style = "#FFA066",
+			},
 		}
 
-		local style_color = style[colorscheme] or "#ffffff"
+		local color = (palette[scheme] or palette["gruvbox-material"]).chunk_style
 
 		require("hlchunk").setup({
 			indent = {
@@ -1401,42 +1466,18 @@ return {
 					left_bottom = "└",
 					right_arrow = "─",
 				},
-				style = style_color,
+				style = color,
 				duration = 50,
 				delay = 50,
 			},
 		})
-	end,
-}
-</file>
 
-<file path="./lua/plugins/inline.lua">
-return {
-	"b0o/incline.nvim",
-	event = "VeryLazy",
-	config = function()
-		local helpers = require("incline.helpers")
-		local devicons = require("nvim-web-devicons")
-
-		require("incline").setup({
-			window = {
-				padding = 0,
-				margin = { horizontal = 0 },
-			},
-			render = function(props)
-				local filename = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(props.buf), ":t")
-				if filename == "" then
-					filename = "[No Name]"
-				end
-				local ft_icon, ft_color = devicons.get_icon_color(filename)
-				local modified = vim.bo[props.buf].modified
-				return {
-					ft_icon and { " ", ft_icon, " ", guibg = ft_color, guifg = helpers.contrast_color(ft_color) } or "",
-					" ",
-					{ filename, gui = modified and "bold,italic" or "bold" },
-					" ",
-					guibg = "#504945",
-				}
+		vim.api.nvim_create_autocmd("ColorScheme", {
+			callback = function()
+				vim.schedule(function()
+					vim.cmd("silent! lua require('hlchunk').disable()")
+					vim.cmd("silent! lua require('hlchunk').enable()")
+				end)
 			end,
 		})
 	end,
@@ -1687,46 +1728,61 @@ return {
 			-- },
 		})
 
-		local gruvbox_material = {
-			fg = "#d4be98", -- Foreground
-			bg = "#282828", -- Background (Medium variant)
-			green = "#a9b665", -- Green
-			aqua = "#89b482", -- Aqua / Cyan
-			yellow = "#d8a657", -- Yellow (Warmer than default gruvbox)
-			orange = "#e78a4e", -- Orange
-			red = "#ea6962", -- Red
-			gray = "#928374", -- Neutral Gray
-		}
-
 		local function set_nvim_tree_highlight()
-			vim.api.nvim_set_hl(0, "NvimTreeGitFileNewHL", { fg = gruvbox_material.green })
-			vim.api.nvim_set_hl(0, "NvimTreeGitFolderNewHL", { fg = gruvbox_material.green })
+			local scheme = vim.g.colors_name or "gruvbox-material"
 
-			vim.api.nvim_set_hl(0, "NvimTreeGitFileDirtyHL", { fg = gruvbox_material.aqua })
-			vim.api.nvim_set_hl(0, "NvimTreeGitFolderDirtyHL", { fg = gruvbox_material.aqua })
+			local palettes = {
+				["gruvbox-material"] = {
+					fg = "#d4be98",
+					bg = "#282828",
+					green = "#a9b665",
+					aqua = "#89b482",
+					yellow = "#d8a657",
+					orange = "#e78a4e",
+					red = "#ea6962",
+					gray = "#928374",
+				},
+				["kanagawa"] = {
+					fg = "#C5C9C5",
+					bg = "#1F1F28",
+					green = "#98BB6C",
+					aqua = "#7AA89F",
+					yellow = "#DCA561",
+					orange = "#FFA066",
+					red = "#E82424",
+					gray = "#727169",
+				},
+			}
 
-			vim.api.nvim_set_hl(0, "NvimTreeDiagnosticWarnFileHL", { fg = gruvbox_material.yellow, underline = true })
-			vim.api.nvim_set_hl(0, "NvimTreeDiagnosticWarnFolderHL", { fg = gruvbox_material.yellow, bold = true })
+			local c = palettes[scheme] or palettes["gruvbox-material"]
 
-			vim.api.nvim_set_hl(0, "NvimTreeDiagnosticErrorFileHL", { fg = gruvbox_material.orange, underline = true })
-			vim.api.nvim_set_hl(0, "NvimTreeDiagnosticErrorFolderHL", { fg = gruvbox_material.orange, bold = true })
+			local highlights = {
+				{ name = "NvimTreeGitFileNewHL", fg = c.green },
+				{ name = "NvimTreeGitFolderNewHL", fg = c.green },
+				{ name = "NvimTreeGitFileDirtyHL", fg = c.aqua },
+				{ name = "NvimTreeGitFolderDirtyHL", fg = c.aqua },
+				{ name = "NvimTreeDiagnosticWarnFileHL", fg = c.yellow, underline = true },
+				{ name = "NvimTreeDiagnosticWarnFolderHL", fg = c.yellow, bold = true },
+				{ name = "NvimTreeDiagnosticErrorFileHL", fg = c.orange, underline = true },
+				{ name = "NvimTreeDiagnosticErrorFolderHL", fg = c.orange, bold = true },
+				{ name = "NvimTreeIndentMarker", fg = c.gray },
+				{ name = "NvimTreeWindowPicker", fg = c.bg, bg = c.orange, bold = true },
+			}
 
-			vim.api.nvim_set_hl(0, "NvimTreeIndentMarker", { fg = gruvbox_material.gray }) -- Indentation guides
-
-			-- Window picker background
-			vim.api.nvim_set_hl(0, "NvimTreeWindowPicker", {
-				fg = gruvbox_material.bg,
-				bg = gruvbox_material.orange,
-				bold = true,
-			})
+			for _, h in ipairs(highlights) do
+				local name = h.name
+				h.name = nil
+				vim.api.nvim_set_hl(0, name, h)
+			end
 		end
 
 		-- Apply highlights immediately
 		set_nvim_tree_highlight()
 
-		-- Auto-adjust highlights after colorscheme changes
 		vim.api.nvim_create_autocmd("ColorScheme", {
-			callback = set_nvim_tree_highlight,
+			callback = function()
+				vim.schedule(set_nvim_tree_highlight)
+			end,
 		})
 
 		local tree_api = require("nvim-tree.api")
@@ -2067,6 +2123,8 @@ require("core.keymap")
 require("core.option")
 require("core.command")
 require("core.lazy")
+
+vim.cmd("colorscheme kanagawa")
 </file>
 
 </files>

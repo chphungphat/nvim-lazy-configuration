@@ -10,5 +10,8 @@ return {
 		vim.g.gruvbox_material_enable_italic = true
 		vim.g.gruvbox_material_enable_bold = 1
 		-- vim.cmd.colorscheme("gruvbox-material")
+
+		vim.api.nvim_set_hl(0, "CursorLine", { bg = "#3c3836" })
+		vim.api.nvim_set_hl(0, "CursorLineNr", { fg = "#fabd2f", bold = true })
 	end,
 }

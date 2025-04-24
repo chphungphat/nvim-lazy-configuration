@@ -7,7 +7,7 @@ return {
 		local fzf = require("fzf-lua")
 
 		local function get_fzf_colors()
-			local colorscheme = vim.g.colors_name or "kanagawa"
+			local colorscheme = vim.g.colors_name or "gruvbox-material"
 
 			local themes = {
 				["gruvbox-material"] = {
