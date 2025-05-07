@@ -1,13 +1,10 @@
 return {
-	"williamboman/mason.nvim",
+	"mason-org/mason.nvim",
 	dependencies = {
-		-- "hrsh7th/cmp-nvim-lsp",
-		"WhoIsSethDaniel/mason-tool-installer.nvim",
 		"stevearc/dressing.nvim",
 	},
 	config = function()
 		local mason = require("mason")
-		local mason_tool_installer = require("mason-tool-installer")
 
 		mason.setup({
 			ui = {
@@ -27,18 +24,6 @@ return {
 					cancel_installation = "<C-c>",
 					apply_language_filter = "<C-f>",
 				},
-			},
-		})
-
-		mason_tool_installer.setup({
-			ensure_installed = {
-				"prettier",
-				"stylua",
-				"typescript-language-server",
-				"lua-language-server",
-				"marksman",
-				"bash-language-server",
-				"shfmt",
 			},
 		})
 
