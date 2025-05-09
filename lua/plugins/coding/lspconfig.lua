@@ -93,6 +93,23 @@ return {
 
 				opts.desc = "Restart LSP"
 				keymap.set("n", "<leader>rs", ":LspRestart<CR>", opts)
+
+				opts.desc = "Organize imports"
+				keymap.set("n", "<leader>oi", function()
+					if
+						vim.bo.filetype == "typescript"
+						or vim.bo.filetype == "typescriptreact"
+						or vim.bo.filetype == "javascript"
+						or vim.bo.filetype == "javascriptreact"
+					then
+						local params = {
+							command = "_typescript.organizeImports",
+							arguments = { vim.api.nvim_buf_get_name(0) },
+							title = "",
+						}
+						vim.lsp.buf_request_sync(0, "workspace/executeCommand", params, 1000)
+					end
+				end, opts)
 			end,
 		})
 
@@ -147,6 +164,48 @@ return {
 				"vimls",
 			},
 			automatic_enable = true,
+		})
+
+		vim.lsp.config("lua_ls", {
+			capabilities = capabilities,
+			settings = {
+				Lua = {
+					diagnostics = {
+						globals = { "vim" },
+					},
+					completion = {
+						callSnippet = "Replace",
+					},
+				},
+			},
+		})
+
+		-- This will organize imports on save
+		-- vim.lsp.config("ts_ls", {
+		-- 	capabilities = capabilities,
+		-- 	on_attach = function(client, bufnr)
+		-- 		vim.api.nvim_create_autocmd("BufWritePre", {
+		-- 			buffer = bufnr,
+		-- 			callback = function()
+		-- 				if client.name == "ts_ls" then
+		-- 					local params = {
+		-- 						command = "_typescript.organizeImports",
+		-- 						arguments = { vim.api.nvim_buf_get_name(bufnr) },
+		-- 						title = "",
+		-- 					}
+		-- 					vim.lsp.buf_request_sync(bufnr, "workspace/executeCommand", params, 1000)
+		-- 				end
+		-- 			end,
+		-- 		})
+		-- 	end,
+		-- })
+
+		vim.lsp.config("ts_ls", {
+			capabilities = capabilities,
+		})
+
+		vim.lsp.config("bashls", {
+			capabilities = capabilities,
 		})
 	end,
 }
