@@ -11,8 +11,6 @@ vim.keymap.set("n", "<leader>\\", "<C-w>v", { desc = "Split vertical" })
 
 vim.keymap.set("n", "<ESC>", "<cmd>nohlsearch<CR>")
 
-vim.keymap.set("n", "[e", vim.diagnostic.goto_prev, { desc = "Go to previous Diagnostic message" })
-vim.keymap.set("n", "]e", vim.diagnostic.goto_next, { desc = "Go to next Diagnostic message" })
 vim.keymap.set("n", "<leader>cd", vim.diagnostic.open_float, { desc = "Show diagnostic Error messages" })
 vim.keymap.set("n", "<leader>ca", vim.diagnostic.setloclist, { desc = "Open diagnostic Quickfix list" })
 
