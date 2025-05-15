@@ -16,10 +16,30 @@ return {
 			darker = "#111111", --  Hard but even darker
 			dark_soft = "#101010", --  Almost black but slightly lighter
 			dark_gray = "#121212", -- Very dark gray (popular "true black" alternative)
+
+			medium_dark = "#1d1d1d", -- Medium dark gray
+			standard_dark = "#282828", -- Standard dark gray (original gruvbox dark)
+			lighter_dark = "#32302f", -- Lighter dark gray (close to original gruvbox soft)
+			medium_gray = "#3c3836", -- Medium gray
+			light_gray = "#504945", -- Light gray (still dark enough for a dark theme)
 		}
 
-		local selected_bg = bg_colors.dark_gray
-		local cursorline_bg = "#1a1a1a"
+		local cursorline_bg_colors = {
+			very_dark = "#191919", -- Slightly lighter than very_dark
+			darker_hard = "#202020", -- Slightly lighter than darker_hard
+			darker = "#1a1a1a", -- Slightly lighter than darker
+			dark_soft = "#1a1a1a", -- Slightly lighter than dark_soft
+			dark_gray = "#1c1c1c", -- Slightly lighter than dark_gray
+
+			medium_dark = "#262626", -- Slightly lighter than medium_dark
+			standard_dark = "#32302f", -- Slightly lighter than standard_dark
+			lighter_dark = "#3c3836", -- Slightly lighter than lighter_dark
+			medium_gray = "#45403d", -- Slightly lighter than medium_gray
+			light_gray = "#5a524c", -- Slightly lighter than light_gray
+		}
+
+		local selected_bg = bg_colors.medium_dark
+		local cursorline_bg = cursorline_bg_colors.medium_dark
 
 		local function override_backgrounds()
 			local normal_hl = vim.api.nvim_get_hl(0, { name = "Normal" })
