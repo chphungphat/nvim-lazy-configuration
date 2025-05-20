@@ -6,7 +6,6 @@ return {
 		"fang2hou/blink-copilot",
 		"lspkind.nvim",
 		"echasnovski/mini.icons",
-		"mikavilpas/blink-ripgrep.nvim",
 	},
 	version = "1.*",
 	opts = {
@@ -28,7 +27,6 @@ return {
 				"buffer",
 				"lazydev",
 				"copilot",
-				"ripgrep",
 			},
 
 			providers = {
@@ -71,7 +69,7 @@ return {
 				copilot = {
 					name = "Copilot",
 					module = "blink-copilot",
-					score_offset = 99,
+					score_offset = 101,
 					async = true,
 					opts = {
 						max_completions = 3,
@@ -84,27 +82,6 @@ return {
 							forward = true,
 						},
 					},
-				},
-
-				ripgrep = {
-					module = "blink-ripgrep",
-					name = "Ripgrep",
-					score_offset = 99,
-					opts = {
-						prefix_min_len = 3,
-						context_size = 5,
-						max_filesize = "1M",
-						project_root_marker = ".git",
-						search_casing = "--ignore-case",
-						fallback_to_regex_highlighting = true,
-						debug = false,
-					},
-					transform_items = function(_, items)
-						for _, item in ipairs(items) do
-							item.labelDetails = { description = "(rg)" }
-						end
-						return items
-					end,
 				},
 			},
 		},
