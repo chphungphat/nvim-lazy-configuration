@@ -38,8 +38,8 @@ return {
 			light_gray = "#5a524c", -- Slightly lighter than light_gray
 		}
 
-		local selected_bg = bg_colors.medium_dark
-		local cursorline_bg = cursorline_bg_colors.medium_dark
+		local selected_bg = bg_colors.standard_dark
+		local cursorline_bg = cursorline_bg_colors.standard_dark
 
 		local function override_backgrounds()
 			local normal_hl = vim.api.nvim_get_hl(0, { name = "Normal" })
