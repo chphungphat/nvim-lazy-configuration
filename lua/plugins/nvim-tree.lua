@@ -425,7 +425,7 @@ return {
 
     -- Enhanced keymaps
     vim.keymap.set("n", "<C-t>", smart_tree_toggle, { desc = "Smart tree toggle" })
-    vim.keymap.set("n", "<leader>e", smart_tree_toggle, { desc = "Smart tree toggle" })
+    vim.keymap.set("n", "<leader>ee", smart_tree_toggle, { desc = "Smart tree toggle" })
     vim.keymap.set("n", "<leader>ef", focus_on_current_file, { desc = "Focus on current file" })
     vim.keymap.set("n", "<leader>er", change_root_to_global_cwd, { desc = "Change root to global CWD" })
     vim.keymap.set("n", "<leader>ec", collapse_all, { desc = "Collapse all folders" })

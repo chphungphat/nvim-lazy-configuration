@@ -125,7 +125,7 @@ return {
       list = {
         max_items = 50, -- Reasonable limit for performance
         selection = {
-          preselect = true,
+          preselect = false,
           auto_insert = false, -- Manual control over insertion
         },
         cycle = {

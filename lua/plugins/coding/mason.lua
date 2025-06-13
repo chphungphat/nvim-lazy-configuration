@@ -41,16 +41,15 @@ return {
       require("mason-lspconfig").setup({
         -- Install these language servers through Mason
         ensure_installed = {
-          "ts_ls", -- TypeScript Language Server (reliable alternative to VTSLS)
-          "lua_ls", -- Lua language server
-          "bashls", -- Bash language server
-          "vimls", -- Vim language server
+          "ts_ls",    -- TypeScript Language Server (reliable alternative to VTSLS)
+          "lua_ls",   -- Lua language server
+          "bashls",   -- Bash language server
+          "vimls",    -- Vim language server
           "marksman", -- Markdown language server
-          "jsonls", -- JSON language server
-          "yamlls", -- YAML language server
-          "html", -- HTML language server
-          "cssls", -- CSS language server
-          "eslint", -- ESLint language server
+          "jsonls",   -- JSON language server
+          "yamlls",   -- YAML language server
+          "html",     -- HTML language server
+          "cssls",    -- CSS language server
         },
         automatic_installation = true,
       })
@@ -66,17 +65,16 @@ return {
         ensure_installed = {
           -- Formatters
           "prettier", -- Prettier formatter
-          "stylua", -- Lua formatter
-          "shfmt", -- Shell script formatter
-          "black", -- Python formatter
-          "isort", -- Python import sorter
+          "stylua",   -- Lua formatter
+          "shfmt",    -- Shell script formatter
+          "black",    -- Python formatter
+          "isort",    -- Python import sorter
 
           -- Linters (remove luacheck if it's causing issues)
-          "eslint_d", -- ESLint daemon
           "shellcheck", -- Shell script linter
           -- "luacheck", -- Lua linter (removed due to installation issues)
         },
-        auto_update = false, -- Disable auto-update to prevent issues
+        auto_update = false,  -- Disable auto-update to prevent issues
         run_on_start = false, -- Don't run on start to prevent startup delays
       })
     end,
