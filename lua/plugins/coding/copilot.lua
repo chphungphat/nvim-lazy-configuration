@@ -9,37 +9,48 @@ return {
 		config = function()
 			require("copilot").setup({
 				panel = {
-					enabled = false,
-					auto_refresh = true,
-					layout = {
-						position = "bottom",
-						ratio = 0.4,
-					},
+					enabled = false, -- Disable panel as we use blink.cmp integration
+					auto_refresh = false,
 				},
 				suggestion = {
-					enabled = false,
+					enabled = false, -- Disable suggestions as we use blink.cmp integration
 					auto_trigger = false,
-					debounce = 100,
-					keymap = {
-						accept = "<M-l>",
-						next = "<M-]>",
-						prev = "<M-[>",
-						dismiss = "<C-]>",
-					},
 				},
 				filetypes = {
+					-- Enable for specific filetypes
+					lua = true,
+					javascript = true,
+					typescript = true,
+					javascriptreact = true,
+					typescriptreact = true,
+					python = true,
+					rust = true,
+					go = true,
+					java = true,
+					c = true,
+					cpp = true,
 					markdown = true,
-					help = false,
+					yaml = true,
+					json = true,
+					html = true,
+					css = true,
+					scss = true,
+					-- Disable for certain filetypes
 					gitcommit = false,
 					gitrebase = false,
+					help = false,
 					["."] = false,
 					[""] = false,
 				},
-				copilot_node_command = "node",
+				copilot_node_command = "node", -- Use system node
 				server_opts_overrides = {
-					advanced = {
-						inlineSuggestCount = 3,
-						length = 100,
+					trace = "off", -- Reduce logging for performance
+					settings = {
+						advanced = {
+							inlineSuggestCount = 3,
+							length = 500, -- Allow longer suggestions
+							listCount = 10, -- More suggestions for blink.cmp
+						},
 					},
 				},
 			})
@@ -47,29 +58,104 @@ return {
 	},
 	{
 		"CopilotC-Nvim/CopilotChat.nvim",
-		event = "VeryLazy",
+		branch = "main",
 		dependencies = {
 			"zbirenbaum/copilot.lua",
 			"nvim-lua/plenary.nvim",
+			"stevearc/dressing.nvim", -- For better UI selection
 		},
+		build = "make tiktoken", -- Only on MacOS or Linux
+		event = "VeryLazy",
 		config = function()
 			local chat = require("CopilotChat")
-			local select = require("CopilotChat.select")
 
 			chat.setup({
 				debug = false,
 				show_help = false,
-				model = "claude-3.7-sonnet-thought",
-				-- window = {
-				-- 	width = 0.8,
-				-- 	height = 0.8,
-				-- 	row = 0.1,
-				-- 	col = 0.1,
-				-- },
-				-- agent = "agentic-search",
+				model = "gpt-4o-2024-11-20", -- Latest GPT-4o model
+				agent = "copilot", -- Use official Copilot agent
+				context = nil, -- Auto-detect context
+				temperature = 0.1,
+
+				-- Window configuration
+				window = {
+					layout = "vertical", -- or 'horizontal', 'float', 'replace'
+					width = 0.4, -- 40% of screen width
+					height = 0.8, -- 80% of screen height
+					relative = "editor",
+					border = "rounded",
+					title = "Copilot Chat",
+				},
+
+				-- Selection configuration
+				selection = function(source)
+					local select = require("CopilotChat.select")
+					return select.visual(source) or select.line(source)
+				end,
+
+				-- Prompts configuration
+				prompts = {
+					Explain = {
+						prompt = "/COPILOT_EXPLAIN Write an explanation for the active selection as paragraphs of text.",
+					},
+					Review = {
+						prompt = "/COPILOT_REVIEW Review the selected code.",
+						callback = function(response, source)
+							-- Add review to quickfix
+							local lines = vim.split(response, "\n", { plain = true })
+							local qf_entries = {}
+							for i, line in ipairs(lines) do
+								if line:match("^-") or line:match("^%+") then
+									table.insert(qf_entries, {
+										filename = source.filename or "",
+										lnum = source.line_start or 1,
+										col = 1,
+										text = line,
+									})
+								end
+							end
+							if #qf_entries > 0 then
+								vim.fn.setqflist(qf_entries, "r")
+								vim.cmd("copen")
+							end
+						end,
+					},
+					Fix = {
+						prompt = "/COPILOT_GENERATE There is a problem in this code. Rewrite the code to fix the problem.",
+					},
+					Optimize = {
+						prompt = "/COPILOT_GENERATE Optimize the selected code to improve performance and readability.",
+					},
+					Docs = {
+						prompt = "/COPILOT_GENERATE Please add documentation comment for the selection.",
+					},
+					Tests = {
+						prompt = "/COPILOT_GENERATE Please generate tests for my code.",
+					},
+					FixDiagnostic = {
+						prompt = "Please assist with the following diagnostic issue in file:",
+						selection = function(source)
+							return require("CopilotChat.select").diagnostics(source)
+						end,
+					},
+					Commit = {
+						prompt = "Write commit message for the change with commitizen convention. Make sure the title has maximum 50 characters and message is wrapped at 72 characters. Wrap the whole message in code block with language gitcommit.",
+						selection = function(source)
+							return require("CopilotChat.select").gitdiff(source, true)
+						end,
+					},
+					CommitStaged = {
+						prompt = "Write commit message for the change with commitizen convention. Make sure the title has maximum 50 characters and message is wrapped at 72 characters. Wrap the whole message in code block with language gitcommit.",
+						selection = function(source)
+							return require("CopilotChat.select").gitdiff(source)
+						end,
+					},
+				},
+
+				-- Mappings
 				mappings = {
 					complete = {
-						insert = "<C-x>",
+						insert = "<Tab>",
 					},
 					close = {
 						normal = "q",
@@ -81,7 +167,24 @@ return {
 					},
 					submit_prompt = {
 						normal = "<CR>",
-						insert = "<C-CR>",
+						insert = "<C-s>",
+					},
+					accept_diff = {
+						normal = "<C-y>",
+						insert = "<C-y>",
+					},
+					yank_diff = {
+						normal = "gy",
+						register = '"',
+					},
+					show_diff = {
+						normal = "gd",
+					},
+					show_info = {
+						normal = "gi",
+					},
+					show_context = {
+						normal = "gc",
 					},
 				},
 			})
@@ -94,70 +197,46 @@ return {
 				vim.keymap.set(mode, lhs, rhs, opts)
 			end
 
-			-- Chat commands
-			local chat_commands = {
-				{ key = "<leader>cpp", cmd = ":CopilotChatOpen<CR>", desc = "Open Chat" },
-				{ key = "<leader>cpt", cmd = ":CopilotChatTests<CR>", desc = "Generate Tests" },
-				{ key = "<leader>cpr", cmd = ":CopilotChatReview<CR>", desc = "Review Code" },
-			}
+			-- Chat commands with better organization
+			map("n", "<leader>cco", ":CopilotChatOpen<CR>", { desc = "Open Copilot Chat" })
+			map("n", "<leader>ccc", ":CopilotChatClose<CR>", { desc = "Close Copilot Chat" })
+			map("n", "<leader>cct", ":CopilotChatToggle<CR>", { desc = "Toggle Copilot Chat" })
+			map("n", "<leader>ccr", ":CopilotChatReset<CR>", { desc = "Reset Copilot Chat" })
 
-			-- Buffer operations
-			local buffer_commands = {
-				{
-					key = "<leader>cpo",
-					fn = function()
-						vim.cmd("normal! ggVG")
-						vim.cmd("CopilotChatOptimize")
-					end,
-					desc = "Optimize Buffer",
-				},
-				{
-					key = "<leader>cpf",
-					fn = function()
-						vim.cmd("normal! ggVG")
-						vim.cmd("CopilotChatFix")
-					end,
-					desc = "Fix Buffer",
-				},
-				{
-					key = "<leader>cpe",
-					fn = function()
-						vim.cmd("normal! ggVG")
-						vim.cmd("CopilotChatExplain")
-					end,
-					desc = "Explain Buffer",
-				},
-			}
-
-			-- Quick chat with input
-			local function quick_chat()
-				local input = vim.fn.input("Quick Chat: ")
-				if input ~= "" then
-					chat.ask(input, { selection = select.buffer })
-				end
-			end
-
-			-- Register normal mode commands
-			for _, cmd in ipairs(chat_commands) do
-				map("n", cmd.key, cmd.cmd, { desc = cmd.desc })
-			end
-
-			for _, cmd in ipairs(buffer_commands) do
-				map("n", cmd.key, cmd.fn, { desc = cmd.desc })
-			end
-
-			map({ "n" }, "<leader>cpq", quick_chat, { desc = "Quick Chat" })
+			-- Quick actions
+			map("n", "<leader>cce", ":CopilotChatExplain<CR>", { desc = "Explain code" })
+			map("n", "<leader>ccf", ":CopilotChatFix<CR>", { desc = "Fix code" })
+			map("n", "<leader>ccv", ":CopilotChatReview<CR>", { desc = "Review code" })
+			map("n", "<leader>cco", ":CopilotChatOptimize<CR>", { desc = "Optimize code" })
+			map("n", "<leader>ccd", ":CopilotChatDocs<CR>", { desc = "Add documentation" })
+			map("n", "<leader>cct", ":CopilotChatTests<CR>", { desc = "Generate tests" })
 
 			-- Visual mode mappings
-			map("v", "<leader>cpo", ":CopilotChatOptimize<CR>", { desc = "Optimize Selection" })
-			map("v", "<leader>cpf", ":CopilotChatFix<CR>", { desc = "Fix Selection" })
-			map("v", "<leader>cpe", ":CopilotChatExplain<CR>", { desc = "Explain Selection" })
-			map(
-				"v",
-				"<leader>cpq",
-				":<C-u>lua require('CopilotChat').ask(vim.fn.input('Quick Chat: '), { selection = require('CopilotChat.select').visual })<CR>",
-				{ desc = "Quick Chat (Visual)" }
-			)
+			map("v", "<leader>cce", ":CopilotChatExplain<CR>", { desc = "Explain selection" })
+			map("v", "<leader>ccf", ":CopilotChatFix<CR>", { desc = "Fix selection" })
+			map("v", "<leader>ccv", ":CopilotChatReview<CR>", { desc = "Review selection" })
+			map("v", "<leader>cco", ":CopilotChatOptimize<CR>", { desc = "Optimize selection" })
+
+			-- Diagnostics and commit helpers
+			map("n", "<leader>ccx", ":CopilotChatFixDiagnostic<CR>", { desc = "Fix diagnostic" })
+			map("n", "<leader>ccm", ":CopilotChatCommit<CR>", { desc = "Generate commit message" })
+			map("n", "<leader>ccM", ":CopilotChatCommitStaged<CR>", { desc = "Generate staged commit message" })
+
+			-- Quick chat with input
+			map("n", "<leader>ccq", function()
+				local input = vim.fn.input("Quick Chat: ")
+				if input ~= "" then
+					require("CopilotChat").ask(input, { selection = require("CopilotChat.select").buffer })
+				end
+			end, { desc = "Quick chat" })
+
+			-- Visual mode quick chat
+			map("v", "<leader>ccq", function()
+				local input = vim.fn.input("Quick Chat: ")
+				if input ~= "" then
+					require("CopilotChat").ask(input, { selection = require("CopilotChat.select").visual })
+				end
+			end, { desc = "Quick chat with selection" })
 		end,
 	},
 }

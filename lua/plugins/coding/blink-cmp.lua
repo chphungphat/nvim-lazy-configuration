@@ -1,258 +1,247 @@
 return {
-	"saghen/blink.cmp",
-	dependencies = {
-		"folke/lazydev.nvim",
-		-- "rafamadriz/friendly-snippets",
-		"fang2hou/blink-copilot",
-		"lspkind.nvim",
-		"echasnovski/mini.icons",
-	},
-	-- Use latest stable version to avoid crashes
-	version = "1.*", -- Use latest stable in 1.x series
+  "saghen/blink.cmp",
+  dependencies = {
+    "folke/lazydev.nvim",
+    "fang2hou/blink-copilot", -- Updated copilot integration
+    "echasnovski/mini.icons",
+  },
+  version = "1.*", -- Use latest 1.x stable version
 
-	-- Force Lua implementation to avoid Rust-related crashes
-	build = function()
-		-- Disable prebuilt binaries for Ubuntu 25.04 compatibility
-		return false
-	end,
+  opts = {
+    keymap = {
+      preset = "none", -- RESTORED: Your original preset
+      ["<C-k>"] = { "select_prev", "fallback" },
+      ["<C-j>"] = { "select_next", "fallback" },
+      ["<CR>"] = { "accept", "fallback" },
+      ["<C-b>"] = { "scroll_documentation_up", "fallback" },
+      ["<C-f>"] = { "scroll_documentation_down", "fallback" },
+      ["<C-Space>"] = { "show", "fallback" },
+    },
 
-	opts = {
-		keymap = {
-			preset = "none",
-			["<C-k>"] = { "select_prev", "fallback" },
-			["<C-j>"] = { "select_next", "fallback" },
-			["<CR>"] = { "accept", "fallback" },
-			["<C-b>"] = { "scroll_documentation_up", "fallback" },
-			["<C-f>"] = { "scroll_documentation_down", "fallback" },
-			["<C-Space>"] = { "show", "fallback" },
-		},
+    sources = {
+      default = {
+        "lsp",
+        "path",
+        "buffer",
+        "lazydev",
+        "copilot",
+      },
+      -- Enable per-filetype sources if needed
+      per_filetype = {},
+      -- Minimum keyword length to trigger providers
+      min_keyword_length = 0,
+      -- Transform items before returning (optional)
+      transform_items = function(_, items)
+        return items
+      end,
 
-		sources = {
-			default = {
-				"lsp",
-				"path",
-				-- "snippets",
-				"buffer",
-				"lazydev",
-				"copilot",
-			},
+      providers = {
+        lazydev = {
+          name = "LazyDev",
+          module = "lazydev.integrations.blink",
+          score_offset = 100,
+        },
 
-			providers = {
-				lazydev = {
-					name = "LazyDev",
-					module = "lazydev.integrations.blink",
-					score_offset = 98,
-				},
+        lsp = {
+          name = "LSP",
+          module = "blink.cmp.sources.lsp",
+          fallbacks = { "buffer" },
+          async = true,
+          score_offset = 100,
 
-				lsp = {
-					name = "LSP",
-					module = "blink.cmp.sources.lsp",
-					fallbacks = { "buffer" },
-					async = true, -- IMPORTANT: Enable async to prevent crashes
+          -- RESTORED: Minimal filtering to allow auto-imports
+          transform_items = function(_, items)
+            -- Only filter out problematic items, keep most for auto-imports
+            return vim.tbl_filter(function(item)
+              -- Only filter out text items, keep everything else
+              return item.kind ~= require('blink.cmp.types').CompletionItemKind.Text
+            end, items)
+          end,
+        },
 
-					-- Disable snippet support for TypeScript to prevent crashes
-					-- Transform items to prevent TypeScript-related crashes
-					transform_items = function(_, items)
-						return vim.tbl_filter(function(item)
-							-- Filter out problematic completion types that can cause crashes
-							local kind = require("blink.cmp.types").CompletionItemKind
+        path = {
+          module = "blink.cmp.sources.path",
+          fallbacks = { "buffer" },
+          opts = {
+            trailing_slash = true,
+            label_trailing_slash = true,
+            get_cwd = function(context)
+              return vim.fn.expand(("#%d:p:h"):format(context.bufnr))
+            end,
+            show_hidden_files_by_default = false,
+          },
+          score_offset = 90,
+        },
 
-							-- Remove snippets and text completions
-							if item.kind == kind.Text or item.kind == kind.Snippet then
-								return false
-							end
+        buffer = {
+          module = "blink.cmp.sources.buffer",
+          score_offset = -3,
+          opts = {
+            get_bufnrs = function()
+              return vim
+                  .iter(vim.api.nvim_list_wins())
+                  :map(function(win) return vim.api.nvim_win_get_buf(win) end)
+                  :filter(function(buf) return vim.bo[buf].buftype ~= "nofile" end)
+                  :totable()
+            end,
+          },
+        },
 
-							-- Filter out problematic TypeScript completions
-							if item.insertText then
-								-- Remove completions with complex template strings
-								if string.match(item.insertText, "%$%{") then
-									return false
-								end
-								-- Remove completions with complex destructuring
-								if string.match(item.insertText, "%{.*%}") and #item.insertText > 50 then
-									return false
-								end
-							end
+        copilot = {
+          name = "Copilot",
+          module = "blink-copilot",
+          score_offset = 101, -- RESTORED: Higher than LSP like your original
+          async = true,
+          opts = {
+            max_completions = 3, -- RESTORED: Your original setting
+            max_attempts = 4,    -- RESTORED: Your original setting
+            kind_name = "Copilot",
+            kind_icon = "",
+            debounce = 200, -- RESTORED: Your original setting
+            auto_refresh = {
+              backward = true,
+              forward = true,
+            },
+          },
+        },
+      },
+    },
 
-							-- Limit detail text length to prevent memory issues
-							if item.detail and #item.detail > 200 then
-								item.detail = string.sub(item.detail, 1, 200) .. "..."
-							end
+    completion = {
+      keyword = {
+        range = "full", -- Important for TypeScript completions
+      },
 
-							return true
-						end, items)
-					end,
+      trigger = {
+        prefetch_on_insert = false, -- RESTORED: Your original setting
+        show_in_snippet = false,    -- RESTORED: Your original setting
+        show_on_keyword = true,
+        show_on_trigger_character = true,
+        show_on_blocked_trigger_characters = { " ", "\n", "\t" },
+        show_on_accept_on_trigger_character = true,
+        show_on_insert_on_trigger_character = true,
+      },
 
-					opts = {
-						tailwind_color_icon = "██",
-						-- Reduce timeout to prevent hangs/crashes
-						timeout_ms = 1000,
-					},
-					score_offset = 100,
-				},
+      list = {
+        max_items = 50, -- Reasonable limit for performance
+        selection = {
+          preselect = true,
+          auto_insert = false, -- Manual control over insertion
+        },
+        cycle = {
+          from_bottom = true,
+          from_top = true,
+        },
+      },
 
-				path = {
-					module = "blink.cmp.sources.path",
-					fallbacks = { "buffer" },
-					opts = {
-						trailing_slash = true,
-						label_trailing_slash = true,
-						get_cwd = function(context)
-							return vim.fn.expand(("#%d:p:h"):format(context.bufnr))
-						end,
-						show_hidden_files_by_default = false,
-					},
-					score_offset = 90,
-				},
+      accept = {
+        create_undo_point = true,
+        resolve_timeout_ms = 50, -- RESTORED: Your original timeout
+        auto_brackets = {
+          enabled = false,       -- RESTORED: Your original setting (disabled)
+        },
+      },
 
-				copilot = {
-					name = "Copilot",
-					module = "blink-copilot",
-					score_offset = 101,
-					async = true, -- IMPORTANT: Enable async for copilot
-					opts = {
-						max_completions = 3,
-						max_attempts = 4,
-						kind_name = "Copilot",
-						kind_icon = "",
-						debounce = 200,
-						auto_refresh = {
-							backward = true,
-							forward = true,
-						},
-					},
-				},
-			},
-		},
+      documentation = {
+        auto_show = true,
+        auto_show_delay_ms = 200, -- RESTORED: Your original delay
+        update_delay_ms = 50,
+        treesitter_highlighting = true,
+        window = {
+          scrollbar = true,
+        },
+      },
 
-		completion = {
-			accept = {
-				auto_brackets = { enabled = false }, -- Disable auto-brackets to prevent crashes
-				resolve_timeout_ms = 50, -- Reduce timeout to prevent hangs
-			},
+      menu = {
+        enabled = true,
+        scrollbar = true,
+        auto_show = true,
+        draw = {
+          treesitter = { "lsp" }, -- Enable treesitter highlighting
+          columns = {
+            { "kind_icon", gap = 1 },
+            { "label",     "label_description", gap = 1 },
+            { "kind" }, -- FIXED: Show completion kind instead of source_name
+          },
+        },
+      },
 
-			list = {
-				selection = {
-					preselect = false,
-					auto_insert = false,
-				},
-			},
+      ghost_text = {
+        enabled = false, -- Disable to avoid conflicts with Copilot
+      },
+    },
 
-			documentation = {
-				auto_show = true,
-				auto_show_delay_ms = 200, -- Increase delay to reduce crash frequency
-			},
+    appearance = {
+      use_nvim_cmp_as_default = true, -- RESTORED: Your original setting
+      nerd_font_variant = "normal",   -- RESTORED: Your original setting
+      kind_icons = {
+        -- RESTORED: Your original icon set
+        Copilot = "",
+        Text = "󰉿",
+        Method = "󰊕",
+        Function = "󰊕",
+        Constructor = "󰒓",
+        Field = "󰜢",
+        Variable = "󰆦",
+        Property = "󰖷",
+        Class = "󱡠",
+        Interface = "󱡠",
+        Struct = "󱡠",
+        Module = "󰅩",
+        Unit = "󰪚",
+        Value = "󰦨",
+        Enum = "󰦨",
+        EnumMember = "󰦨",
+        Keyword = "󰻾",
+        Constant = "󰏿",
+        Snippet = "󱄽",
+        Color = "󰏘",
+        File = "󰈔",
+        Reference = "󰬲",
+        Folder = "󰉋",
+        Event = "󱐋",
+        Operator = "󰪚",
+        TypeParameter = "󰬛",
+      },
+    },
 
-			ghost_text = { enabled = false }, -- Disable ghost text to prevent crashes
+    -- Fuzzy matching configuration
+    fuzzy = {
+      -- Use Rust implementation for better performance
+      implementation = "prefer_rust_with_warning",
+      -- Allow typos based on query length
+      max_typos = function(keyword)
+        return math.floor(#keyword / 4)
+      end,
+      -- Enable advanced sorting features
+      use_frecency = true,
+      use_proximity = true,
+      -- Sorting priority
+      sorts = { "score", "sort_text" },
+      -- Prebuilt binaries configuration
+      prebuilt_binaries = {
+        download = true,
+        ignore_version_mismatch = false,
+      },
+    },
+  },
 
-			menu = {
-				draw = {
-					columns = {
-						{ "label", "label_description", gap = 1 },
-						{ "kind_icon", gap = 1, "kind" },
-					},
-					-- Disable treesitter highlighting to prevent crashes
-					treesitter = {
-						enabled = false,
-					},
-				},
-			},
+  config = function(_, opts)
+    require("blink.cmp").setup(opts)
 
-			keyword = {
-				range = "full",
-			},
+    -- Handle Copilot integration
+    vim.api.nvim_create_autocmd("User", {
+      pattern = "BlinkCmpMenuOpen",
+      callback = function()
+        vim.b.copilot_suggestion_hidden = true
+      end,
+    })
 
-			-- Reduce trigger sensitivity to prevent crashes
-			trigger = {
-				prefetch_on_insert = false, -- Disable prefetching to prevent crashes
-				show_in_snippet = false,
-				show_on_keyword = true,
-				show_on_trigger_character = true,
-				-- Reduce blocked characters that might cause issues
-				show_on_x_blocked_trigger_characters = { " ", "\n", "\t" },
-			},
-		},
-
-		appearance = {
-			use_nvim_cmp_as_default = true,
-			nerd_font_variant = "normal",
-
-			kind_icons = {
-				Copilot = "",
-				Text = "󰉿",
-				Method = "󰊕",
-				Function = "󰊕",
-				Constructor = "󰒓",
-				Field = "󰜢",
-				Variable = "󰆦",
-				Property = "󰖷",
-				Class = "󱡠",
-				Interface = "󱡠",
-				Struct = "󱡠",
-				Module = "󰅩",
-				Unit = "󰪚",
-				Value = "󰦨",
-				Enum = "󰦨",
-				EnumMember = "󰦨",
-				Keyword = "󰻾",
-				Constant = "󰏿",
-				Snippet = "󱄽",
-				Color = "󰏘",
-				File = "󰈔",
-				Reference = "󰬲",
-				Folder = "󰉋",
-				Event = "󱐋",
-				Operator = "󰪚",
-				TypeParameter = "󰬛",
-			},
-		},
-
-		-- Force Lua fuzzy matcher to avoid Rust-related crashes on Ubuntu 25.04
-		fuzzy = {
-			use_typo_resistance = true,
-			use_frecency = true,
-			use_proximity = true,
-			-- Disable prebuilt binaries to force Lua implementation
-			prebuilt_binaries = {
-				download = false,
-				force_version = nil,
-			},
-		},
-	},
-	opts_extend = { "sources.default" },
-	config = function(_, opts)
-		-- Add crash protection
-		local ok, blink = pcall(require, "blink.cmp")
-		if not ok then
-			vim.notify("Failed to load blink.cmp: " .. tostring(blink), vim.log.levels.ERROR)
-			return
-		end
-
-		blink.setup(opts)
-
-		-- Crash protection for completion menu events
-		vim.api.nvim_create_autocmd("User", {
-			pattern = "BlinkCmpCompletionMenuOpen",
-			callback = function()
-				local ok_menu = pcall(function()
-					vim.b.copilot_suggestion_hidden = true
-				end)
-				if not ok_menu then
-					vim.notify("Error in completion menu open", vim.log.levels.WARN)
-				end
-			end,
-		})
-
-		vim.api.nvim_create_autocmd("User", {
-			pattern = "BlinkCmpCompletionMenuClose",
-			callback = function()
-				local ok_menu = pcall(function()
-					vim.b.copilot_suggestion_hidden = false
-				end)
-				if not ok_menu then
-					vim.notify("Error in completion menu close", vim.log.levels.WARN)
-				end
-			end,
-		})
-	end,
+    vim.api.nvim_create_autocmd("User", {
+      pattern = "BlinkCmpMenuClose",
+      callback = function()
+        vim.b.copilot_suggestion_hidden = false
+      end,
+    })
+  end,
 }
