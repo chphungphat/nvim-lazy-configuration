@@ -2,14 +2,14 @@ return {
   "saghen/blink.cmp",
   dependencies = {
     "folke/lazydev.nvim",
-    "fang2hou/blink-copilot", -- Updated copilot integration
+    "fang2hou/blink-copilot",
     "echasnovski/mini.icons",
   },
-  version = "1.*", -- Use latest 1.x stable version
+  version = "1.*",
 
   opts = {
     keymap = {
-      preset = "none", -- RESTORED: Your original preset
+      preset = "none",
       ["<C-k>"] = { "select_prev", "fallback" },
       ["<C-j>"] = { "select_next", "fallback" },
       ["<CR>"] = { "accept", "fallback" },

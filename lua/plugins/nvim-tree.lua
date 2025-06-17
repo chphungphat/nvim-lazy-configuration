@@ -131,13 +131,13 @@ return {
 
       -- Enhanced hijack configuration
       hijack_directories = {
-        enable = true,
-        auto_open = true,
+        enable = false,
+        auto_open = false,
       },
 
       -- Enhanced update configuration
       update_focused_file = {
-        enable = true,
+        enable = false,
         update_root = {
           enable = true,
           ignore_list = {},
@@ -145,7 +145,6 @@ return {
         exclude = false,
       },
 
-      -- Enhanced git integration
       git = {
         enable = true,
         show_on_dirs = true,
@@ -377,19 +376,19 @@ return {
     local tree_api = require("nvim-tree.api")
 
     -- Smart toggle function (enhanced version of your original)
-    local function smart_tree_toggle()
-      local nvim_tree_view = require("nvim-tree.view")
-      local current_buf = vim.api.nvim_get_current_buf()
-      local current_buf_ft = vim.api.nvim_get_option_value("filetype", { buf = current_buf })
-
-      if current_buf_ft == "NvimTree" then
-        tree_api.tree.close()
-      elseif nvim_tree_view.is_visible() then
-        tree_api.tree.focus()
-      else
-        tree_api.tree.open()
-      end
-    end
+    -- local function smart_tree_toggle()
+    --   local nvim_tree_view = require("nvim-tree.view")
+    --   local current_buf = vim.api.nvim_get_current_buf()
+    --   local current_buf_ft = vim.api.nvim_get_option_value("filetype", { buf = current_buf })
+    --
+    --   if current_buf_ft == "NvimTree" then
+    --     tree_api.tree.close()
+    --   elseif nvim_tree_view.is_visible() then
+    --     tree_api.tree.focus()
+    --   else
+    --     tree_api.tree.open()
+    --   end
+    -- end
 
     -- Enhanced focus on current file
     local function focus_on_current_file()
@@ -424,12 +423,18 @@ return {
     end
 
     -- Enhanced keymaps
-    vim.keymap.set("n", "<C-t>", smart_tree_toggle, { desc = "Smart tree toggle" })
-    vim.keymap.set("n", "<leader>ee", smart_tree_toggle, { desc = "Smart tree toggle" })
+    vim.keymap.set("n", "<leader>ee", function() tree_api.tree.toggle() end, { desc = "Simple toggle tree" })
     vim.keymap.set("n", "<leader>ef", focus_on_current_file, { desc = "Focus on current file" })
     vim.keymap.set("n", "<leader>er", change_root_to_global_cwd, { desc = "Change root to global CWD" })
     vim.keymap.set("n", "<leader>ec", collapse_all, { desc = "Collapse all folders" })
     vim.keymap.set("n", "<leader>ey", copy_path_to_clipboard, { desc = "Copy file path" })
+
+    vim.keymap.set("n", "<leader>eh", function() tree_api.tree.toggle_hidden_filter() end,
+      { desc = "Toggle hidden files" })
+
+
+
+
 
     -- Enhanced auto-commands
     local nvim_tree_augroup = vim.api.nvim_create_augroup("NvimTreeEnhanced", { clear = true })

@@ -50,6 +50,7 @@ return {
           "yamlls",   -- YAML language server
           "html",     -- HTML language server
           "cssls",    -- CSS language server
+          -- "eslint",   -- ESLint language server
         },
         automatic_installation = true,
       })
@@ -71,6 +72,7 @@ return {
           "isort",    -- Python import sorter
 
           -- Linters (remove luacheck if it's causing issues)
+          -- "eslint_d",   -- ESLint daemon
           "shellcheck", -- Shell script linter
           -- "luacheck", -- Lua linter (removed due to installation issues)
         },
