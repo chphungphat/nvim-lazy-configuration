@@ -132,19 +132,5 @@ return {
         prefix = "",
       },
     })
-
-
-    local mason_lspconfig = require("mason-lspconfig")
-
-    mason_lspconfig.setup({
-      ensure_installed = {
-        "ts_ls",
-        "lua_ls",
-        "marksman",
-        "bashls",
-        "vimls",
-      },
-      automatic_enable = true,
-    })
   end,
 }

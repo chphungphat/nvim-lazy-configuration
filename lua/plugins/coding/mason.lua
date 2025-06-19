@@ -50,9 +50,9 @@ return {
           "yamlls",   -- YAML language server
           "html",     -- HTML language server
           "cssls",    -- CSS language server
-          -- "eslint",   -- ESLint language server
         },
         automatic_installation = true,
+        automatic_setup = true,
       })
     end,
   },
@@ -64,17 +64,13 @@ return {
     config = function()
       require("mason-tool-installer").setup({
         ensure_installed = {
-          -- Formatters
-          "prettier", -- Prettier formatter
-          "stylua",   -- Lua formatter
-          "shfmt",    -- Shell script formatter
-          "black",    -- Python formatter
-          "isort",    -- Python import sorter
+          "prettier",         -- Prettier formatter
+          "stylua",           -- Lua formatter
+          "shfmt",            -- Shell script formatter
+          "black",            -- Python formatter
+          "isort",            -- Python import sorter
 
-          -- Linters (remove luacheck if it's causing issues)
-          -- "eslint_d",   -- ESLint daemon
-          "shellcheck", -- Shell script linter
-          -- "luacheck", -- Lua linter (removed due to installation issues)
+          "shellcheck",       -- Shell script linter
         },
         auto_update = false,  -- Disable auto-update to prevent issues
         run_on_start = false, -- Don't run on start to prevent startup delays
