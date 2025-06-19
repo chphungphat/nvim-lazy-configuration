@@ -133,20 +133,6 @@ return {
       },
     })
 
-    -- Configure capabilities for blink.cmp
-    local capabilities
-    local has_blink, blink = pcall(require, "blink.cmp")
-    if has_blink then
-      capabilities = blink.get_lsp_capabilities()
-    else
-      capabilities = vim.lsp.protocol.make_client_capabilities()
-    end
-
-    -- Add folding capabilities
-    capabilities.textDocument.foldingRange = {
-      dynamicRegistration = false,
-      lineFoldingOnly = true,
-    }
 
     local mason_lspconfig = require("mason-lspconfig")
 
@@ -159,94 +145,6 @@ return {
         "vimls",
       },
       automatic_enable = true,
-    })
-
-    -- Lua LSP configuration
-    vim.lsp.config("lua_ls", {
-      capabilities = capabilities,
-      settings = {
-        Lua = {
-          diagnostics = {
-            globals = { "vim" },
-          },
-          completion = {
-            callSnippet = "Replace",
-          },
-          workspace = {
-            checkThirdParty = false,
-          },
-        },
-      },
-    })
-
-    -- CLEAN TypeScript LSP configuration - optimized for functionality
-    vim.lsp.config("ts_ls", {
-      capabilities = capabilities,
-      init_options = {
-        preferences = {
-          -- ENABLE all completion features for better TypeScript support
-          includeCompletionsForModuleExports = true,
-          includeCompletionsForImportStatements = true,
-          includeCompletionsWithSnippetText = true,
-          includeAutomaticOptionalChainCompletions = true,
-          includePackageJsonAutoImports = "auto",
-          allowIncompleteCompletions = true,
-          providePrefixAndSuffixTextForRename = true,
-          allowRenameOfImportPath = true,
-          -- Enhanced auto-import behavior
-          includeCompletionsWithClassMemberSnippets = true,
-          includeCompletionsWithObjectLiteralMethodSnippets = true,
-        },
-      },
-      settings = {
-        typescript = {
-          -- Enable inlay hints for better development experience
-          inlayHints = {
-            includeInlayParameterNameHints = "literals",
-            includeInlayParameterNameHintsWhenArgumentMatchesName = false,
-            includeInlayFunctionParameterTypeHints = false,
-            includeInlayVariableTypeHints = false,
-            includeInlayPropertyDeclarationTypeHints = false,
-            includeInlayFunctionLikeReturnTypeHints = false,
-            includeInlayEnumMemberValueHints = true,
-          },
-          -- Enable all suggest features
-          suggest = {
-            completeFunctionCalls = true,
-            includeCompletionsForModuleExports = true,
-            includeAutomaticOptionalChainCompletions = true,
-          },
-          -- Better preferences for auto-imports
-          preferences = {
-            includePackageJsonAutoImports = "auto",
-            quotePreference = "auto",
-          },
-        },
-        javascript = {
-          inlayHints = {
-            includeInlayParameterNameHints = "literals",
-            includeInlayParameterNameHintsWhenArgumentMatchesName = false,
-            includeInlayFunctionParameterTypeHints = false,
-            includeInlayVariableTypeHints = false,
-            includeInlayPropertyDeclarationTypeHints = false,
-            includeInlayFunctionLikeReturnTypeHints = false,
-            includeInlayEnumMemberValueHints = true,
-          },
-          suggest = {
-            completeFunctionCalls = true,
-            includeCompletionsForModuleExports = true,
-            includeAutomaticOptionalChainCompletions = true,
-          },
-          preferences = {
-            includePackageJsonAutoImports = "auto",
-            quotePreference = "auto",
-          },
-        },
-      },
-    })
-
-    vim.lsp.config("bashls", {
-      capabilities = capabilities,
     })
   end,
 }

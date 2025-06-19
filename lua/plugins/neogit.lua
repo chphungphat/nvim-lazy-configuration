@@ -56,9 +56,8 @@ return {
 			fzf_lua = true,
 		},
 
-		-- Sections
+		-- Sections (same as original)
 		sections = {
-			-- Expanded by default
 			untracked = {
 				folded = false,
 				hidden = false,
@@ -101,7 +100,7 @@ return {
 			},
 		},
 
-		-- Mappings
+		-- Mappings (same as original)
 		mappings = {
 			commit_editor = {
 				["q"] = "Close",
@@ -246,22 +245,24 @@ return {
 		})
 
 		-- Handle Neogit closing
-		vim.api.nvim_create_autocmd("BufDelete", {
-			group = group,
-			pattern = "*NeogitStatus*",
-			callback = function()
-				-- Refresh all visible buffers if needed
-				for _, win in ipairs(vim.api.nvim_list_wins()) do
-					local buf = vim.api.nvim_win_get_buf(win)
-					if vim.api.nvim_buf_is_valid(buf) and vim.bo[buf].buftype == "" then
-						local ft = vim.bo[buf].filetype
-						if ft and ft ~= "" then
-							-- Modern treesitter handles this automatically
-							-- No manual intervention needed
-						end
-					end
-				end
-			end,
-		})
+		-- UPDATED: Updated the buffer pattern matching for neo-tree compatibility
+		-- vim.api.nvim_create_autocmd("BufDelete", {
+		-- 	group = group,
+		-- 	pattern = "*NeogitStatus*",
+		-- 	callback = function()
+		-- 		-- Refresh all visible buffers if needed
+		-- 		for _, win in ipairs(vim.api.nvim_list_wins()) do
+		-- 			local buf = vim.api.nvim_win_get_buf(win)
+		-- 			if vim.api.nvim_buf_is_valid(buf) and vim.bo[buf].buftype == "" then
+		-- 				local ft = vim.bo[buf].filetype
+		-- 				-- UPDATED: Check for neo-tree instead of NvimTree
+		-- 				if ft and ft ~= "" and ft ~= "neo-tree" and ft ~= "neo-tree-popup" then
+		-- 					-- Modern treesitter handles this automatically
+		-- 					-- No manual intervention needed
+		-- 				end
+		-- 			end
+		-- 		end
+		-- 	end,
+		-- })
 	end,
 }

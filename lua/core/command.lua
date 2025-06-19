@@ -24,13 +24,15 @@ vim.api.nvim_create_autocmd({ "WinEnter", "BufEnter", "InsertLeave" }, {
     local bt = vim.bo.buftype
 
     -- Don't show cursor line in certain filetypes
+    -- UPDATED: Changed "NvimTree" to "neo-tree" and added "neo-tree-popup"
     local excluded_filetypes = {
       "TelescopePrompt",
       "fzf",
       "oil_preview",
       "oil",
       "copilot-chat",
-      "NvimTree",
+      "neo-tree",       -- CHANGED from "NvimTree"
+      "neo-tree-popup", -- ADDED for neo-tree popups
       "NeogitStatus",
       "lazy",
       "mason",
@@ -58,7 +60,7 @@ vim.api.nvim_create_autocmd({ "WinLeave", "BufLeave", "InsertEnter" }, {
 -- Special handling for fzf and floating windows
 vim.api.nvim_create_autocmd("FileType", {
   group = cursorline_group,
-  pattern = { "fzf", "TelescopePrompt" },
+  pattern = { "fzf", "TelescopePrompt", "neo-tree", "neo-tree-popup" }, -- UPDATED pattern list
   callback = function()
     vim.wo.cursorline = false
   end,
@@ -87,7 +89,8 @@ vim.api.nvim_create_autocmd("User", {
   group = cursorline_group,
   pattern = "FocusGained",
   callback = function()
-    if vim.bo.filetype ~= "NvimTree" and vim.bo.buftype ~= "terminal" then
+    -- UPDATED: Changed "NvimTree" to "neo-tree"
+    if vim.bo.filetype ~= "neo-tree" and vim.bo.buftype ~= "terminal" then
       vim.wo.cursorline = true
     end
   end,

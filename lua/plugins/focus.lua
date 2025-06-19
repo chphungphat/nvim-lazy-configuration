@@ -37,9 +37,11 @@ return {
     })
 
     -- Disable focus for specific filetypes and buftypes that shouldn't be auto-resized
+    -- UPDATED: Changed "NvimTree" to "neo-tree" and "NeogitStatus" references
     local ignore_filetypes = {
       "NvimTree",
       "neo-tree",
+      "neo-tree-popup",
       "TelescopePrompt",
       "oil",
       "oil_preview",

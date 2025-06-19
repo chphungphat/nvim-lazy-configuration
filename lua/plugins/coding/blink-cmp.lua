@@ -26,11 +26,8 @@ return {
         "lazydev",
         "copilot",
       },
-      -- Enable per-filetype sources if needed
       per_filetype = {},
-      -- Minimum keyword length to trigger providers
       min_keyword_length = 0,
-      -- Transform items before returning (optional)
       transform_items = function(_, items)
         return items
       end,
@@ -49,11 +46,8 @@ return {
           async = true,
           score_offset = 100,
 
-          -- RESTORED: Minimal filtering to allow auto-imports
           transform_items = function(_, items)
-            -- Only filter out problematic items, keep most for auto-imports
             return vim.tbl_filter(function(item)
-              -- Only filter out text items, keep everything else
               return item.kind ~= require('blink.cmp.types').CompletionItemKind.Text
             end, items)
           end,
@@ -90,14 +84,14 @@ return {
         copilot = {
           name = "Copilot",
           module = "blink-copilot",
-          score_offset = 101, -- RESTORED: Higher than LSP like your original
+          score_offset = 101,
           async = true,
           opts = {
-            max_completions = 3, -- RESTORED: Your original setting
-            max_attempts = 4,    -- RESTORED: Your original setting
+            max_completions = 3,
+            max_attempts = 4,
             kind_name = "Copilot",
             kind_icon = "",
-            debounce = 200, -- RESTORED: Your original setting
+            debounce = 200, --
             auto_refresh = {
               backward = true,
               forward = true,
@@ -109,12 +103,12 @@ return {
 
     completion = {
       keyword = {
-        range = "full", -- Important for TypeScript completions
+        range = "full",
       },
 
       trigger = {
-        prefetch_on_insert = false, -- RESTORED: Your original setting
-        show_in_snippet = false,    -- RESTORED: Your original setting
+        prefetch_on_insert = false,
+        show_in_snippet = false,
         show_on_keyword = true,
         show_on_trigger_character = true,
         show_on_blocked_trigger_characters = { " ", "\n", "\t" },
@@ -123,10 +117,10 @@ return {
       },
 
       list = {
-        max_items = 50, -- Reasonable limit for performance
+        max_items = 50,
         selection = {
           preselect = false,
-          auto_insert = false, -- Manual control over insertion
+          auto_insert = false,
         },
         cycle = {
           from_bottom = true,
@@ -136,15 +130,15 @@ return {
 
       accept = {
         create_undo_point = true,
-        resolve_timeout_ms = 50, -- RESTORED: Your original timeout
+        resolve_timeout_ms = 100,
         auto_brackets = {
-          enabled = false,       -- RESTORED: Your original setting (disabled)
+          enabled = false,
         },
       },
 
       documentation = {
         auto_show = true,
-        auto_show_delay_ms = 200, -- RESTORED: Your original delay
+        auto_show_delay_ms = 200,
         update_delay_ms = 50,
         treesitter_highlighting = true,
         window = {
@@ -157,25 +151,24 @@ return {
         scrollbar = true,
         auto_show = true,
         draw = {
-          treesitter = { "lsp" }, -- Enable treesitter highlighting
+          treesitter = { "lsp" },
           columns = {
             { "kind_icon", gap = 1 },
             { "label",     "label_description", gap = 1 },
-            { "kind" }, -- FIXED: Show completion kind instead of source_name
+            { "kind" },
           },
         },
       },
 
       ghost_text = {
-        enabled = false, -- Disable to avoid conflicts with Copilot
+        enabled = false,
       },
     },
 
     appearance = {
-      use_nvim_cmp_as_default = true, -- RESTORED: Your original setting
-      nerd_font_variant = "normal",   -- RESTORED: Your original setting
+      use_nvim_cmp_as_default = true,
+      nerd_font_variant = "normal",
       kind_icons = {
-        -- RESTORED: Your original icon set
         Copilot = "",
         Text = "󰉿",
         Method = "󰊕",
@@ -205,43 +198,12 @@ return {
       },
     },
 
-    -- Fuzzy matching configuration
     fuzzy = {
-      -- Use Rust implementation for better performance
       implementation = "prefer_rust_with_warning",
-      -- Allow typos based on query length
-      max_typos = function(keyword)
-        return math.floor(#keyword / 4)
-      end,
-      -- Enable advanced sorting features
-      use_frecency = true,
-      use_proximity = true,
-      -- Sorting priority
-      sorts = { "score", "sort_text" },
-      -- Prebuilt binaries configuration
-      prebuilt_binaries = {
-        download = true,
-        ignore_version_mismatch = false,
-      },
     },
   },
 
   config = function(_, opts)
     require("blink.cmp").setup(opts)
-
-    -- Handle Copilot integration
-    vim.api.nvim_create_autocmd("User", {
-      pattern = "BlinkCmpMenuOpen",
-      callback = function()
-        vim.b.copilot_suggestion_hidden = true
-      end,
-    })
-
-    vim.api.nvim_create_autocmd("User", {
-      pattern = "BlinkCmpMenuClose",
-      callback = function()
-        vim.b.copilot_suggestion_hidden = false
-      end,
-    })
   end,
 }
