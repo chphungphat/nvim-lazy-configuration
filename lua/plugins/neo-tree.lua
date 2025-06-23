@@ -1,3 +1,6 @@
+if true then
+  return {}
+end
 return {
   "nvim-neo-tree/neo-tree.nvim",
   branch = "v3.x",
@@ -375,38 +378,21 @@ return {
 
       local palettes = {
         ["gruvbox-material"] = {
-          fg = "#d4be98",     -- Main foreground (gruvbox-material fg)
-          bg = "#282828",     -- Main background (gruvbox-material bg)
-          bg0 = "#1d2021",    -- Darker background
-          bg1 = "#282828",    -- Standard background
-          bg2 = "#32302f",    -- Lighter background
-          fg0 = "#fbf1c7",    -- Bright foreground
-          fg1 = "#ebdbb2",    -- Standard foreground
-          gray = "#928374",   -- Gray (comments)
-          red = "#ea6962",    -- Red (errors, deleted)
-          green = "#a9b665",  -- Green (added, strings)
-          yellow = "#d8a657", -- Yellow (warnings, modified)
-          blue = "#7daea3",   -- Blue (functions, directories)
-          purple = "#d3869b", -- Purple (keywords)
-          aqua = "#89b482",   -- Aqua (operators)
-          orange = "#e78a4e", -- Orange (numbers)
-        },
-        ["kanagawa"] = {
-          fg = "#C5C9C5",
-          bg = "#1F1F28",
-          bg0 = "#16161D",
-          bg1 = "#1F1F28",
-          bg2 = "#2A2A37",
-          fg0 = "#D5CEE3",
-          fg1 = "#C8C093",
-          gray = "#727169",
-          red = "#E82424",
-          green = "#98BB6C",
-          yellow = "#DCA561",
-          blue = "#7E9CD8",
-          purple = "#957FB8",
-          aqua = "#7AA89F",
-          orange = "#FFA066",
+          fg = "#d4be98",
+          bg = "#282828",
+          bg0 = "#1d2021",
+          bg1 = "#282828",
+          bg2 = "#32302f",
+          fg0 = "#fbf1c7",
+          fg1 = "#ebdbb2",
+          gray = "#928374",
+          red = "#ea6962",
+          green = "#a9b665",
+          yellow = "#d8a657",
+          blue = "#7daea3",
+          purple = "#d3869b",
+          aqua = "#89b482",
+          orange = "#e78a4e",
         },
       }
 
@@ -501,11 +487,5 @@ return {
         end
       end,
     })
-
-    -- REMOVED: Auto-close autocmd that was interfering with :qa
-    -- Let user manually close neo-tree or use :qa normally
-
-    -- Notification for successful setup
-    vim.notify("✅ Enhanced neo-tree loaded successfully!", vim.log.levels.INFO)
   end,
 }

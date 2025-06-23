@@ -9,15 +9,15 @@ return {
     config = function()
       require("copilot").setup({
         panel = {
-          enabled = false, -- Disable panel as we use blink.cmp integration
+          enabled = false, -- Disable panel to reduce conflicts
           auto_refresh = false,
         },
         suggestion = {
-          enabled = false, -- Disable suggestions as we use blink.cmp integration
+          enabled = false, -- IMPORTANT: Disable to avoid conflicts with blink.cmp
           auto_trigger = false,
         },
         filetypes = {
-          -- Enable for specific filetypes
+          -- Enable for specific filetypes only
           lua = true,
           javascript = true,
           typescript = true,
@@ -35,24 +35,62 @@ return {
           html = true,
           css = true,
           scss = true,
-          -- Disable for certain filetypes
+          -- Disable for problematic filetypes
           gitcommit = false,
           gitrebase = false,
           help = false,
           ["."] = false,
           [""] = false,
         },
-        copilot_node_command = "node", -- Use system node
+        copilot_node_command = "node",
         server_opts_overrides = {
-          trace = "off",               -- Reduce logging for performance
+          trace = "off", -- Reduce logging for stability
           settings = {
             advanced = {
-              inlineSuggestCount = 3,
-              length = 500,   -- Allow longer suggestions
-              listCount = 10, -- More suggestions for blink.cmp
+              -- REDUCED: Conservative settings to prevent crashes
+              inlineSuggestCount = 2, -- Reduced from 3
+              length = 300,           -- Reduced from 500
+              listCount = 5,          -- Reduced from 10
             },
           },
         },
+      })
+
+      -- Add crash recovery autocmds
+      local group = vim.api.nvim_create_augroup("CopilotStability", { clear = true })
+
+      -- Disable Copilot during macro recording (can cause crashes)
+      vim.api.nvim_create_autocmd("RecordingEnter", {
+        group = group,
+        callback = function()
+          vim.b.copilot_suggestion_hidden = true
+          pcall(require("copilot.api").stop)
+        end,
+      })
+
+      vim.api.nvim_create_autocmd("RecordingLeave", {
+        group = group,
+        callback = function()
+          vim.schedule(function()
+            vim.b.copilot_suggestion_hidden = false
+            pcall(require("copilot.api").start)
+          end)
+        end,
+      })
+
+      -- Monitor LSP health and restart if needed
+      vim.api.nvim_create_autocmd("LspDetach", {
+        group = group,
+        pattern = "*",
+        callback = function(args)
+          local client = vim.lsp.get_client_by_id(args.data.client_id)
+          if client and client.name == "copilot" then
+            vim.notify("Copilot LSP detached, attempting restart...", vim.log.levels.WARN)
+            vim.defer_fn(function()
+              pcall(require("copilot.api").start)
+            end, 1000)
+          end
+        end,
       })
     end,
   },
@@ -62,9 +100,9 @@ return {
     dependencies = {
       "zbirenbaum/copilot.lua",
       "nvim-lua/plenary.nvim",
-      "stevearc/dressing.nvim", -- For better UI selection
+      "stevearc/dressing.nvim",
     },
-    build = "make tiktoken",    -- Only on MacOS or Linux
+    build = "make tiktoken",
     event = "VeryLazy",
     config = function()
       local chat = require("CopilotChat")
@@ -73,52 +111,32 @@ return {
         debug = false,
         show_help = false,
         model = "claude-sonnet-4",
-        agent = "copilot", -- Use official Copilot agent
-        context = nil,     -- Auto-detect context
+        agent = "copilot",
+        context = nil,
         temperature = 0.1,
 
-        -- Window configuration
+        -- Conservative window configuration
         window = {
-          layout = "vertical", -- or 'horizontal', 'float', 'replace'
-          width = 0.4,         -- 40% of screen width
-          height = 0.8,        -- 80% of screen height
+          layout = "vertical",
+          width = 0.4,
+          height = 0.8,
           relative = "editor",
           border = "rounded",
           title = "Copilot Chat",
         },
 
-        -- Selection configuration
         selection = function(source)
           local select = require("CopilotChat.select")
           return select.visual(source) or select.line(source)
         end,
 
-        -- Prompts configuration
+        -- Stable prompts configuration
         prompts = {
           Explain = {
             prompt = "/COPILOT_EXPLAIN Write an explanation for the active selection as paragraphs of text.",
           },
           Review = {
             prompt = "/COPILOT_REVIEW Review the selected code.",
-            callback = function(response, source)
-              -- Add review to quickfix
-              local lines = vim.split(response, "\n", { plain = true })
-              local qf_entries = {}
-              for i, line in ipairs(lines) do
-                if line:match("^-") or line:match("^%+") then
-                  table.insert(qf_entries, {
-                    filename = source.filename or "",
-                    lnum = source.line_start or 1,
-                    col = 1,
-                    text = line,
-                  })
-                end
-              end
-              if #qf_entries > 0 then
-                vim.fn.setqflist(qf_entries, "r")
-                vim.cmd("copen")
-              end
-            end,
           },
           Fix = {
             prompt = "/COPILOT_GENERATE There is a problem in this code. Rewrite the code to fix the problem.",
@@ -138,23 +156,9 @@ return {
               return require("CopilotChat.select").diagnostics(source)
             end,
           },
-          Commit = {
-            prompt =
-            "Write commit message for the change with commitizen convention. Make sure the title has maximum 50 characters and message is wrapped at 72 characters. Wrap the whole message in code block with language gitcommit.",
-            selection = function(source)
-              return require("CopilotChat.select").gitdiff(source, true)
-            end,
-          },
-          CommitStaged = {
-            prompt =
-            "Write commit message for the change with commitizen convention. Make sure the title has maximum 50 characters and message is wrapped at 72 characters. Wrap the whole message in code block with language gitcommit.",
-            selection = function(source)
-              return require("CopilotChat.select").gitdiff(source)
-            end,
-          },
         },
 
-        -- Mappings
+        -- Conservative mappings
         mappings = {
           complete = {
             insert = "<Tab>",
@@ -191,54 +195,46 @@ return {
         },
       })
 
-      -- Keymaps helper
-      local function map(mode, lhs, rhs, opts)
+      -- Safer keymaps with error handling
+      local function safe_map(mode, lhs, rhs, opts)
         opts = opts or {}
         opts.noremap = true
         opts.silent = true
-        vim.keymap.set(mode, lhs, rhs, opts)
+        vim.keymap.set(mode, lhs, function()
+          local ok, err = pcall(rhs)
+          if not ok then
+            vim.notify("CopilotChat error: " .. tostring(err), vim.log.levels.ERROR)
+          end
+        end, opts)
       end
 
-      -- Chat commands with better organization
-      map("n", "<leader>cco", ":CopilotChatOpen<CR>", { desc = "Open Copilot Chat" })
-      map("n", "<leader>ccc", ":CopilotChatClose<CR>", { desc = "Close Copilot Chat" })
-      map("n", "<leader>cct", ":CopilotChatToggle<CR>", { desc = "Toggle Copilot Chat" })
-      map("n", "<leader>ccr", ":CopilotChatReset<CR>", { desc = "Reset Copilot Chat" })
+      -- Basic commands
+      safe_map("n", "<leader>cco", function() vim.cmd("CopilotChatOpen") end, { desc = "Open Copilot Chat" })
+      safe_map("n", "<leader>ccc", function() vim.cmd("CopilotChatClose") end, { desc = "Close Copilot Chat" })
+      safe_map("n", "<leader>cct", function() vim.cmd("CopilotChatToggle") end, { desc = "Toggle Copilot Chat" })
+      safe_map("n", "<leader>ccr", function() vim.cmd("CopilotChatReset") end, { desc = "Reset Copilot Chat" })
 
-      -- Quick actions
-      map("n", "<leader>cce", ":CopilotChatExplain<CR>", { desc = "Explain code" })
-      map("n", "<leader>ccf", ":CopilotChatFix<CR>", { desc = "Fix code" })
-      map("n", "<leader>ccv", ":CopilotChatReview<CR>", { desc = "Review code" })
-      map("n", "<leader>cco", ":CopilotChatOptimize<CR>", { desc = "Optimize code" })
-      map("n", "<leader>ccd", ":CopilotChatDocs<CR>", { desc = "Add documentation" })
-      map("n", "<leader>cct", ":CopilotChatTests<CR>", { desc = "Generate tests" })
+      -- Quick actions with error handling
+      safe_map("n", "<leader>cce", function() vim.cmd("CopilotChatExplain") end, { desc = "Explain code" })
+      safe_map("n", "<leader>ccf", function() vim.cmd("CopilotChatFix") end, { desc = "Fix code" })
+      safe_map("n", "<leader>ccv", function() vim.cmd("CopilotChatReview") end, { desc = "Review code" })
 
       -- Visual mode mappings
-      map("v", "<leader>cce", ":CopilotChatExplain<CR>", { desc = "Explain selection" })
-      map("v", "<leader>ccf", ":CopilotChatFix<CR>", { desc = "Fix selection" })
-      map("v", "<leader>ccv", ":CopilotChatReview<CR>", { desc = "Review selection" })
-      map("v", "<leader>cco", ":CopilotChatOptimize<CR>", { desc = "Optimize selection" })
+      safe_map("v", "<leader>cce", function() vim.cmd("CopilotChatExplain") end, { desc = "Explain selection" })
+      safe_map("v", "<leader>ccf", function() vim.cmd("CopilotChatFix") end, { desc = "Fix selection" })
 
-      -- Diagnostics and commit helpers
-      map("n", "<leader>ccx", ":CopilotChatFixDiagnostic<CR>", { desc = "Fix diagnostic" })
-      map("n", "<leader>ccm", ":CopilotChatCommit<CR>", { desc = "Generate commit message" })
-      map("n", "<leader>ccM", ":CopilotChatCommitStaged<CR>", { desc = "Generate staged commit message" })
-
-      -- Quick chat with input
-      map("n", "<leader>ccq", function()
+      -- Quick chat with enhanced error handling
+      safe_map("n", "<leader>ccq", function()
         local input = vim.fn.input("Quick Chat: ")
         if input ~= "" then
-          require("CopilotChat").ask(input, { selection = require("CopilotChat.select").buffer })
+          local ok, err = pcall(function()
+            require("CopilotChat").ask(input, { selection = require("CopilotChat.select").buffer })
+          end)
+          if not ok then
+            vim.notify("CopilotChat error: " .. tostring(err), vim.log.levels.ERROR)
+          end
         end
       end, { desc = "Quick chat" })
-
-      -- Visual mode quick chat
-      map("v", "<leader>ccq", function()
-        local input = vim.fn.input("Quick Chat: ")
-        if input ~= "" then
-          require("CopilotChat").ask(input, { selection = require("CopilotChat.select").visual })
-        end
-      end, { desc = "Quick chat with selection" })
     end,
   },
 }

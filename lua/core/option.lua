@@ -58,3 +58,19 @@ vim.g.loaded_netrwPlugin = 1
 vim.o.laststatus = 3
 
 vim.o.lazyredraw = true
+
+vim.o.winborder = "rounded"
+
+vim.opt.wildmenu = true
+vim.opt.wildmode = "list:full"
+vim.opt.wildoptions = "pum"
+vim.opt.wildignorecase = true
+vim.opt.wildignore = {
+  "*.o", "*.obj", "*.bin", "*.dll", "*.exe",
+  "*/.git/*", "*/.svn/*", "*/.hg/*",
+  "*/node_modules/*", "*/vendor/*",
+  "*.pyc", "*.pyo", "*.pyd", "__pycache__",
+  "*.class", "*.jar",
+  "*.min.*", "bundle*.js",
+  "*.swp", "*.tmp", "*~"
+}

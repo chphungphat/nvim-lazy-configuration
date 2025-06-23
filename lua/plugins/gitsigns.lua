@@ -10,12 +10,6 @@ return {
 				delete = "#ea6962",
 				blame = "#d65d0e",
 			},
-			["kanagawa"] = {
-				add = "#98BB6C",
-				change = "#7AA89F",
-				delete = "#FF5D62",
-				blame = "#FFA066",
-			},
 		}
 
 		local c = palette[scheme] or palette["gruvbox-material"]
