@@ -6,25 +6,19 @@ return {
     "nvim-tree/nvim-web-devicons",
   },
   config = function()
-    -- Disable netrw at the very start of your init.lua (already in your config)
     vim.g.loaded_netrw = 1
     vim.g.loaded_netrwPlugin = 1
 
     require("nvim-tree").setup({
-      -- MODERN: Improved auto-close behavior
-      -- Enhanced view configuration
       view = {
-        adaptive_size = false,               -- UPDATED: Use fixed width for consistency
-        width = 35,                          -- UPDATED: Fixed width matching your preference
+        adaptive_size = false,
+        width = 35,
         side = "left",
-        preserve_window_proportions = false, -- UPDATED: Better window management
+        preserve_window_proportions = false,
         number = false,
         relativenumber = false,
         signcolumn = "yes",
 
-
-
-        -- MODERN: Enhanced float options (optional feature)
         float = {
           enable = false,
           quit_on_focus_loss = true,
@@ -41,7 +35,7 @@ return {
 
       -- Enhanced sorting
       sort = {
-        sorter = "case_sensitive", -- UPDATED: Better than "name"
+        sorter = "case_sensitive",
         folders_first = true,
         files_first = false,
       },
@@ -49,15 +43,15 @@ return {
       -- Enhanced renderer with better icons and performance
       renderer = {
         add_trailing = false,
-        group_empty = true,              -- Group empty folders
+        group_empty = true,
         full_name = false,
-        highlight_git = "name",          -- UPDATED: Better git highlighting
-        highlight_diagnostics = "name",  -- UPDATED: Show diagnostics on names
-        highlight_opened_files = "name", -- UPDATED: Highlight opened files
-        highlight_modified = "name",     -- UPDATED: Show modified files
+        highlight_git = "name",
+        highlight_diagnostics = "name",
+        highlight_opened_files = "name",
+        highlight_modified = "name",
         highlight_bookmarks = "none",
         highlight_clipboard = "name",
-        root_folder_label = ":~:s?$?/..?", -- UPDATED: Better root display
+        root_folder_label = ":~:s?$?/..?",
 
         -- Enhanced indent markers
         indent_markers = {
@@ -92,7 +86,7 @@ return {
             symlink = "󰌷",
             bookmark = "󰆤",
             modified = "●",
-            hidden = "󰀚", -- ADDED: Hidden file icon
+            hidden = "󰀚",
             folder = {
               arrow_closed = "",
               arrow_open = "",
@@ -122,8 +116,8 @@ return {
           "README.md",
           "readme.md",
           "package.json",
-          "package-lock.json", -- ADDED
-          "yarn.lock",         -- ADDED
+          "package-lock.json",
+          "yarn.lock",
           "tsconfig.json",
           "jsconfig.json",
           "vite.config.ts",
@@ -132,11 +126,11 @@ return {
           "tailwind.config.ts",
           ".env",
           ".env.local",
-          ".env.production", -- ADDED
+          ".env.production",
           "docker-compose.yml",
           "Dockerfile",
-          ".gitignore", -- ADDED
-          "init.lua",   -- ADDED
+          ".gitignore",
+          "init.lua",
         },
       },
 
@@ -148,15 +142,15 @@ return {
 
       -- Enhanced update configuration
       update_focused_file = {
-        enable = true,    -- UPDATED: Enable for better navigation
+        enable = true,
         update_root = {
-          enable = false, -- UPDATED: Don't auto-change root
+          enable = false,
           ignore_list = {},
         },
         exclude = false,
       },
 
-      -- ENHANCED: Git integration
+      -- Git integration
       git = {
         enable = true,
         show_on_dirs = true,
@@ -197,8 +191,8 @@ return {
         dotfiles = false,
         git_clean = false,
         no_buffer = false,
-        custom = { "^\\.git$", "node_modules", "\\.cache", "__pycache__" }, -- ADDED Python cache
-        exclude = { ".env", ".gitignore", ".editorconfig" },                -- ADDED .editorconfig
+        custom = { "^\\.git$", "node_modules", "\\.cache", "__pycache__" },
+        exclude = { ".env", ".gitignore", ".editorconfig" },
       },
 
       -- Enhanced live filter
@@ -207,7 +201,7 @@ return {
         always_show_folders = true,
       },
 
-      -- FIXED: Ensure nvim-tree closes properly with :qa
+      -- Enhanced actions
       actions = {
         use_system_clipboard = true,
         change_dir = {
@@ -217,7 +211,7 @@ return {
         },
         expand_all = {
           max_folder_discovery = 300,
-          exclude = { ".git", "target", "build", "node_modules", ".next", "dist" }, -- ADDED modern build dirs
+          exclude = { ".git", "target", "build", "node_modules", ".next", "dist" },
         },
         file_popup = {
           open_win_config = {
@@ -231,13 +225,13 @@ return {
         open_file = {
           quit_on_open = false,
           eject = true,
-          resize_window = false, -- UPDATED: Don't resize to maintain fixed width
+          resize_window = false,
           window_picker = {
             enable = true,
             picker = "default",
             chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890",
             exclude = {
-              filetype = { "notify", "packer", "qf", "diff", "fugitive", "fugitiveblame", "Trouble" }, -- ADDED Trouble
+              filetype = { "notify", "packer", "qf", "diff", "fugitive", "fugitiveblame", "Trouble" },
               buftype = { "nofile", "terminal", "help" },
             },
           },
@@ -249,7 +243,7 @@ return {
 
       -- Enhanced trash configuration
       trash = {
-        cmd = "gio trash", -- Use system trash (safer than rm)
+        cmd = "gio trash",
       },
 
       -- Enhanced tab configuration
@@ -276,13 +270,13 @@ return {
         },
       },
 
-      -- MODERN: System open configuration
+      -- System open configuration
       system_open = {
-        cmd = nil, -- Auto-detect based on OS
+        cmd = nil,
         args = {},
       },
 
-      -- Enhanced log configuration
+      -- Log configuration
       log = {
         enable = false,
         truncate = false,
@@ -299,127 +293,108 @@ return {
       },
     })
 
-    -- Enhanced highlight groups with better theming
-    local function set_nvim_tree_highlight()
-      local scheme = vim.g.colors_name or "gruvbox-material"
+    -- ============================================================================
+    -- CRITICAL: :qa FIX - THIS ENSURES :qa ALWAYS WORKS
+    -- ============================================================================
 
-      local palettes = {
-        ["gruvbox-material"] = {
-          fg = "#d4be98",
-          bg = "#282828",
-          green = "#a9b665",
-          green_bright = "#b8bb26",  -- Brighter green
-          green_soft = "#98971a",    -- Softer green
-          yellow = "#d8a657",
-          yellow_bright = "#fabd2f", -- Brighter yellow
-          yellow_soft = "#d79921",   -- Softer yellow
-          orange = "#e78a4e",
-          red = "#ea6962",
-          gray = "#928374",
-          gray_light = "#a89984",
-          purple = "#d3869b",
-        },
-      }
+    local tree_api = require("nvim-tree.api")
+    local quit_group = vim.api.nvim_create_augroup("NvimTreeQuitFix", { clear = true })
 
-      local c = palettes[scheme] or palettes["gruvbox-material"]
+    -- Method 1: Create alternative quit commands (uppercase as required)
+    vim.api.nvim_create_user_command("QA", function()
+      tree_api.tree.close()
+      vim.schedule(function()
+        vim.cmd("qall!")
+      end)
+    end, {
+      desc = "Quit all (handles nvim-tree)",
+      bang = true
+    })
 
-      -- Choose your preferred theme: "green" or "yellow"
-      -- Change this to "yellow" if you prefer yellow theme
-      local theme = vim.g.nvim_tree_theme or "green"
+    vim.api.nvim_create_user_command("QuitAll", function()
+      tree_api.tree.close()
+      vim.schedule(function()
+        vim.cmd("qall!")
+      end)
+    end, {
+      desc = "Quit all (handles nvim-tree)",
+      bang = true
+    })
 
-      local theme_colors = {}
-      if theme == "green" then
-        theme_colors = {
-          primary = c.green,
-          primary_bright = c.green_bright,
-          primary_soft = c.green_soft,
-          secondary = c.yellow,
-          accent = c.orange,
-        }
-      elseif theme == "yellow" then
-        theme_colors = {
-          primary = c.yellow,
-          primary_bright = c.yellow_bright,
-          primary_soft = c.yellow_soft,
-          secondary = c.green,
-          accent = c.orange,
-        }
-      end
+    -- Method 1b: Create command alias using cnoreabbrev
+    vim.cmd("cnoreabbrev qa QA")
+    vim.cmd("cnoreabbrev qall QuitAll")
 
-      local highlights = {
-        -- Git highlights with chosen theme
-        { name = "NvimTreeGitNew",                    fg = theme_colors.primary_bright, bold = true },
-        { name = "NvimTreeGitDirty",                  fg = theme_colors.secondary,      bold = true },
-        { name = "NvimTreeGitDeleted",                fg = c.red,                       bold = true },
-        { name = "NvimTreeGitStaged",                 fg = theme_colors.primary,        bold = true },
-        { name = "NvimTreeGitRenamed",                fg = c.purple,                    bold = true },
-        { name = "NvimTreeGitIgnored",                fg = c.gray,                      italic = true },
-
-        -- Diagnostic highlights (keeping logical colors)
-        { name = "NvimTreeLspDiagnosticsError",       fg = c.red,                       bold = true },
-        { name = "NvimTreeLspDiagnosticsWarning",     fg = c.yellow_bright,             bold = true },
-        { name = "NvimTreeLspDiagnosticsInformation", fg = theme_colors.primary,        bold = true },
-        { name = "NvimTreeLspDiagnosticsHint",        fg = theme_colors.primary_soft,   bold = true },
-
-        -- Enhanced file type highlights
-        { name = "NvimTreeIndentMarker",              fg = c.gray },
-        { name = "NvimTreeWindowPicker",              fg = c.bg,                        bg = theme_colors.accent, bold = true },
-        { name = "NvimTreeSpecialFile",               fg = theme_colors.accent,         bold = true,              underline = true },
-        { name = "NvimTreeSymlink",                   fg = c.purple,                    italic = true },
-        { name = "NvimTreeImageFile",                 fg = c.purple },
-        { name = "NvimTreeMarkdownFile",              fg = theme_colors.primary },
-        { name = "NvimTreeExecFile",                  fg = theme_colors.primary_bright, bold = true },
-
-        -- Folder highlights with chosen theme
-        { name = "NvimTreeFolderName",                fg = theme_colors.primary,        bold = true },
-        { name = "NvimTreeRootFolder",                fg = theme_colors.primary_bright, bold = true,              underline = true },
-        { name = "NvimTreeOpenedFolderName",          fg = theme_colors.primary_bright, bold = true },
-        { name = "NvimTreeEmptyFolderName",           fg = theme_colors.primary_soft },
-
-        -- Status highlights
-        { name = "NvimTreeModifiedFile",              fg = theme_colors.secondary,      bold = true },
-        { name = "NvimTreeBookmark",                  fg = theme_colors.primary,        bold = true },
-        { name = "NvimTreeHiddenFile",                fg = c.gray,                      italic = true },
-
-        -- Additional file name highlights for better theme consistency
-        { name = "NvimTreeFileName",                  fg = c.fg },
-        { name = "NvimTreeFileNameOpened",            fg = theme_colors.primary },
-
-        -- Normal files get a subtle theme tint
-        { name = "NvimTreeNormal",                    fg = c.fg,                        bg = c.bg },
-        { name = "NvimTreeEndOfBuffer",               fg = c.bg,                        bg = c.bg },
-      }
-
-      for _, h in ipairs(highlights) do
-        local name = h.name
-        h.name = nil
-        vim.api.nvim_set_hl(0, name, h)
-      end
-    end
-
-    -- Apply highlights immediately and on colorscheme change
-    set_nvim_tree_highlight()
-    vim.api.nvim_create_autocmd("ColorScheme", {
+    -- Method 2: Handle VimLeavePre (before Vim exits)
+    vim.api.nvim_create_autocmd("VimLeavePre", {
+      group = quit_group,
       callback = function()
-        vim.schedule(set_nvim_tree_highlight)
+        pcall(tree_api.tree.close)
       end,
     })
 
-    -- Enhanced keymaps and functions
-    local tree_api = require("nvim-tree.api")
+    -- Method 3: Handle QuitPre (when user runs :q or :qa)
+    vim.api.nvim_create_autocmd("QuitPre", {
+      group = quit_group,
+      callback = function()
+        local wins = vim.api.nvim_list_wins()
+        local normal_wins = 0
 
-    -- Auto-open nvim-tree when Neovim starts (optional)
+        for _, win in ipairs(wins) do
+          local buf = vim.api.nvim_win_get_buf(win)
+          local buf_name = vim.api.nvim_buf_get_name(buf)
+          if not buf_name:match("NvimTree_") then
+            normal_wins = normal_wins + 1
+          end
+        end
+
+        -- If only one normal window left or we're dying, close tree
+        if normal_wins <= 1 or vim.v.dying > 0 then
+          pcall(tree_api.tree.close)
+        end
+      end,
+    })
+
+    -- Method 4: Handle WinClosed (when windows are closed)
+    vim.api.nvim_create_autocmd("WinClosed", {
+      group = quit_group,
+      callback = function()
+        vim.schedule(function()
+          local wins = vim.api.nvim_list_wins()
+          local has_normal_wins = false
+
+          for _, win in ipairs(wins) do
+            if vim.api.nvim_win_is_valid(win) then
+              local buf = vim.api.nvim_win_get_buf(win)
+              local buf_name = vim.api.nvim_buf_get_name(buf)
+              if not buf_name:match("NvimTree_") then
+                has_normal_wins = true
+                break
+              end
+            end
+          end
+
+          -- If only nvim-tree windows remain, close them
+          if not has_normal_wins then
+            pcall(tree_api.tree.close)
+          end
+        end)
+      end,
+    })
+
+    -- ============================================================================
+    -- ENHANCED KEYMAPS AND FUNCTIONS
+    -- ============================================================================
+
+    -- Auto-open nvim-tree when Neovim starts (configurable)
     local function auto_open_tree()
-      -- Check if auto-open is enabled
       if not vim.g.nvim_tree_auto_open then
         return
       end
 
-      -- Only auto-open if no arguments were passed to nvim
       if vim.fn.argc(-1) == 0 then
         tree_api.tree.open()
       elseif vim.fn.argc(-1) == 1 then
-        -- If opening a directory, open tree and focus on it
         local arg = vim.fn.argv(0)
         if vim.fn.isdirectory(arg) == 1 then
           tree_api.tree.open()
@@ -468,7 +443,11 @@ return {
       end
     end
 
-    -- Enhanced keymaps
+    -- ============================================================================
+    -- KEYMAPS
+    -- ============================================================================
+
+    -- Basic nvim-tree keymaps
     vim.keymap.set("n", "<leader>ee", function() tree_api.tree.toggle() end, { desc = "Toggle nvim-tree" })
     vim.keymap.set("n", "<leader>ef", focus_on_current_file, { desc = "Focus on current file" })
     vim.keymap.set("n", "<leader>er", change_root_to_global_cwd, { desc = "Change root to global CWD" })
@@ -476,16 +455,139 @@ return {
     vim.keymap.set("n", "<leader>ey", copy_path_to_clipboard, { desc = "Copy file path" })
     vim.keymap.set("n", "<leader>ei", show_tree_info, { desc = "Show tree info" })
     vim.keymap.set("n", "<leader>eo", auto_open_tree, { desc = "Auto-open tree" })
-
     vim.keymap.set("n", "<leader>eh", function() tree_api.tree.toggle_hidden_filter() end,
       { desc = "Toggle hidden files" })
 
-    -- Global variable to control auto-open (set to false to disable)
-    if vim.g.nvim_tree_auto_open == nil then
-      vim.g.nvim_tree_auto_open = true
+    -- Enhanced quit keymaps that always work
+    vim.keymap.set("n", "<leader>qq", function()
+      tree_api.tree.close()
+      vim.cmd("qa")
+    end, { desc = "Quit all (close tree first)" })
+
+    vim.keymap.set("n", "ZZ", function()
+      vim.cmd("wa") -- Save all first
+      tree_api.tree.close()
+      vim.cmd("qa")
+    end, { desc = "Save and quit all (handles nvim-tree)" })
+
+    vim.keymap.set("n", "ZQ", function()
+      tree_api.tree.close()
+      vim.cmd("qa!")
+    end, { desc = "Quit without saving (handles nvim-tree)" })
+
+    -- ============================================================================
+    -- THEME SYSTEM (GREEN/YELLOW)
+    -- ============================================================================
+
+    -- Enhanced highlight groups with theme system
+    local function set_nvim_tree_highlight()
+      local scheme = vim.g.colors_name or "gruvbox-material"
+
+      local palettes = {
+        ["gruvbox-material"] = {
+          fg = "#d4be98",
+          bg = "#282828",
+          green = "#a9b665",
+          green_bright = "#b8bb26",
+          green_soft = "#98971a",
+          yellow = "#d8a657",
+          yellow_bright = "#fabd2f",
+          yellow_soft = "#d79921",
+          orange = "#e78a4e",
+          red = "#ea6962",
+          gray = "#928374",
+          gray_light = "#a89984",
+          purple = "#d3869b",
+        },
+      }
+
+      local c = palettes[scheme] or palettes["gruvbox-material"]
+
+      -- Theme selection (default to green)
+      local theme = vim.g.nvim_tree_theme or "green"
+
+      local theme_colors = {}
+      if theme == "green" then
+        theme_colors = {
+          primary = c.green,
+          primary_bright = c.green_bright,
+          primary_soft = c.green_soft,
+          secondary = c.yellow,
+          accent = c.orange,
+        }
+      elseif theme == "yellow" then
+        theme_colors = {
+          primary = c.yellow,
+          primary_bright = c.yellow_bright,
+          primary_soft = c.yellow_soft,
+          secondary = c.green,
+          accent = c.orange,
+        }
+      end
+
+      local highlights = {
+        -- Git highlights with chosen theme
+        { name = "NvimTreeGitNew",                    fg = theme_colors.primary_bright, bold = true },
+        { name = "NvimTreeGitDirty",                  fg = theme_colors.secondary,      bold = true },
+        { name = "NvimTreeGitDeleted",                fg = c.red,                       bold = true },
+        { name = "NvimTreeGitStaged",                 fg = theme_colors.primary,        bold = true },
+        { name = "NvimTreeGitRenamed",                fg = c.purple,                    bold = true },
+        { name = "NvimTreeGitIgnored",                fg = c.gray,                      italic = true },
+
+        -- Diagnostic highlights (keeping logical colors)
+        { name = "NvimTreeLspDiagnosticsError",       fg = c.red,                       bold = true },
+        { name = "NvimTreeLspDiagnosticsWarning",     fg = c.yellow_bright,             bold = true },
+        { name = "NvimTreeLspDiagnosticsInformation", fg = theme_colors.primary,        bold = true },
+        { name = "NvimTreeLspDiagnosticsHint",        fg = theme_colors.primary_soft,   bold = true },
+
+        -- File type highlights
+        { name = "NvimTreeIndentMarker",              fg = c.gray },
+        { name = "NvimTreeWindowPicker",              fg = c.bg,                        bg = theme_colors.accent, bold = true },
+        { name = "NvimTreeSpecialFile",               fg = theme_colors.accent,         bold = true,              underline = true },
+        { name = "NvimTreeSymlink",                   fg = c.purple,                    italic = true },
+        { name = "NvimTreeImageFile",                 fg = c.purple },
+        { name = "NvimTreeMarkdownFile",              fg = theme_colors.primary },
+        { name = "NvimTreeExecFile",                  fg = theme_colors.primary_bright, bold = true },
+
+        -- Folder highlights with chosen theme
+        { name = "NvimTreeFolderName",                fg = theme_colors.primary,        bold = true },
+        { name = "NvimTreeRootFolder",                fg = theme_colors.primary_bright, bold = true,              underline = true },
+        { name = "NvimTreeOpenedFolderName",          fg = theme_colors.primary_bright, bold = true },
+        { name = "NvimTreeEmptyFolderName",           fg = theme_colors.primary_soft },
+
+        -- Status highlights
+        { name = "NvimTreeModifiedFile",              fg = theme_colors.secondary,      bold = true },
+        { name = "NvimTreeBookmark",                  fg = theme_colors.primary,        bold = true },
+        { name = "NvimTreeHiddenFile",                fg = c.gray,                      italic = true },
+
+        -- Additional file name highlights
+        { name = "NvimTreeFileName",                  fg = c.fg },
+        { name = "NvimTreeFileNameOpened",            fg = theme_colors.primary },
+
+        -- Normal files and background
+        { name = "NvimTreeNormal",                    fg = c.fg,                        bg = c.bg },
+        { name = "NvimTreeEndOfBuffer",               fg = c.bg,                        bg = c.bg },
+      }
+
+      for _, h in ipairs(highlights) do
+        local name = h.name
+        h.name = nil
+        vim.api.nvim_set_hl(0, name, h)
+      end
     end
 
-    -- Enhanced auto-commands
+    -- Apply highlights immediately and on colorscheme change
+    set_nvim_tree_highlight()
+    vim.api.nvim_create_autocmd("ColorScheme", {
+      callback = function()
+        vim.schedule(set_nvim_tree_highlight)
+      end,
+    })
+
+    -- ============================================================================
+    -- AUTO-COMMANDS
+    -- ============================================================================
+
     local nvim_tree_augroup = vim.api.nvim_create_augroup("NvimTreeEnhanced", { clear = true })
 
     -- Auto-open nvim-tree on startup
@@ -498,12 +600,11 @@ return {
       end,
     })
 
-    -- MODERN: Better window management
+    -- Better window management
     vim.api.nvim_create_autocmd("BufEnter", {
       group = nvim_tree_augroup,
       pattern = "NvimTree_*",
       callback = function()
-        -- Ensure nvim-tree maintains fixed width
         local win = vim.api.nvim_get_current_win()
         if vim.api.nvim_win_is_valid(win) then
           vim.schedule(function()
@@ -515,70 +616,62 @@ return {
       end,
     })
 
-    -- MODERN: Auto-close handling (FIXED for :qa behavior)
-    vim.api.nvim_create_autocmd("VimLeavePre", {
-      group = nvim_tree_augroup,
-      callback = function()
-        -- Always close nvim-tree before vim exits
-        pcall(tree_api.tree.close)
-      end,
-    })
+    -- ============================================================================
+    -- USER COMMANDS
+    -- ============================================================================
 
-    vim.api.nvim_create_autocmd("QuitPre", {
-      group = nvim_tree_augroup,
-      callback = function()
-        local wins = vim.api.nvim_list_wins()
-        local tree_wins = {}
-        local other_wins = {}
+    -- Auto-open control commands
+    vim.api.nvim_create_user_command("NvimTreeAutoOpenEnable", function()
+      vim.g.nvim_tree_auto_open = true
+      vim.notify("nvim-tree auto-open enabled", vim.log.levels.INFO)
+    end, { desc = "Enable nvim-tree auto-open on startup" })
 
-        -- Categorize windows
-        for _, w in ipairs(wins) do
-          local bufname = vim.api.nvim_buf_get_name(vim.api.nvim_win_get_buf(w))
-          if bufname:match("NvimTree_") then
-            table.insert(tree_wins, w)
-          else
-            table.insert(other_wins, w)
-          end
-        end
+    vim.api.nvim_create_user_command("NvimTreeAutoOpenDisable", function()
+      vim.g.nvim_tree_auto_open = false
+      vim.notify("nvim-tree auto-open disabled", vim.log.levels.INFO)
+    end, { desc = "Disable nvim-tree auto-open on startup" })
 
-        -- If user runs :qa or there are no other windows, close tree first
-        if #other_wins <= 1 or vim.v.dying > 0 then
-          pcall(tree_api.tree.close)
-        end
-      end,
-    })
+    vim.api.nvim_create_user_command("NvimTreeAutoOpenToggle", function()
+      vim.g.nvim_tree_auto_open = not vim.g.nvim_tree_auto_open
+      local status = vim.g.nvim_tree_auto_open and "enabled" or "disabled"
+      vim.notify("nvim-tree auto-open " .. status, vim.log.levels.INFO)
+    end, { desc = "Toggle nvim-tree auto-open on startup" })
 
-    -- Better handling for window closing
-    vim.api.nvim_create_autocmd("WinClosed", {
-      group = nvim_tree_augroup,
-      callback = function()
-        -- Delay to let other windows close first
-        vim.schedule(function()
-          local wins = vim.api.nvim_list_wins()
-          local has_normal_wins = false
+    -- Theme switching commands
+    vim.api.nvim_create_user_command("NvimTreeThemeGreen", function()
+      vim.g.nvim_tree_theme = "green"
+      set_nvim_tree_highlight()
+      vim.notify("nvim-tree theme set to GREEN", vim.log.levels.INFO)
+    end, { desc = "Set nvim-tree theme to green" })
 
-          for _, w in ipairs(wins) do
-            local bufname = vim.api.nvim_buf_get_name(vim.api.nvim_win_get_buf(w))
-            if not bufname:match("NvimTree_") then
-              has_normal_wins = true
-              break
-            end
-          end
+    vim.api.nvim_create_user_command("NvimTreeThemeYellow", function()
+      vim.g.nvim_tree_theme = "yellow"
+      set_nvim_tree_highlight()
+      vim.notify("nvim-tree theme set to YELLOW", vim.log.levels.INFO)
+    end, { desc = "Set nvim-tree theme to yellow" })
 
-          -- If only nvim-tree windows remain, close them
-          if not has_normal_wins then
-            pcall(tree_api.tree.close)
-          end
-        end)
-      end,
-    })
+    vim.api.nvim_create_user_command("NvimTreeThemeToggle", function()
+      local current = vim.g.nvim_tree_theme or "green"
+      vim.g.nvim_tree_theme = (current == "green") and "yellow" or "green"
+      set_nvim_tree_highlight()
+      vim.notify("nvim-tree theme switched to " .. string.upper(vim.g.nvim_tree_theme), vim.log.levels.INFO)
+    end, { desc = "Toggle nvim-tree theme between green and yellow" })
 
-    -- MODERN: Performance optimization for large directories
-    vim.api.nvim_create_autocmd("BufReadPre", {
-      group = nvim_tree_augroup,
-      callback = function()
-        -- Add any performance optimizations here if needed
-      end,
-    })
+    -- Theme switching keymap
+    vim.keymap.set("n", "<leader>et", "<cmd>NvimTreeThemeToggle<CR>", { desc = "Toggle nvim-tree theme" })
+
+    -- ============================================================================
+    -- GLOBAL CONFIGURATION
+    -- ============================================================================
+
+    -- Set default theme if not already set
+    if vim.g.nvim_tree_theme == nil then
+      vim.g.nvim_tree_theme = "green" -- Change this to "yellow" if you prefer yellow by default
+    end
+
+    -- Set auto-open default if not already set
+    if vim.g.nvim_tree_auto_open == nil then
+      vim.g.nvim_tree_auto_open = true -- Change to false if you don't want auto-open
+    end
   end,
 }

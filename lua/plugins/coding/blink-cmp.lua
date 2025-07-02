@@ -2,7 +2,7 @@ return {
   "saghen/blink.cmp",
   dependencies = {
     "folke/lazydev.nvim",
-    "fang2hou/blink-copilot",
+    -- "fang2hou/blink-copilot",
     "echasnovski/mini.icons",
   },
   version = "1.*",
@@ -25,7 +25,7 @@ return {
         "path",
         "buffer",
         "lazydev",
-        "copilot",
+        -- "copilot",
       },
 
       min_keyword_length = 1,
@@ -77,21 +77,21 @@ return {
           },
         },
 
-        copilot = {
-          name = "Copilot",
-          module = "blink-copilot",
-          score_offset = 101,
-          async = true,
-          opts = {
-            max_completions = 3,
-            max_attempts = 3,
-            debounce = 200,
-            auto_refresh = {
-              backward = true,
-              forward = true,
-            },
-          },
-        },
+        -- copilot = {
+        --   name = "Copilot",
+        --   module = "blink-copilot",
+        --   score_offset = 101,
+        --   async = true,
+        --   opts = {
+        --     max_completions = 3,
+        --     max_attempts = 3,
+        --     debounce = 200,
+        --     auto_refresh = {
+        --       backward = true,
+        --       forward = true,
+        --     },
+        --   },
+        -- },
       },
     },
 

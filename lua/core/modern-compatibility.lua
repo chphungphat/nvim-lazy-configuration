@@ -3,87 +3,232 @@ local M = {}
 local modern_group = vim.api.nvim_create_augroup("ModernNeovimCompat", { clear = true })
 
 -- ============================================================================
+-- TREESITTER ASYNC HIGHLIGHTING FIXES (Neovim 0.11+)
+-- ============================================================================
+
+local function setup_treesitter_async_fixes()
+  -- Force synchronous treesitter parsing to prevent window ID issues
+  -- This is the most reliable fix for the neogit navigation problem
+  vim.g._ts_force_sync_parsing = true
+
+  -- Alternative: Wrap treesitter highlighter functions to validate windows
+  local function safe_highlight_wrapper()
+    local ok, highlighter = pcall(require, "vim.treesitter.highlighter")
+    if not ok then return end
+
+    -- Store original functions
+    local original_on_line = highlighter._on_line
+    local original_on_buf = highlighter._on_buf
+
+    -- Safe wrapper for _on_line
+    if original_on_line then
+      highlighter._on_line = function(...)
+        local args = { ... }
+        -- Validate window if present in args
+        for i, arg in ipairs(args) do
+          if type(arg) == "number" and arg > 1000 then -- Likely a window ID
+            if not vim.api.nvim_win_is_valid(arg) then
+              return                                   -- Skip highlighting for invalid window
+            end
+          end
+        end
+
+        local success, result = pcall(original_on_line, ...)
+        if not success then
+          -- Log error but don't crash
+          vim.schedule(function()
+            vim.notify("Treesitter highlighting error (recovered): " .. tostring(result), vim.log.levels.DEBUG)
+          end)
+          return
+        end
+        return result
+      end
+    end
+
+    -- Safe wrapper for _on_buf
+    if original_on_buf then
+      highlighter._on_buf = function(...)
+        local args = { ... }
+        -- Validate buffer and windows
+        for i, arg in ipairs(args) do
+          if type(arg) == "number" then
+            if arg > 1000 and not vim.api.nvim_win_is_valid(arg) then
+              return -- Skip for invalid window
+            elseif arg < 1000 and arg > 0 and not vim.api.nvim_buf_is_valid(arg) then
+              return -- Skip for invalid buffer
+            end
+          end
+        end
+
+        local success, result = pcall(original_on_buf, ...)
+        if not success then
+          vim.schedule(function()
+            vim.notify("Treesitter buffer highlighting error (recovered): " .. tostring(result), vim.log.levels.DEBUG)
+          end)
+          return
+        end
+        return result
+      end
+    end
+  end
+
+  -- Apply the wrapper after treesitter loads
+  vim.schedule(function()
+    safe_highlight_wrapper()
+  end)
+end
+
+-- ============================================================================
 -- WINDOW AND UI FIXES
 -- ============================================================================
 
--- Handle the specific window ID error fixes
 local function setup_window_fixes()
-  -- Wrap nvim_open_win to handle invalid window references
+  -- Enhanced nvim_open_win wrapper with better validation
   local original_nvim_open_win = vim.api.nvim_open_win
   vim.api.nvim_open_win = function(buffer, enter, config)
-    -- Validate window config before calling
-    if config and config.win and not vim.api.nvim_win_is_valid(config.win) then
-      config.win = nil
+    -- Validate all window-related config
+    if config then
+      if config.win and not vim.api.nvim_win_is_valid(config.win) then
+        config.win = nil
+      end
+      if config.relative == "win" and config.win and not vim.api.nvim_win_is_valid(config.win) then
+        config.relative = "editor"
+        config.win = nil
+      end
     end
 
-    return original_nvim_open_win(buffer, enter, config)
+    -- Validate buffer
+    if buffer and buffer ~= 0 and not vim.api.nvim_buf_is_valid(buffer) then
+      return nil
+    end
+
+    local ok, result = pcall(original_nvim_open_win, buffer, enter, config)
+    if not ok then
+      vim.schedule(function()
+        vim.notify("Window creation failed (recovered): " .. tostring(result), vim.log.levels.DEBUG)
+      end)
+      return nil
+    end
+    return result
   end
 
-  -- Additional window validation for floating windows
+  -- Enhanced nvim_win_set_config wrapper
   local original_nvim_win_set_config = vim.api.nvim_win_set_config
   vim.api.nvim_win_set_config = function(window, config)
     if not vim.api.nvim_win_is_valid(window) then
       return
     end
 
-    return original_nvim_win_set_config(window, config)
+    if config and config.win and not vim.api.nvim_win_is_valid(config.win) then
+      config.win = nil
+    end
+
+    local ok, result = pcall(original_nvim_win_set_config, window, config)
+    if not ok then
+      vim.schedule(function()
+        vim.notify("Window config failed (recovered): " .. tostring(result), vim.log.levels.DEBUG)
+      end)
+    end
+    return result
+  end
+
+  -- Wrap nvim_buf_set_extmark to validate window references
+  local original_nvim_buf_set_extmark = vim.api.nvim_buf_set_extmark
+  vim.api.nvim_buf_set_extmark = function(buffer, ns_id, line, col, opts)
+    -- Validate buffer
+    if not vim.api.nvim_buf_is_valid(buffer) then
+      return
+    end
+
+    -- Validate window references in opts
+    if opts then
+      if opts.win and not vim.api.nvim_win_is_valid(opts.win) then
+        opts.win = nil
+      end
+      -- Check for window references in virt_text positioning
+      if opts.virt_text_win_col and opts.win and not vim.api.nvim_win_is_valid(opts.win) then
+        opts.virt_text_win_col = nil
+        opts.win = nil
+      end
+    end
+
+    local ok, result = pcall(original_nvim_buf_set_extmark, buffer, ns_id, line, col, opts)
+    if not ok then
+      -- Don't spam notifications for extmark errors
+      return
+    end
+    return result
   end
 end
 
 -- ============================================================================
--- TREESITTER MODERN ENHANCEMENTS
+-- NEOGIT SPECIFIC FIXES
 -- ============================================================================
 
-local function setup_treesitter_enhancements()
-  -- Modern treesitter startup handling
-  vim.api.nvim_create_autocmd("BufReadPost", {
+local function setup_neogit_fixes()
+  -- Better handling when navigating from neogit
+  vim.api.nvim_create_autocmd("BufEnter", {
     group = modern_group,
     callback = function(event)
       local buf = event.buf
+      local bufname = vim.api.nvim_buf_get_name(buf)
 
-      -- Skip for empty or special buffers
-      if not vim.api.nvim_buf_is_valid(buf) or vim.bo[buf].buftype ~= "" then
-        return
-      end
-
-      -- Modern Neovim handles treesitter automatically, but we can optimize
-      vim.schedule(function()
-        if vim.api.nvim_buf_is_valid(buf) then
-          local ft = vim.bo[buf].filetype
-          if ft and ft ~= "" then
-            -- Ensure treesitter is working for this filetype
-            local ok, parser = pcall(vim.treesitter.get_parser, buf, ft)
-            if ok and parser then
-              -- Parser exists, let treesitter handle highlighting
-              local has_highlights = vim.treesitter.highlighter.active[buf]
-              if not has_highlights then
-                -- Try to start highlighting if it's not active
-                pcall(vim.treesitter.start, buf, ft)
+      -- If we're entering a file from neogit, refresh treesitter safely
+      if bufname and bufname ~= "" and not bufname:match("NeogitStatus") then
+        -- Check if this buffer came from neogit navigation
+        local neogit_was_open = false
+        for _, win in ipairs(vim.api.nvim_list_wins()) do
+          if vim.api.nvim_win_is_valid(win) then
+            local win_buf = vim.api.nvim_win_get_buf(win)
+            if vim.api.nvim_buf_is_valid(win_buf) then
+              local win_bufname = vim.api.nvim_buf_get_name(win_buf)
+              if win_bufname:match("NeogitStatus") then
+                neogit_was_open = true
+                break
               end
             end
           end
         end
-      end)
+
+        if neogit_was_open then
+          -- Schedule treesitter refresh after window management settles
+          vim.schedule(function()
+            if vim.api.nvim_buf_is_valid(buf) then
+              -- Restart treesitter for this buffer
+              pcall(vim.treesitter.stop, buf)
+              vim.defer_fn(function()
+                if vim.api.nvim_buf_is_valid(buf) and vim.bo[buf].filetype ~= "" then
+                  pcall(vim.treesitter.start, buf)
+                end
+              end, 50)
+            end
+          end)
+        end
+      end
     end,
   })
 
-  -- Handle treesitter errors gracefully
-  vim.api.nvim_create_autocmd("User", {
+  -- Clean up treesitter when neogit closes
+  vim.api.nvim_create_autocmd("BufHidden", {
     group = modern_group,
-    pattern = "TSUpdate",
+    pattern = "*NeogitStatus*",
     callback = function()
-      vim.schedule(function()
-        -- Refresh all buffers after treesitter update
-        for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-          if vim.api.nvim_buf_is_valid(buf) and vim.bo[buf].buftype == "" then
-            local ft = vim.bo[buf].filetype
-            if ft and ft ~= "" then
-              pcall(vim.treesitter.stop, buf)
-              pcall(vim.treesitter.start, buf, ft)
+      -- Small delay to let window management settle
+      vim.defer_fn(function()
+        -- Refresh treesitter for all visible buffers
+        for _, win in ipairs(vim.api.nvim_list_wins()) do
+          if vim.api.nvim_win_is_valid(win) then
+            local buf = vim.api.nvim_win_get_buf(win)
+            if vim.api.nvim_buf_is_valid(buf) and vim.bo[buf].buftype == "" then
+              local ft = vim.bo[buf].filetype
+              if ft and ft ~= "" then
+                pcall(vim.treesitter.stop, buf)
+                pcall(vim.treesitter.start, buf)
+              end
             end
           end
         end
-      end)
+      end, 100)
     end,
   })
 end
@@ -104,19 +249,18 @@ local function setup_lsp_enhancements()
         return
       end
 
-      -- Modern semantic tokens handling
+      -- Modern semantic tokens handling with error recovery
       if client.server_capabilities.semanticTokensProvider then
         vim.schedule(function()
           if vim.api.nvim_buf_is_valid(buf) then
-            -- Enable semantic tokens with modern API
-            vim.lsp.semantic_tokens.start(buf, client.id)
+            pcall(vim.lsp.semantic_tokens.start, buf, client.id)
           end
         end)
       end
 
       -- Modern inlay hints setup (Neovim 0.10+)
       if client.server_capabilities.inlayHintProvider and vim.lsp.inlay_hint then
-        vim.lsp.inlay_hint.enable(true, { bufnr = buf })
+        pcall(vim.lsp.inlay_hint.enable, true, { bufnr = buf })
       end
 
       -- Modern diagnostic configuration per client
@@ -132,67 +276,6 @@ local function setup_lsp_enhancements()
           severity_sort = true,
         }, vim.lsp.diagnostic.get_namespace(client.id))
       end
-    end,
-  })
-
-  -- Handle LSP errors gracefully
-  vim.api.nvim_create_autocmd("LspDetach", {
-    group = modern_group,
-    callback = function(event)
-      local buf = event.buf
-
-      -- Clean up any client-specific configurations
-      vim.schedule(function()
-        if vim.api.nvim_buf_is_valid(buf) then
-          -- Modern cleanup - let Neovim handle most of this automatically
-          vim.diagnostic.reset(nil, buf)
-        end
-      end)
-    end,
-  })
-end
-
--- ============================================================================
--- FOLDING MODERN ENHANCEMENTS
--- ============================================================================
-
-local function setup_folding_enhancements()
-  -- Modern folding with treesitter
-  vim.api.nvim_create_autocmd("FileType", {
-    group = modern_group,
-    callback = function(event)
-      local buf = event.buf
-      local ft = vim.bo[buf].filetype
-
-      -- Skip for special filetypes
-      local excluded_fts = {
-        "help", "man", "qf", "fugitive", "git",
-        "NvimTree", "neo-tree", "oil", "lazy", "mason"
-      }
-
-      if vim.tbl_contains(excluded_fts, ft) then
-        return
-      end
-
-      -- Set up modern treesitter folding
-      vim.schedule(function()
-        if vim.api.nvim_buf_is_valid(buf) then
-          local has_ts_parser = pcall(vim.treesitter.get_parser, buf, ft)
-          if has_ts_parser then
-            -- Window-local options
-            vim.wo.foldmethod = "expr"
-            vim.wo.foldexpr = "v:lua.vim.treesitter.foldexpr()"
-            vim.wo.foldenable = true
-            vim.wo.foldlevel = 99
-
-            -- Global options (set only once)
-            if not vim.g.foldlevelstart_set then
-              vim.opt.foldlevelstart = 99
-              vim.g.foldlevelstart_set = true
-            end
-          end
-        end
-      end)
     end,
   })
 end
@@ -222,9 +305,13 @@ local function setup_performance_optimizations()
         vim.bo[buf].undofile = false
         vim.wo.foldenable = false
 
+        -- Use synchronous treesitter for large files to prevent issues
+        vim.b[buf]._ts_force_sync = true
+
         -- Disable treesitter for very large files
         if stats.size > 5 * 1024 * 1024 then -- 5MB
-          vim.treesitter.stop(buf)
+          pcall(vim.treesitter.stop, buf)
+          vim.b[buf].ts_highlight = false
         end
 
         vim.notify(
@@ -234,17 +321,6 @@ local function setup_performance_optimizations()
       end
     end,
   })
-
-  -- Optimize startup time
-  vim.api.nvim_create_autocmd("VimEnter", {
-    group = modern_group,
-    callback = function()
-      -- Defer expensive operations until after startup
-      vim.schedule(function()
-        -- Re-enable some features after startup if needed
-      end)
-    end,
-  })
 end
 
 -- ============================================================================
@@ -252,38 +328,38 @@ end
 -- ============================================================================
 
 local function setup_error_recovery()
-  -- Modern error recovery system (less intrusive)
+  -- Enhanced error recovery with modern APIs
   vim.api.nvim_create_autocmd("User", {
     group = modern_group,
     pattern = "LazyDone",
     callback = function()
-      -- Only run health check after a delay and when LSP is likely to be ready
       vim.defer_fn(function()
-        -- Only run automatic health check if we're in a file that would have LSP
-        local current_buf = vim.api.nvim_get_current_buf()
-        local ft = vim.bo[current_buf].filetype
-        local lsp_filetypes = {
-          "lua", "javascript", "typescript", "python", "rust", "go",
-          "java", "c", "cpp", "html", "css", "json", "yaml"
-        }
-
-        if vim.tbl_contains(lsp_filetypes, ft) then
-          local healthy = M.health_check()
-          if healthy then
-            vim.notify("All systems healthy", vim.log.levels.INFO, { title = "Health Check" })
-          end
-        end
-      end, 3000) -- Wait 3 seconds for LSP to potentially start
+        M.health_check()
+      end, 2000)
     end,
   })
 
-  -- Handle common errors gracefully
+  -- Handle window resize events that might break treesitter
   vim.api.nvim_create_autocmd("VimResized", {
     group = modern_group,
     callback = function()
-      -- Ensure all windows are properly sized after resize
       vim.schedule(function()
-        vim.cmd("wincmd =")
+        -- Ensure all windows are properly sized
+        pcall(vim.cmd, "wincmd =")
+
+        -- Refresh treesitter for visible buffers after resize
+        for _, win in ipairs(vim.api.nvim_list_wins()) do
+          if vim.api.nvim_win_is_valid(win) then
+            local buf = vim.api.nvim_win_get_buf(win)
+            if vim.api.nvim_buf_is_valid(buf) and vim.bo[buf].buftype == "" then
+              local ft = vim.bo[buf].filetype
+              if ft and ft ~= "" then
+                pcall(vim.treesitter.stop, buf)
+                pcall(vim.treesitter.start, buf)
+              end
+            end
+          end
+        end
       end)
     end,
   })
@@ -313,31 +389,27 @@ function M.health_check()
 
   vim.api.nvim_buf_delete(test_buf, { force = true })
 
-  -- Check LSP health (only if we expect LSP to be active)
-  local active_clients = vim.lsp.get_clients()
-  local current_buf = vim.api.nvim_get_current_buf()
-  local ft = vim.bo[current_buf].filetype
-
-  -- Only check for LSP if we're in a file that typically has LSP support
-  local lsp_filetypes = {
-    "lua", "javascript", "typescript", "python", "rust", "go",
-    "java", "c", "cpp", "html", "css", "json", "yaml"
-  }
-
-  if vim.tbl_contains(lsp_filetypes, ft) and #active_clients == 0 then
-    table.insert(issues, "No LSP clients active for " .. ft)
+  -- Check async treesitter setting
+  if not vim.g._ts_force_sync_parsing then
+    table.insert(issues, "Async treesitter may cause window ID issues with neogit")
   end
 
-  -- Report results (only if there are actual issues)
+  -- Report results
   if #issues > 0 then
     vim.notify(
-      "Health issues detected:\n" .. table.concat(issues, "\n"),
+      "Modern Neovim compatibility issues:\n" .. table.concat(issues, "\n"),
       vim.log.levels.WARN,
       { title = "Modern Neovim Health Check" }
     )
+    return false
+  else
+    vim.notify(
+      "All modern Neovim compatibility checks passed!",
+      vim.log.levels.INFO,
+      { title = "Modern Neovim Health Check" }
+    )
+    return true
   end
-
-  return #issues == 0
 end
 
 -- ============================================================================
@@ -345,26 +417,43 @@ end
 -- ============================================================================
 
 function M.setup()
+  setup_treesitter_async_fixes() -- This should be first
   setup_window_fixes()
-  setup_treesitter_enhancements()
+  setup_neogit_fixes()
   setup_lsp_enhancements()
-  setup_folding_enhancements()
   setup_performance_optimizations()
   setup_error_recovery()
 
-  -- Add a command to manually run health check
+  -- Add enhanced commands
   vim.api.nvim_create_user_command("ModernHealth", M.health_check, {
     desc = "Run modern Neovim health check"
   })
 
-  -- Add a command to reload modern enhancements
   vim.api.nvim_create_user_command("ModernReload", function()
-    -- Clear the autocommand group and reinitialize
     vim.api.nvim_clear_autocmds({ group = modern_group })
     M.setup()
     vim.notify("Modern Neovim features reloaded", vim.log.levels.INFO)
   end, {
     desc = "Reload modern Neovim enhancements"
+  })
+
+  vim.api.nvim_create_user_command("ModernFixTreesitter", function()
+    -- Force refresh treesitter for all visible buffers
+    for _, win in ipairs(vim.api.nvim_list_wins()) do
+      if vim.api.nvim_win_is_valid(win) then
+        local buf = vim.api.nvim_win_get_buf(win)
+        if vim.api.nvim_buf_is_valid(buf) and vim.bo[buf].buftype == "" then
+          local ft = vim.bo[buf].filetype
+          if ft and ft ~= "" then
+            pcall(vim.treesitter.stop, buf)
+            pcall(vim.treesitter.start, buf)
+          end
+        end
+      end
+    end
+    vim.notify("Treesitter refreshed for all buffers", vim.log.levels.INFO)
+  end, {
+    desc = "Fix treesitter highlighting issues"
   })
 end
 

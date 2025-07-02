@@ -61,10 +61,12 @@ vim.o.lazyredraw = true
 
 vim.o.winborder = "rounded"
 
+-- FIXED: Better command completion behavior
 vim.opt.wildmenu = true
-vim.opt.wildmode = "list:full"
+vim.opt.wildmode = "longest,list"
 vim.opt.wildoptions = "pum"
 vim.opt.wildignorecase = true
+
 vim.opt.wildignore = {
   "*.o", "*.obj", "*.bin", "*.dll", "*.exe",
   "*/.git/*", "*/.svn/*", "*/.hg/*",
