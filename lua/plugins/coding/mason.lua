@@ -1,79 +1,70 @@
 return {
   {
-    "williamboman/mason.nvim",
-    dependencies = {
-      "stevearc/dressing.nvim",
-    },
+    "mason-org/mason.nvim",
+    lazy = false,
     config = function()
-      local mason = require("mason")
-
-      mason.setup({
+      require("mason").setup({
         ui = {
           icons = {
             package_installed = "✓",
             package_pending = "➜",
             package_uninstalled = "✗",
           },
-          keymaps = {
-            toggle_package_expand = "<CR>",
-            install_package = "i",
-            update_package = "u",
-            check_package_version = "c",
-            update_all_packages = "U",
-            check_outdated_packages = "C",
-            uninstall_package = "X",
-            cancel_installation = "<C-c>",
-            apply_language_filter = "<C-f>",
-          },
+          border = "rounded",
         },
+
+        PATH = "prepend",
+
+        install_root_dir = vim.fn.stdpath("data") .. "/mason",
+
+        max_concurrent_installers = 4,
       })
 
-      vim.keymap.set("n", "<leader>mm", "<cmd>Mason<CR>", { noremap = true, silent = true })
+      vim.keymap.set("n", "<leader>mm", "<cmd>Mason<CR>", { desc = "Open Mason" })
     end,
   },
+
   {
-    "williamboman/mason-lspconfig.nvim",
-    dependencies = {
-      "williamboman/mason.nvim",
-      "neovim/nvim-lspconfig",
-    },
+    "mason-org/mason-lspconfig.nvim",
+    dependencies = { "mason-org/mason.nvim" },
     config = function()
       require("mason-lspconfig").setup({
-        -- Install these language servers through Mason
         ensure_installed = {
-          "ts_ls",    -- TypeScript Language Server (reliable alternative to VTSLS)
-          "lua_ls",   -- Lua language server
-          "bashls",   -- Bash language server
-          "vimls",    -- Vim language server
-          "marksman", -- Markdown language server
-          "jsonls",   -- JSON language server
-          "yamlls",   -- YAML language server
-          "html",     -- HTML language server
-          "cssls",    -- CSS language server
+          "lua_ls",
+          "ts_ls",
+          "bashls",
+          "jsonls",
+          "yamlls",
+          "html",
+          "cssls",
+          "marksman",
         },
+
         automatic_installation = true,
-        automatic_setup = true,
+        automatic_setup = false,
       })
     end,
   },
+
   {
     "WhoIsSethDaniel/mason-tool-installer.nvim",
-    dependencies = {
-      "williamboman/mason.nvim",
-    },
+    dependencies = { "mason-org/mason.nvim" },
     config = function()
       require("mason-tool-installer").setup({
         ensure_installed = {
-          "prettier",         -- Prettier formatter
-          "stylua",           -- Lua formatter
-          "shfmt",            -- Shell script formatter
-          "black",            -- Python formatter
-          "isort",            -- Python import sorter
+          "stylua",
+          "prettier",
+          "shfmt",
+          "black",
+          "isort",
 
-          "shellcheck",       -- Shell script linter
+          "shellcheck",
         },
-        auto_update = false,  -- Disable auto-update to prevent issues
-        run_on_start = false, -- Don't run on start to prevent startup delays
+
+        auto_update = false,
+        run_on_start = false,
+        start_delay = 3000,
+        debounce_hours = 24,
       })
     end,
   },

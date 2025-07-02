@@ -22,8 +22,8 @@ vim.opt.signcolumn = "auto"
 
 vim.opt.numberwidth = 4
 
-vim.opt.updatetime = 1000
-vim.opt.timeoutlen = 1000
+vim.opt.updatetime = 300
+vim.opt.timeoutlen = 300
 
 vim.opt.splitright = true
 vim.opt.splitbelow = true
@@ -33,7 +33,7 @@ vim.opt.listchars = { tab = "  ", trail = "-", nbsp = "␣" }
 
 vim.opt.inccommand = "split"
 
-vim.opt.cursorline = false
+vim.opt.cursorline = true
 vim.opt.scrolloff = 10
 
 vim.opt.hlsearch = true
@@ -61,7 +61,6 @@ vim.o.lazyredraw = true
 
 vim.o.winborder = "rounded"
 
--- FIXED: Better command completion behavior
 vim.opt.wildmenu = true
 vim.opt.wildmode = "longest,list"
 vim.opt.wildoptions = "pum"
@@ -76,3 +75,14 @@ vim.opt.wildignore = {
   "*.min.*", "bundle*.js",
   "*.swp", "*.tmp", "*~"
 }
+
+vim.g.loaded_node_provider = 0
+vim.g.loaded_perl_provider = 0
+vim.g.loaded_python3_provider = 0
+vim.g.loaded_ruby_provider = 0
+
+vim.opt.pumheight = 15
+
+vim.opt.ttyfast = true
+
+vim.opt.regexpengine = 0
