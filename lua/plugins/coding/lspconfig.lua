@@ -5,7 +5,6 @@ return {
   dependencies = {
     "nvim-lua/plenary.nvim",
     { "mason-org/mason-lspconfig.nvim", dependencies = { "mason-org/mason.nvim" } },
-    "stevearc/dressing.nvim",
   },
   config = function()
     local lspconfig = require("lspconfig")
@@ -21,16 +20,38 @@ return {
         local opts = { buffer = event.buf, silent = true }
 
         -- Navigation
-        vim.keymap.set("n", "gd", vim.lsp.buf.definition, vim.tbl_extend("force", opts, { desc = "Go to definition" }))
-        vim.keymap.set("n", "gD", vim.lsp.buf.declaration, vim.tbl_extend("force", opts, { desc = "Go to declaration" }))
-        vim.keymap.set("n", "gr", vim.lsp.buf.references, vim.tbl_extend("force", opts, { desc = "Show references" }))
-        vim.keymap.set("n", "gi", vim.lsp.buf.implementation,
+        -- vim.keymap.set("n", "gd", vim.lsp.buf.definition, vim.tbl_extend("force", opts, { desc = "Go to definition" }))
+        -- vim.keymap.set("n", "gD", vim.lsp.buf.declaration, vim.tbl_extend("force", opts, { desc = "Go to declaration" }))
+        -- vim.keymap.set("n", "gr", vim.lsp.buf.references, vim.tbl_extend("force", opts, { desc = "Show references" }))
+        -- vim.keymap.set("n", "gi", vim.lsp.buf.implementation,
+        --   vim.tbl_extend("force", opts, { desc = "Go to implementation" }))
+        -- vim.keymap.set("n", "gt", vim.lsp.buf.type_definition,
+        --   vim.tbl_extend("force", opts, { desc = "Go to type definition" }))
+
+        vim.keymap.set("n", "gd", "<cmd>FzfLua lsp_definitions jump1=true ignore_current_line=true<cr>",
+          vim.tbl_extend("force", opts, { desc = "Go to definition" }))
+        vim.keymap.set("n", "gD", "<cmd>FzfLua lsp_declarations jump1=true ignore_current_line=true<cr>",
+          vim.tbl_extend("force", opts, { desc = "Go to declaration" }))
+        vim.keymap.set("n", "gr", "<cmd>FzfLua lsp_references jump1=true ignore_current_line=true<cr>",
+          vim.tbl_extend("force", opts, { desc = "Show references" }))
+        vim.keymap.set("n", "gi", "<cmd>FzfLua lsp_implementations jump1=true ignore_current_line=true<cr>",
           vim.tbl_extend("force", opts, { desc = "Go to implementation" }))
-        vim.keymap.set("n", "gt", vim.lsp.buf.type_definition,
+        vim.keymap.set("n", "gt", "<cmd>FzfLua lsp_typedefs jump1=true ignore_current_line=true<cr>",
           vim.tbl_extend("force", opts, { desc = "Go to type definition" }))
 
+        vim.keymap.set("n", "<leader>cs", "<cmd>FzfLua lsp_document_symbols<cr>",
+          vim.tbl_extend("force", opts, { desc = "Document symbols" }))
+        vim.keymap.set("n", "<leader>cS", "<cmd>FzfLua lsp_workspace_symbols<cr>",
+          vim.tbl_extend("force", opts, { desc = "Workspace symbols" }))
+        vim.keymap.set("n", "<leader>cf", "<cmd>FzfLua lsp_finder<cr>",
+          vim.tbl_extend("force", opts, { desc = "LSP Finder (all locations)" }))
+
         -- Actions
-        vim.keymap.set({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action,
+        -- vim.keymap.set({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action,
+        --   vim.tbl_extend("force", opts, { desc = "Code actions" }))
+        -- vim.keymap.set("n", "<leader>cr", vim.lsp.buf.rename, vim.tbl_extend("force", opts, { desc = "Rename symbol" }))
+
+        vim.keymap.set({ "n", "v" }, "<leader>ca", "<cmd>FzfLua lsp_code_actions<cr>",
           vim.tbl_extend("force", opts, { desc = "Code actions" }))
         vim.keymap.set("n", "<leader>cr", vim.lsp.buf.rename, vim.tbl_extend("force", opts, { desc = "Rename symbol" }))
 
@@ -53,18 +74,18 @@ return {
 
         vim.keymap.set("n", "[d", function()
             vim.diagnostic.jump({
-              severity = vim.diagnostic.severity.WARN or vim.diagnostic.severity.INFO or vim.diagnostic.severity.HINT,
+              severity = { vim.diagnostic.severity.WARN, vim.diagnostic.severity.HINT, vim.diagnostic.severity.INFO },
               count = -1,
             })
           end,
-          vim.tbl_extend("force", opts, { desc = "Previous Warning" }))
+          vim.tbl_extend("force", opts, { desc = "Previous Warning/Info/Hint" }))
         vim.keymap.set("n", "]d", function()
             vim.diagnostic.jump({
-              severity = vim.diagnostic.severity.WARN or vim.diagnostic.severity.INFO or vim.diagnostic.severity.HINT,
+              severity = { vim.diagnostic.severity.WARN, vim.diagnostic.severity.HINT, vim.diagnostic.severity.INFO },
               count = 1,
             })
           end,
-          vim.tbl_extend("force", opts, { desc = "Next Warning" }))
+          vim.tbl_extend("force", opts, { desc = "Next Warning/Info/Hint" }))
 
         vim.keymap.set("n", "<leader>cd", vim.diagnostic.open_float,
           vim.tbl_extend("force", opts, { desc = "Show diagnostic" }))

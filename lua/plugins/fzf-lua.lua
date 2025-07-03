@@ -42,6 +42,11 @@ return {
 
       lsp = {
         prompt = "LSP❯ ",
+        jump1 = true,
+        ignore_current_line = true,
+        async_or_timeout = 5000,
+        file_icons = true,
+        git_icons = false,
       },
 
       previewers = {
@@ -51,6 +56,8 @@ return {
         },
       },
     })
+
+    fzf.register_ui_select()
 
     vim.keymap.set("n", "<leader>sk", fzf.keymaps, { desc = "Search Keymaps" })
     vim.keymap.set("n", "<leader><leader>", fzf.files, { desc = "Search Files" })
