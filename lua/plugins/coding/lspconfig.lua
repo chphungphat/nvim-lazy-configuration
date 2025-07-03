@@ -1,3 +1,4 @@
+-- lua/plugins/coding/lspconfig.lua
 return {
   "neovim/nvim-lspconfig",
   event = { "BufReadPre", "BufNewFile" },
@@ -37,10 +38,34 @@ return {
         vim.keymap.set("n", "K", vim.lsp.buf.hover, vim.tbl_extend("force", opts, { desc = "Show hover documentation" }))
 
         -- Diagnostics
-        vim.keymap.set("n", "[d", function() vim.diagnostic.jump({ count = -1 }) end,
-          vim.tbl_extend("force", opts, { desc = "Previous diagnostic" }))
-        vim.keymap.set("n", "]d", function() vim.diagnostic.jump({ count = 1 }) end,
-          vim.tbl_extend("force", opts, { desc = "Next diagnostic" }))
+        vim.keymap.set("n", "[e", function()
+          vim.diagnostic.jump({
+            severity = vim.diagnostic.severity.ERROR,
+            count = -1,
+          })
+        end, vim.tbl_extend("force", opts, { desc = "Previous Error" }))
+        vim.keymap.set("n", "]e", function()
+          vim.diagnostic.jump({
+            severity = vim.diagnostic.severity.ERROR,
+            count = 1,
+          })
+        end, vim.tbl_extend("force", opts, { desc = "Next Error" }))
+
+        vim.keymap.set("n", "[d", function()
+            vim.diagnostic.jump({
+              severity = vim.diagnostic.severity.WARN or vim.diagnostic.severity.INFO or vim.diagnostic.severity.HINT,
+              count = -1,
+            })
+          end,
+          vim.tbl_extend("force", opts, { desc = "Previous Warning" }))
+        vim.keymap.set("n", "]d", function()
+            vim.diagnostic.jump({
+              severity = vim.diagnostic.severity.WARN or vim.diagnostic.severity.INFO or vim.diagnostic.severity.HINT,
+              count = 1,
+            })
+          end,
+          vim.tbl_extend("force", opts, { desc = "Next Warning" }))
+
         vim.keymap.set("n", "<leader>cd", vim.diagnostic.open_float,
           vim.tbl_extend("force", opts, { desc = "Show diagnostic" }))
 
@@ -54,6 +79,12 @@ return {
             }
             vim.lsp.buf_request(0, "workspace/executeCommand", params)
           end, vim.tbl_extend("force", opts, { desc = "Organize imports" }))
+        end
+
+        -- C/C++ specific keymaps
+        if client and client.name == "clangd" then
+          vim.keymap.set("n", "<leader>ch", "<cmd>ClangdSwitchSourceHeader<cr>",
+            vim.tbl_extend("force", opts, { desc = "Switch Source/Header (C/C++)" }))
         end
       end,
     })
@@ -83,59 +114,99 @@ return {
       },
     })
 
-    local function setup_server(server_name, custom_config)
-      local config = {
-        capabilities = capabilities,
-        on_attach = function(client, _)
-          if server_name == "ts_ls" or server_name == "lua_ls" then
-            client.server_capabilities.documentFormattingProvider = false
-            client.server_capabilities.documentRangeFormattingProvider = false
-          end
-        end,
-      }
-
-      if custom_config then
-        config = vim.tbl_deep_extend("force", config, custom_config)
-      end
-
-      lspconfig[server_name].setup(config)
-    end
-
-    setup_server("lua_ls", {
-      settings = {
-        Lua = {
-          diagnostics = { globals = { "vim" } },
-          workspace = {
-            library = vim.api.nvim_get_runtime_file("", true),
-            checkThirdParty = false,
-          },
-          telemetry = { enable = false },
-        },
-      },
-    })
-
-    setup_server("ts_ls", {
-      settings = {
-        typescript = {
-          inlayHints = {
-            includeInlayParameterNameHints = "literal",
-            includeInlayParameterNameHintsWhenArgumentMatchesName = false,
-            includeInlayFunctionParameterTypeHints = false,
-            includeInlayVariableTypeHints = false,
-            includeInlayPropertyDeclarationTypeHints = false,
-            includeInlayFunctionLikeReturnTypeHints = false,
-            includeInlayEnumMemberValueHints = false,
+    local server_configs = {
+      lua_ls = {
+        settings = {
+          Lua = {
+            diagnostics = { globals = { "vim" } },
+            workspace = {
+              library = vim.api.nvim_get_runtime_file("", true),
+              checkThirdParty = false,
+            },
+            telemetry = { enable = false },
           },
         },
       },
-    })
 
-    local simple_servers = {
-      "bashls", "jsonls", "yamlls", "html", "cssls", "marksman"
+      ts_ls = {
+        settings = {
+          typescript = {
+            inlayHints = {
+              includeInlayParameterNameHints = "literal",
+              includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+              includeInlayFunctionParameterTypeHints = false,
+              includeInlayVariableTypeHints = false,
+              includeInlayPropertyDeclarationTypeHints = false,
+              includeInlayFunctionLikeReturnTypeHints = false,
+              includeInlayEnumMemberValueHints = false,
+            },
+          },
+        },
+      },
+
+      clangd = {
+        cmd = {
+          "clangd",
+          "--background-index",
+          "--clang-tidy",
+          "--header-insertion=iwyu",
+          "--completion-style=detailed",
+          "--function-arg-placeholders",
+          "--fallback-style=llvm",
+        },
+        init_options = {
+          usePlaceholders = true,
+          completeUnimported = true,
+          clangdFileStatus = true,
+        },
+        capabilities = vim.tbl_extend("force", capabilities, {
+          offsetEncoding = { "utf-16" },
+        }),
+      },
     }
 
-    for _, server in ipairs(simple_servers) do
-      setup_server(server)
-    end
+    local disable_formatting = {
+      "ts_ls",
+      "lua_ls",
+      "clangd",
+      "jsonls",
+      "yamlls",
+    }
+
+
+    local mason_lspconfig = require("mason-lspconfig")
+    mason_lspconfig.setup({
+      ensure_installed = {
+        "lua_ls",
+        "ts_ls",
+        "bashls",
+        "jsonls",
+        "yamlls",
+        "html",
+        "cssls",
+        "marksman",
+        "clangd",
+      },
+      automatic_installation = true,
+      handlers = {
+        function(server_name)
+          local config = {
+            capabilities = capabilities,
+            on_attach = function(client, _)
+              if vim.tbl_contains(disable_formatting, server_name) then
+                client.server_capabilities.documentFormattingProvider = false
+                client.server_capabilities.documentRangeFormattingProvider = false
+              end
+            end,
+          }
+
+          if server_configs[server_name] then
+            config = vim.tbl_deep_extend("force", config, server_configs[server_name])
+          end
+
+          lspconfig[server_name].setup(config)
+        end,
+      },
+    })
   end,
 }

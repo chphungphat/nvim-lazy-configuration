@@ -18,7 +18,7 @@ return {
       view = {
         width = 30,
         side = "left",
-        preserve_window_proportions = false,
+        preserve_window_proportions = true,
         number = false,
         relativenumber = false,
         signcolumn = "yes",
@@ -33,8 +33,8 @@ return {
         root_folder_label = ":~:s?$?/..?",
         indent_width = 2,
 
-        highlight_git = "name",         -- Only highlight file names, no icons
-        highlight_diagnostics = "name", -- Only highlight file names, no icons
+        highlight_git = "name",
+        highlight_diagnostics = "name",
         highlight_opened_files = "none",
         highlight_modified = "none",
         highlight_bookmarks = "none",
@@ -49,9 +49,9 @@ return {
             file = true,
             folder = true,
             folder_arrow = true,
-            git = false,         -- Disable git icons
-            modified = false,    -- Disable modified icons
-            diagnostics = false, -- Disable diagnostic icons
+            git = false,
+            modified = false,
+            diagnostics = false,
             bookmarks = false,
             hidden = false,
           },
@@ -72,29 +72,26 @@ return {
         },
 
         decorators = {
-          "Git",         -- Enable git highlighting
-          "Diagnostics", -- Enable diagnostic highlighting
-          "Open",        -- Keep open file highlighting
+          "Git",
+          "Diagnostics",
+          "Open",
         },
 
-        -- Minimal special files
         special_files = { "Cargo.toml", "Makefile", "README.md", "readme.md" },
       },
 
-      -- Git integration - minimal but functional
       git = {
         enable = true,
         show_on_dirs = true,
-        show_on_open_dirs = false, -- Performance optimization
+        show_on_open_dirs = false,
         disable_for_dirs = {},
         timeout = 400,
       },
 
-      -- Diagnostics integration - minimal but functional
       diagnostics = {
         enable = true,
-        show_on_dirs = false,      -- Performance optimization
-        show_on_open_dirs = false, -- Performance optimization
+        show_on_dirs = false,
+        show_on_open_dirs = false,
         debounce_delay = 50,
         severity = {
           min = vim.diagnostic.severity.HINT,
@@ -102,7 +99,6 @@ return {
         },
       },
 
-      -- Minimal filters
       filters = {
         git_ignored = false,
         dotfiles = false,
@@ -112,13 +108,11 @@ return {
         exclude = {},
       },
 
-      -- Disable expensive features for better performance
       live_filter = {
         prefix = "[FILTER]: ",
-        always_show_folders = false, -- Performance optimization
+        always_show_folders = false,
       },
 
-      -- Minimal actions
       actions = {
         use_system_clipboard = true,
         change_dir = {
@@ -132,7 +126,7 @@ return {
         open_file = {
           quit_on_open = false,
           eject = true,
-          resize_window = false,
+          resize_window = true,
           window_picker = {
             enable = true,
             picker = "default",

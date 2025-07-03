@@ -38,6 +38,7 @@ return {
           "html",
           "cssls",
           "marksman",
+          "clangd",
         },
 
         automatic_installation = true,
@@ -59,6 +60,9 @@ return {
           "isort",
 
           "shellcheck",
+
+          "clang-format",
+          "codelldb",
         },
 
         auto_update = false,

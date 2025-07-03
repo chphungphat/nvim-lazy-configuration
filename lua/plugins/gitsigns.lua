@@ -30,12 +30,6 @@ return {
 
         map("n", "gb", gs.toggle_current_line_blame, "Toggle Line Blame")
         map("n", "gB", gs.blame_line, "Blame Line (Full)")
-        map("n", "gr", gs.reset_hunk, "Reset Hunk")
-        map("n", "gR", gs.reset_buffer, "Reset Buffer")
-        map("n", "gs", gs.stage_hunk, "Stage Hunk")
-        map("n", "gS", gs.stage_buffer, "Stage Buffer")
-        map("n", "gu", gs.undo_stage_hunk, "Undo Stage Hunk")
-        map("n", "gd", gs.diffthis, "Diff This")
 
         map("v", "gs", function()
           gs.stage_hunk({ vim.fn.line("."), vim.fn.line("v") })

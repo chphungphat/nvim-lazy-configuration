@@ -36,6 +36,12 @@ return {
         sh = { "shfmt" },
         bash = { "shfmt" },
 
+        -- C/C++
+        c = { "clang_format" },
+        cpp = { "clang_format" },
+        objc = { "clang_format" },
+        objcpp = { "clang_format" },
+
         -- Fallbacks for any file
         ["_"] = { "trim_whitespace" }, -- Clean up whitespace for all files
       },
@@ -56,7 +62,7 @@ return {
 
         -- Skip for certain paths
         local bufname = vim.api.nvim_buf_get_name(bufnr)
-        local ignore_patterns = { "node_modules", "%.git/", "vendor/", "target/" }
+        local ignore_patterns = { "node_modules", "%.git/", "vendor/", "target/", "build/" }
         for _, pattern in ipairs(ignore_patterns) do
           if bufname:match(pattern) then
             return
@@ -108,6 +114,16 @@ return {
 
         shfmt = {
           prepend_args = { "-i", "2", "-ci" },
+        },
+
+        clang_format = {
+          condition = function(_, ctx)
+            local cwd = vim.fs.dirname(ctx.filename)
+            return vim.uv.fs_stat(cwd .. "/.clang-format") ~= nil or
+                vim.uv.fs_stat(cwd .. "/_clang-format") ~= nil or
+                vim.uv.fs_stat(vim.fn.getcwd() .. "/.clang-format") ~= nil
+          end,
+          args = { "--style=file" }, -- Use .clang-format file in project
         },
       },
 
