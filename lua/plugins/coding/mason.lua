@@ -34,43 +34,12 @@ return {
           "clang_format",
           "black",
           "isort",
-
-          "eslint_d",
-          "shellcheck",
-          "selene",
-          "yamllint",
-          "jsonlint",
-          "stylelint",
-          "cpplint",
         },
 
         auto_update = true,
         run_on_start = true,
         start_delay = 3000,
         debounce_hours = 24,
-      })
-    end,
-  },
-
-  {
-    "rshkarin/mason-nvim-lint",
-    dependencies = {
-      "mason-org/mason.nvim",
-      "mfussenegger/nvim-lint",
-    },
-    config = function()
-      require("mason-nvim-lint").setup({
-        automatic_installation = true,
-        ensure_installed = {
-          "eslint_d",
-          "shellcheck",
-          "selene",
-          "yamllint",
-          "jsonlint",
-          "stylelint",
-          "cpplint",
-        },
-        quiet_mode = true,
       })
     end,
   },
