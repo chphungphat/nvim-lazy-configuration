@@ -125,3 +125,35 @@ vim.keymap.set("n", "<leader>tsp", function()
   vim.api.nvim_win_set_buf(0, syntax_buf)
   vim.api.nvim_win_set_height(0, math.min(15, #tree_lines))
 end, { desc = "Show treesitter syntax tree" })
+
+
+vim.keymap.set("n", "<leader>cD", function()
+  vim.diagnostic.setqflist({
+    severity = {
+      vim.diagnostic.severity.ERROR,
+      vim.diagnostic.severity.WARN
+    }
+  })
+end, { desc = "Show all diagnostics in quickfix" })
+
+vim.keymap.set("n", "<leader>cw", function()
+  vim.diagnostic.setqflist({
+    severity = vim.diagnostic.severity.WARN
+  })
+end, { desc = "Show warnings in quickfix" })
+
+vim.keymap.set("n", "<leader>ce", function()
+  vim.diagnostic.setqflist({
+    severity = vim.diagnostic.severity.ERROR
+  })
+end, { desc = "Show errors in quickfix" })
+
+-- Toggle diagnostic virtual text
+vim.keymap.set("n", "<leader>cv", function()
+  local current_config = vim.diagnostic.config()
+  vim.diagnostic.config({
+    virtual_text = not current_config.virtual_text
+  })
+  local status = current_config.virtual_text and "disabled" or "enabled"
+  vim.notify("Diagnostic virtual text " .. status, vim.log.levels.INFO)
+end, { desc = "Toggle diagnostic virtual text" })
