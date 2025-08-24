@@ -38,7 +38,6 @@ vim.api.nvim_create_autocmd({ "WinLeave", "BufLeave" }, {
 vim.api.nvim_create_autocmd("ColorScheme", {
   group = vim.api.nvim_create_augroup("DiagnosticColors", { clear = true }),
   callback = function()
-    -- Diagnostic highlights (for linting)
     if vim.g.colors_name == "gruvbox-material" then
       vim.api.nvim_set_hl(0, "DiagnosticError", { fg = "#ea6962" })
       vim.api.nvim_set_hl(0, "DiagnosticWarn", { fg = "#d8a657" })
@@ -51,7 +50,6 @@ vim.api.nvim_create_autocmd("ColorScheme", {
       vim.api.nvim_set_hl(0, "DiagnosticVirtualTextHint", { fg = "#a9b665", bg = "#2e3c26" })
     end
 
-    -- Cursorline colors (existing)
     local bg = vim.g.colors_name == "gruvbox-material" and "#3c3836" or "#2a2a37"
     vim.api.nvim_set_hl(0, "CursorLine", { bg = bg })
     vim.api.nvim_set_hl(0, "CursorLineNr", { fg = "#fabd2f", bold = true })
